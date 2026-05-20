@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>성연 ♥ 희진 결혼합니다</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&family=Gowun+Batang:wght@400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Gowun Batang', serif;
+    background: #faf9f6;
+    color: #3a3a3a;
+    max-width: 430px;
+    margin: 0 auto;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Cover Section ── */
+  .cover {
+    position: relative;
+    height: 100vh;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: linear-gradient(180deg, #f5ede3 0%, #faf9f6 100%);
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(200,170,130,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .cover-label {
+    font-size: 11px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #b8a88a;
+    margin-bottom: 40px;
+  }
+
+  .cover-names {
+    font-family: 'Noto Serif KR', serif;
+    font-weight: 300;
+    font-size: 36px;
+    letter-spacing: 4px;
+    color: #5a4a3a;
+    line-height: 1.6;
+  }
+
+  .cover-names .heart {
+    display: block;
+    font-size: 18px;
+    color: #c9a87c;
+    margin: 8px 0;
+  }
+
+  .cover-date {
+    margin-top: 40px;
+    font-size: 14px;
+    color: #8a7a6a;
+    letter-spacing: 3px;
+  }
+
+  .cover-scroll {
+    position: absolute;
+    bottom: 40px;
+    font-size: 11px;
+    color: #b8a88a;
+    letter-spacing: 4px;
+    animation: fadeUpDown 2s ease-in-out infinite;
+  }
+
+  @keyframes fadeUpDown {
+    0%, 100% { opacity: 0.4; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(-6px); }
+  }
+
+  /* ── Section Common ── */
+  section {
+    padding: 70px 30px;
+    text-align: center;
+  }
+
+  .section-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 5px;
+    color: #b8a88a;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+  }
+
+  .divider {
+    width: 1px;
+    height: 40px;
+    background: #d4c8b8;
+    margin: 0 auto 30px;
+  }
+
+  /* ── Greeting ── */
+  .greeting p {
+    font-size: 15px;
+    line-height: 2;
+    color: #5a5a5a;
+    word-break: keep-all;
+  }
+
+  .greeting .parents {
+    margin-top: 40px;
+    font-size: 14px;
+    line-height: 2.2;
+    color: #7a7a7a;
+  }
+
+  .greeting .parents span {
+    color: #5a4a3a;
+    font-weight: 700;
+  }
+
+  /* ── Photo Gallery ── */
+  .gallery {
+    background: #f0ebe3;
+    padding: 70px 20px;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin-top: 10px;
+  }
+
+  .gallery-item {
+    aspect-ratio: 1;
+    background: #ddd3c5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #a09080;
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .gallery-item.tall {
+    grid-row: span 2;
+  }
+
+  .gallery-item .placeholder-icon {
+    font-size: 28px;
+    opacity: 0.4;
+  }
+
+  .gallery-item .placeholder-text {
+    position: absolute;
+    bottom: 10px;
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+
+  /* ── Calendar ── */
+  .calendar-section {
+    background: #faf9f6;
+  }
+
+  .calendar {
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .calendar-month {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 18px;
+    color: #5a4a3a;
+    margin-bottom: 20px;
+    font-weight: 400;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    font-size: 13px;
+  }
+
+  .calendar-grid .day-name {
+    font-size: 11px;
+    color: #b8a88a;
+    padding: 8px 0;
+    letter-spacing: 1px;
+  }
+
+  .calendar-grid .day {
+    padding: 8px 0;
+    color: #7a7a7a;
+  }
+
+  .calendar-grid .day.sun { color: #c48a6a; }
+
+  .calendar-grid .day.highlight {
+    background: #c9a87c;
+    color: #fff;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-weight: 700;
+  }
+
+  .calendar-grid .day.empty { visibility: hidden; }
+
+  .calendar-time {
+    margin-top: 24px;
+    font-size: 14px;
+    color: #7a7a7a;
+    line-height: 1.8;
+  }
+
+  .calendar-time strong {
+    color: #5a4a3a;
+    font-weight: 600;
+  }
+
+  /* ── Location ── */
+  .location {
+    background: #f0ebe3;
+  }
+
+  .location-name {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 20px;
+    color: #5a4a3a;
+    margin-bottom: 6px;
+  }
+
+  .location-detail {
+    font-size: 13px;
+    color: #8a7a6a;
+    line-height: 1.8;
+    margin-bottom: 24px;
+  }
+
+  .location-map {
+    width: 100%;
+    height: 200px;
+    background: #ddd3c5;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #a09080;
+    margin-bottom: 20px;
+  }
+
+  .map-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .map-btn {
+    padding: 10px 20px;
+    border: 1px solid #c9a87c;
+    background: transparent;
+    color: #8a7060;
+    font-family: 'Gowun Batang', serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .map-btn:hover {
+    background: #c9a87c;
+    color: #fff;
+  }
+
+  /* ── Account (마음 전하기) ── */
+  .account {
+    background: #faf9f6;
+  }
+
+  .account p {
+    font-size: 14px;
+    color: #7a7a7a;
+    line-height: 1.8;
+    margin-bottom: 30px;
+  }
+
+  .account-group {
+    margin-bottom: 20px;
+  }
+
+  .account-group-title {
+    font-size: 13px;
+    color: #b8a88a;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+
+  .account-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: #f5f0ea;
+    border-radius: 8px;
+    margin-bottom: 6px;
+  }
+
+  .account-info {
+    text-align: left;
+    font-size: 13px;
+    color: #5a5a5a;
+  }
+
+  .account-info .bank {
+    font-size: 11px;
+    color: #a09080;
+    margin-bottom: 2px;
+  }
+
+  .copy-btn {
+    padding: 6px 14px;
+    border: 1px solid #d4c8b8;
+    background: #fff;
+    color: #8a7060;
+    font-family: 'Gowun Batang', serif;
+    font-size: 11px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .copy-btn:active {
+    background: #c9a87c;
+    color: #fff;
+    border-color: #c9a87c;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    padding: 50px 30px 80px;
+    text-align: center;
+    background: linear-gradient(180deg, #faf9f6 0%, #f0ebe3 100%);
+  }
+
+  .footer-names {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 22px;
+    color: #5a4a3a;
+    font-weight: 300;
+    letter-spacing: 3px;
+  }
+
+  .footer-date {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #b8a88a;
+    letter-spacing: 4px;
+  }
+
+  .footer-thankyou {
+    margin-top: 30px;
+    font-size: 13px;
+    color: #a09080;
+  }
+
+  /* ── Animations ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(90, 74, 58, 0.9);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-family: 'Gowun Batang', serif;
+    transition: transform 0.3s ease;
+    z-index: 100;
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ Cover ═══ -->
+<div class="cover">
+  <div class="cover-label">Wedding Invitation</div>
+  <div class="cover-names">
+    이성연
+    <span class="heart">♥</span>
+    천희진
+  </div>
+  <div class="cover-date">2025. 09. 20 SAT PM 2:00</div>
+  <div class="cover-scroll">↓ SCROLL</div>
+</div>
+
+<!-- ═══ Greeting ═══ -->
+<section class="greeting">
+  <div class="divider"></div>
+  <div class="section-title">Invitation</div>
+  <div class="fade-in">
+    <p>
+      서로 다른 두 사람이<br>
+      하나의 길을 걸어가고자 합니다.<br><br>
+      함께한 시간만큼 깊어진 사랑으로<br>
+      이제 평생을 약속하려 합니다.<br><br>
+      귀한 걸음 하시어<br>
+      축복해 주시면 감사하겠습니다.
+    </p>
+    <div class="parents">
+      <span>OOO</span> · OOO 의 아들 <span>성연</span><br>
+      <span>OOO</span> · OOO 의 딸 <span>희진</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Gallery ═══ -->
+<section class="gallery">
+  <div class="section-title">Gallery</div>
+  <div class="gallery-grid fade-in">
+    <div class="gallery-item tall">
+      <span class="placeholder-icon">📷</span>
+      <span class="placeholder-text">PHOTO 1</span>
+    </div>
+    <div class="gallery-item">
+      <span class="placeholder-icon">📷</span>
+      <span class="placeholder-text">PHOTO 2</span>
+    </div>
+    <div class="gallery-item">
+      <span class="placeholder-icon">📷</span>
+      <span class="placeholder-text">PHOTO 3</span>
+    </div>
+    <div class="gallery-item">
+      <span class="placeholder-icon">📷</span>
+      <span class="placeholder-text">PHOTO 4</span>
+    </div>
+    <div class="gallery-item">
+      <span class="placeholder-icon">📷</span>
+      <span class="placeholder-text">PHOTO 5</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Calendar ═══ -->
+<section class="calendar-section">
+  <div class="divider"></div>
+  <div class="section-title">Calendar</div>
+  <div class="calendar fade-in">
+    <div class="calendar-month">2025년 9월</div>
+    <div class="calendar-grid">
+      <div class="day-name">일</div><div class="day-name">월</div><div class="day-name">화</div>
+      <div class="day-name">수</div><div class="day-name">목</div><div class="day-name">금</div>
+      <div class="day-name">토</div>
+      <!-- Week 1 -->
+      <div class="day empty">.</div>
+      <div class="day">1</div><div class="day">2</div><div class="day">3</div>
+      <div class="day">4</div><div class="day">5</div><div class="day">6</div>
+      <!-- Week 2 -->
+      <div class="day sun">7</div><div class="day">8</div><div class="day">9</div>
+      <div class="day">10</div><div class="day">11</div><div class="day">12</div><div class="day">13</div>
+      <!-- Week 3 -->
+      <div class="day sun">14</div><div class="day">15</div><div class="day">16</div>
+      <div class="day">17</div><div class="day">18</div><div class="day">19</div>
+      <div class="day highlight">20</div>
+      <!-- Week 4 -->
+      <div class="day sun">21</div><div class="day">22</div><div class="day">23</div>
+      <div class="day">24</div><div class="day">25</div><div class="day">26</div><div class="day">27</div>
+      <!-- Week 5 -->
+      <div class="day sun">28</div><div class="day">29</div><div class="day">30</div>
+      <div class="day empty">.</div><div class="day empty">.</div><div class="day empty">.</div><div class="day empty">.</div>
+    </div>
+    <div class="calendar-time">
+      <strong>2025년 9월 20일 토요일</strong><br>
+      오후 2시
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Location ═══ -->
+<section class="location">
+  <div class="section-title">Location</div>
+  <div class="fade-in">
+    <div class="location-name">더그랜드홀 3층 그랜드볼룸</div>
+    <div class="location-detail">
+      서울특별시 강남구 테헤란로 123<br>
+      Tel. 02-1234-5678
+    </div>
+    <div class="location-map">
+      🗺️ 지도 영역 (API 연동 필요)
+    </div>
+    <div class="map-buttons">
+      <button class="map-btn" onclick="alert('네이버 지도 연동 예정')">네이버 지도</button>
+      <button class="map-btn" onclick="alert('카카오맵 연동 예정')">카카오맵</button>
+      <button class="map-btn" onclick="alert('티맵 연동 예정')">티맵</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Account ═══ -->
+<section class="account">
+  <div class="divider"></div>
+  <div class="section-title">마음 전하기</div>
+  <div class="fade-in">
+    <p>축하의 마음을 담아 축의금을 전달해 보세요.</p>
+
+    <div class="account-group">
+      <div class="account-group-title">신랑측</div>
+      <div class="account-item">
+        <div class="account-info">
+          <div class="bank">국민은행</div>
+          000-0000-0000-00 이성연
+        </div>
+        <button class="copy-btn" onclick="copyAccount('000-0000-0000-00')">복사</button>
+      </div>
+      <div class="account-item">
+        <div class="account-info">
+          <div class="bank">신한은행</div>
+          000-000-000000 OOO
+        </div>
+        <button class="copy-btn" onclick="copyAccount('000-000-000000')">복사</button>
+      </div>
+    </div>
+
+    <div class="account-group">
+      <div class="account-group-title">신부측</div>
+      <div class="account-item">
+        <div class="account-info">
+          <div class="bank">우리은행</div>
+          0000-000-000000 천희진
+        </div>
+        <button class="copy-btn" onclick="copyAccount('0000-000-000000')">복사</button>
+      </div>
+      <div class="account-item">
+        <div class="account-info">
+          <div class="bank">하나은행</div>
+          000-000000-00000 OOO
+        </div>
+        <button class="copy-btn" onclick="copyAccount('000-000000-00000')">복사</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Footer ═══ -->
+<div class="footer">
+  <div class="footer-names">성연 ♥ 희진</div>
+  <div class="footer-date">2025. 09. 20</div>
+  <div class="footer-thankyou">감사합니다</div>
+</div>
+
+<!-- ═══ Toast ═══ -->
+<div class="toast" id="toast">계좌번호가 복사되었습니다</div>
+
+<script>
+// ── Scroll Animation ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// ── Copy Account ──
+function copyAccount(account) {
+  const num = account.replace(/-/g, '');
+  navigator.clipboard.writeText(num).then(() => {
+    showToast();
+  }).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = num;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast();
+  });
+}
+
+function showToast() {
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+</script>
+
+</body>
+</html>
