@@ -9,7 +9,7 @@ const VENUE_NAME = '트라디노이';
 const VENUE_ADDR = '서울특별시 강남구 도곡로99길 16 6층';
 
 export function render() {
-  const mapSrc = `https://maps.google.com/maps?q=${VENUE_LAT},${VENUE_LNG}&z=16&output=embed&hl=ko`;
+  const mapSrc = `https://maps.google.com/maps?q=37.5018594,127.0660032&z=16&output=embed&hl=ko`;
 
   return `
     <section class="location-section">
