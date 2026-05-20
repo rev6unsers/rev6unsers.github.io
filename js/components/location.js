@@ -2,11 +2,11 @@
  * location.js — 오시는 길 섹션
  */
 
-// 트라디노이 (서울 강남구 대치동 도곡로99길 16)
-const VENUE_LAT = 37.4935;
-const VENUE_LNG = 127.0556;
+// 트라디노이 (서울 강남구 도곡로99길 16, 대치동 984) 6층
+const VENUE_LAT = 37.5044;
+const VENUE_LNG = 127.0568;
 const VENUE_NAME = '트라디노이';
-const VENUE_ADDR = '서울특별시 강남구 대치동 도곡로99길 16';
+const VENUE_ADDR = '서울특별시 강남구 도곡로99길 16 6층';
 
 export function render() {
   const mapSrc = `https://maps.google.com/maps?q=${VENUE_LAT},${VENUE_LNG}&z=16&output=embed&hl=ko`;
@@ -19,7 +19,7 @@ export function render() {
         <div class="loc-name">${VENUE_NAME}</div>
         <div class="loc-addr">
           ${VENUE_ADDR}<br>
-          Tel. 02-0000-0000
+          Tel. 02-567-9916
         </div>
 
         <iframe
