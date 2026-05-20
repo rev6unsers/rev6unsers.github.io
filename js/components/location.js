@@ -36,7 +36,7 @@ export function render() {
           <button class="map-btn" onclick="window.open('https://map.kakao.com/link/search/${encodeURIComponent(VENUE_ADDR)}')">
             카카오맵
           </button>
-          <button class="map-btn" onclick="window.open('https://www.google.com/maps/place/%ED%8A%B8%EB%9D%BC%EB%94%94%EB%85%B8%EC%9D%B4/@37.5018594,127.0660032,16z')">
+          <button class="map-btn" onclick="window.open('https://www.google.com/maps/place/%ED%8A%B8%EB%9D%BC%EB%94%94%EB%85%B8%EC%9D%B4/@37.5018594,127.0660032,16z/data=!3m1!4b1!4m6!3m5!1s0x357ca5532bc0e133:0x98187055c9b13e4a!8m2!3d37.5018594!4d127.0660032!16s%2Fg%2F11fn42mv5x')">
             구글맵
           </button>
         </div>
