@@ -2,11 +2,11 @@
  * location.js — 오시는 길 섹션
  */
 
-// 예식장 좌표 (더그랜드홀 예시 — 실제 주소로 교체 필요)
-const VENUE_LAT = 37.5085;
-const VENUE_LNG = 127.0632;
-const VENUE_NAME = '더그랜드홀';
-const VENUE_ADDR = '서울특별시 강남구 테헤란로 123';
+// 트라디노이 (서울 강남구 대치동 도곡로99길 16)
+const VENUE_LAT = 37.4935;
+const VENUE_LNG = 127.0556;
+const VENUE_NAME = '트라디노이';
+const VENUE_ADDR = '서울특별시 강남구 대치동 도곡로99길 16';
 
 export function render() {
   const mapSrc = `https://maps.google.com/maps?q=${VENUE_LAT},${VENUE_LNG}&z=16&output=embed&hl=ko`;
@@ -19,7 +19,7 @@ export function render() {
         <div class="loc-name">${VENUE_NAME}</div>
         <div class="loc-addr">
           ${VENUE_ADDR}<br>
-          Tel. 02-1234-5678
+          Tel. 02-0000-0000
         </div>
 
         <iframe
@@ -44,18 +44,18 @@ export function render() {
         <div class="loc-transport">
           <div class="transport-item">
             <div class="transport-label">🚇 지하철</div>
-            <div class="transport-desc">2호선 OO역 O번 출구 도보 5분</div>
+            <div class="transport-desc">3호선 매봉역 4번 출구 도보 약 10분<br>분당선 한티역 3번 출구 도보 약 8분</div>
           </div>
           <div class="transport-item">
             <div class="transport-label">🚗 자가용</div>
             <div class="transport-desc">
-              네비게이션 "${VENUE_NAME}" 검색<br>
-              주차 2시간 무료 (건물 지하주차장 이용)
+              네비게이션 "트라디노이" 또는 "도곡로99길 16" 검색<br>
+              건물 내 주차 가능 (하객 주차 안내는 추후 확인)
             </div>
           </div>
           <div class="transport-item">
             <div class="transport-label">🚌 버스</div>
-            <div class="transport-desc">OO정류장 하차 (간선: 140, 지선: 4412)</div>
+            <div class="transport-desc">대치동 사거리 정류장 하차</div>
           </div>
         </div>
       </div>
