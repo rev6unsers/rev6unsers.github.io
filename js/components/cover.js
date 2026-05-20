@@ -13,8 +13,8 @@ export function render() {
         성연 <em>and</em> 희진
       </div>
       <div class="cover-info">
-        2025년 9월 20일 토요일 오후 2시<br>
-        더그랜드홀 3층 그랜드볼룸
+        2027년 3월 13일 토요일 오후 5시<br>
+        트라디노이
       </div>
       <div class="cover-scroll"></div>
     </div>
