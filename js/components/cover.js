@@ -4,7 +4,7 @@
 export function render() {
   return `
     <div class="cover">
-      <div class="cover-date-top">2025 · 09 · 20</div>
+      <div class="cover-date-top">2027 · 03 · 13</div>
       <div class="cover-photo">
         <!-- 실제 사진으로 교체: <img src="images/main.jpg" alt="메인 사진"> -->
         📷 메인 사진
