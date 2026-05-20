@@ -4,7 +4,7 @@
 
 // 트라디노이 (서울 강남구 도곡로99길 16, 대치동 984) 6층
 const VENUE_LAT = 37.5018594;
-const VENUE_LNG = 127.0634229;
+const VENUE_LNG = 127.0660032;
 const VENUE_NAME = '트라디노이';
 const VENUE_ADDR = '서울특별시 강남구 도곡로99길 16 6층';
 
