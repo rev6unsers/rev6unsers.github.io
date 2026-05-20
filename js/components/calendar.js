@@ -8,11 +8,11 @@ export function render() {
       <div class="section-eng">Wedding Day</div>
       <div class="section-title">예식 안내</div>
       <div class="fade-in">
-        <div class="when-venue">더그랜드홀</div>
-        <div class="when-datetime">2025년 9월 20일 토요일 · 오후 2시</div>
+        <div class="when-venue">트라디노이</div>
+        <div class="when-datetime">2027년 3월 26일 토요일 · 오후 5시</div>
 
         <div class="cal">
-          <div class="cal-month">SEPTEMBER 2025</div>
+          <div class="cal-month">MARCH 2027</div>
           <div class="cal-grid">
             <div class="dn">일</div><div class="dn">월</div><div class="dn">화</div>
             <div class="dn">수</div><div class="dn">목</div><div class="dn">금</div><div class="dn">토</div>
@@ -58,7 +58,7 @@ export function render() {
 }
 
 export function init() {
-  const weddingDate = new Date('2025-09-20T14:00:00+09:00');
+  const weddingDate = new Date('2027-03-13T14:00:00+09:00');
 
   function updateCountdown() {
     const now = new Date();
