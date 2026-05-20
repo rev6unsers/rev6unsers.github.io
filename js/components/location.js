@@ -44,18 +44,20 @@ export function render() {
         <div class="loc-transport">
           <div class="transport-item">
             <div class="transport-label">🚇 지하철</div>
-            <div class="transport-desc">3호선 매봉역 4번 출구 도보 약 10분<br>분당선 한티역 3번 출구 도보 약 8분</div>
+            <div class="transport-desc">삼성역 3번 출구 도보 8분</div>
+          </div>
+          <div class="transport-item">
+            <div class="transport-label">🚌 버스</div>
+            <div class="transport-desc">
+              강남01, 강남06, 지선4319<br>
+              대치2동주민센터, 래미안하이스턴 하차
+            </div>
           </div>
           <div class="transport-item">
             <div class="transport-label">🚗 자가용</div>
             <div class="transport-desc">
-              네비게이션 "트라디노이" 또는 "도곡로99길 16" 검색<br>
-              건물 내 주차 가능 (하객 주차 안내는 추후 확인)
+              도곡로 99길 16 (구주소: 대치동 98)
             </div>
-          </div>
-          <div class="transport-item">
-            <div class="transport-label">🚌 버스</div>
-            <div class="transport-desc">대치동 사거리 정류장 하차</div>
           </div>
         </div>
       </div>
