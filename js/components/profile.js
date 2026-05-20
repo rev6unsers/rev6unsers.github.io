@@ -15,8 +15,7 @@ export function render() {
           <div class="profile-role">Groom</div>
           <div class="profile-name">이성연</div>
           <div class="profile-meta">
-            1995.01.01<br>
-            MBTI
+            1994.04.03<br>
           </div>
           <a href="tel:010-0000-0000" class="profile-contact">연락하기 ›</a>
         </div>
@@ -28,8 +27,7 @@ export function render() {
           <div class="profile-role">Bride</div>
           <div class="profile-name">천희진</div>
           <div class="profile-meta">
-            1995.01.01<br>
-            MBTI
+            1997.03.26<br>
           </div>
           <a href="tel:010-0000-0000" class="profile-contact">연락하기 ›</a>
         </div>
