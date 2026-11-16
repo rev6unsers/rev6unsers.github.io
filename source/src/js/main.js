@@ -256,10 +256,10 @@ function tickCountdown() {
   const minutes = Math.floor(diff / 60000) % 60;
   const seconds = Math.floor(diff / 1000) % 60;
 
-  document.getElementById('cdD').textContent = days;
-  document.getElementById('cdH').textContent = pad(hours);
-  document.getElementById('cdM').textContent = pad(minutes);
-  document.getElementById('cdS').textContent = pad(seconds);
+  setCountValue('cdD', days);
+  setCountValue('cdH', pad(hours));
+  setCountValue('cdM', pad(minutes));
+  setCountValue('cdS', pad(seconds));
 
   document.getElementById('ddayNote').innerHTML =
     diff > 0

@@ -130,6 +130,22 @@ function isWeddingDeployed() {
   return Date.now() >= CONFIG.date.getTime();
 }
 
+/* countdown 숫자를 바꾼다. 값이 실제로 바뀔 때만 .tick 을 다시 붙여
+   아래에서 위로 살짝 올라오는 전환(css의 .tick)을 재생한다. 첫 표시는 전환 없이 넣는다. */
+function setCountValue(id, text) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  text = String(text);
+  if (el.textContent === text) return;
+  var first = !el.dataset.ready;
+  el.textContent = text;
+  el.dataset.ready = '1';
+  if (first) return;
+  el.classList.remove('tick');
+  void el.offsetWidth;   // reflow로 animation을 처음부터 다시 시작한다
+  el.classList.add('tick');
+}
+
 /* CONFIG.photos 의 파일 이름을 실제 URL로 바꾼다.
    사진은 photos/ 에 있고 그 base가 window.__PHOTOS__ 로 주입된다. */
 function photoSrc(src) {

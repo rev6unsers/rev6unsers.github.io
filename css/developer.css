@@ -2150,3 +2150,29 @@ footer .version-link:hover { border-color: var(--laravel); color: var(--laravel)
 body { font-variant-ligatures: none; }
 
 .tinker { text-align: left; }
+
+/* 배포 단계: 위에 명령어(mono), 아래에 설명(본문 글꼴) 두 줄 */
+.pl-step .nm code {
+  display: block;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--text);
+}
+
+.pl-step .nm em {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--sans);
+  font-style: normal;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+/* countdown 숫자가 바뀔 때 아래에서 위로 살짝 올라온다 (js/config.js 의 setCountValue) */
+.dd-cell b { display: block; }
+.dd-cell b.tick { animation: count-up 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+@keyframes count-up {
+  from { opacity: 0.3; transform: translateY(40%); filter: blur(1px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}

@@ -1,36 +1,40 @@
 /*
    main.css: 파스텔(main) version style. main.html 전용.
-   라벤더와 피치 톤. 둥근 액자와 부드러운 그림자, 이탤릭 영문 label로 구성한다.
+   크림 바탕에 피치·코랄 톤. 라벤더는 아주 옅게 장식에만 쓴다.
+   제목은 나눔명조, 본문은 나눔고딕, 짧은 문구는 나눔펜(손글씨).
    class 이름은 js/main.js, js/private.js, js/config.js 가 만드는 요소와 맞춰 둔다.
  */
 
 /* 01. 변수 & base */
 
 :root {
-  --bg: #f1ecf8;            /* page 바깥 배경 */
-  --paper: #fbf9fe;         /* 본문 면 */
+  --bg: #f8ece4;            /* page 바깥 배경 */
+  --paper: #fff8f3;         /* 본문 면 (크림) */
   --card: #ffffff;
-  --line: #e7e0f2;
-  --line-soft: #f0ebf7;
+  --line: #f1e1d7;
+  --line-soft: #f7ebe3;
 
-  --ink: #3e3a4a;
-  --ink-bright: #2a2635;
-  --soft: #6b6480;
-  --faint: #847d95;
+  --ink: #4a3f3a;           /* 따뜻한 갈색 글자 */
+  --ink-bright: #372d28;
+  --soft: #7a6a62;
+  --faint: #94827a;
 
-  --lav: #8e7cc3;
-  --lav-deep: #6c5aa8;
-  --lav-soft: #e6dff5;
-  --lav-mist: #f3effa;
-  --peach: #f2a98b;
-  --peach-deep: #d9805e;
-  --peach-soft: #fce6dc;
+  --coral: #e8957a;         /* 주색: 피치코랄 */
+  --coral-deep: #c06a50;    /* 글자용 진한 코랄 */
+  --coral-soft: #f5ddd3;
+  --coral-mist: #fdefe8;
+  --peach: #f0a98f;
+  --peach-deep: #c9694e;
+  --peach-soft: #fbe4da;
 
-  --serif: 'Noto Serif KR', serif;
-  --sans: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
-  --script: 'Cormorant Garamond', 'Noto Serif KR', serif;
+  --lilac: #b9a7d9;         /* 장식에만 쓰는 옅은 라벤더 */
+  --lilac-soft: #eee8f7;
 
-  --shadow: 0 18px 40px -26px rgba(92, 72, 150, 0.35);
+  --serif: 'Nanum Myeongjo', serif;
+  --sans: 'Nanum Gothic', 'Apple SD Gothic Neo', sans-serif;
+  --script: 'Nanum Pen Script', 'Nanum Myeongjo', cursive;
+
+  --shadow: 0 18px 40px -26px rgba(170, 105, 75, 0.28);
   --radius: 22px;
 }
 
@@ -44,13 +48,13 @@ html { scroll-behavior: smooth; }
 
 body {
   background:
-    radial-gradient(circle at 15% 10%, #fbe9e1 0, transparent 38%),
-    radial-gradient(circle at 85% 60%, #e9e1f7 0, transparent 42%),
+    radial-gradient(circle at 15% 10%, #fde3d6 0, transparent 38%),
+    radial-gradient(circle at 85% 60%, #f6ece0 0, transparent 42%),
     var(--bg);
   background-attachment: fixed;
   color: var(--ink);
   font-family: var(--sans);
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.85;
   -webkit-font-smoothing: antialiased;
 }
@@ -65,7 +69,7 @@ body {
   margin: 0 auto;
   overflow-x: hidden;
   background: var(--paper);
-  box-shadow: 0 0 60px -20px rgba(92, 72, 150, 0.18);
+  box-shadow: 0 0 60px -20px rgba(170, 105, 75, 0.14);
 }
 
 section {
@@ -96,7 +100,7 @@ section {
   padding: 58px 24px 54px;
   text-align: center;
   overflow: hidden;
-  background: linear-gradient(180deg, var(--lav-mist) 0%, var(--paper) 78%);
+  background: linear-gradient(180deg, var(--coral-mist) 0%, var(--paper) 78%);
 }
 
 /* 떠 있는 파스텔 원 두 개 */
@@ -122,16 +126,16 @@ section {
   left: -80px;
   width: 200px;
   height: 200px;
-  background: radial-gradient(circle, var(--lav-soft) 0, transparent 70%);
+  background: radial-gradient(circle, var(--lilac-soft) 0, transparent 70%);
 }
 
 .cover > * { position: relative; z-index: 1; }
 
 .cover-eyebrow {
   font-family: var(--script);
-  font-style: italic;
-  font-size: 22px;
-  color: var(--lav);
+  font-style: normal;
+  font-size: 30px;
+  color: var(--coral);
 }
 
 .cover-dot-date {
@@ -165,7 +169,7 @@ section {
   aspect-ratio: 4 / 5;
   overflow: hidden;
   border-radius: 160px 160px 28px 28px;
-  background: var(--lav-soft);
+  background: var(--coral-soft);
   box-shadow: var(--shadow);
 }
 
@@ -190,9 +194,9 @@ section {
   display: inline-block;
   margin: 0 12px;
   font-family: var(--script);
-  font-style: italic;
+  font-style: normal;
   font-weight: 400;
-  font-size: 30px;
+  font-size: 36px;
   color: var(--peach-deep);
   transform: translateY(-1px);
 }
@@ -202,10 +206,10 @@ section {
   margin-top: 20px;
   padding: 6px 18px;
   border-radius: 99px;
-  background: var(--lav-soft);
+  background: var(--coral-soft);
   font-size: 15px;
   font-weight: 400;
-  color: var(--lav-deep);
+  color: var(--coral-deep);
 }
 
 .cover .cover-venue {
@@ -228,9 +232,9 @@ section {
   margin-bottom: 4px;
   text-align: center;
   font-family: var(--script);
-  font-style: italic;
-  font-size: 21px;
-  color: var(--lav);
+  font-style: normal;
+  font-size: 28px;
+  color: var(--coral);
 }
 
 .label-title {
@@ -272,7 +276,7 @@ section {
   content: '';
   flex: 0 0 64px;
   height: 0;
-  border-top: 1.5px dotted var(--lav-soft);
+  border-top: 1.5px dotted var(--coral-soft);
 }
 
 .divider i {
@@ -318,7 +322,7 @@ section {
   margin-top: 40px;
   padding: 22px 18px;
   border-radius: var(--radius);
-  background: var(--lav-mist);
+  background: var(--coral-mist);
   text-align: center;
   font-size: 16px;
   line-height: 2.3;
@@ -366,12 +370,12 @@ section {
   height: 112px;
   overflow: hidden;
   border-radius: 50%;
-  background: var(--lav-soft);
+  background: var(--coral-soft);
   box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--peach-soft);
 }
 
 .pf-card:nth-child(2) .pf-photo {
-  box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--lav-soft);
+  box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--lilac-soft);
 }
 
 .pf-photo img {
@@ -385,7 +389,7 @@ section {
 .pf-photo.is-empty {
   display: grid;
   place-items: center;
-  background: linear-gradient(140deg, var(--peach-soft), var(--lav-soft));
+  background: linear-gradient(140deg, var(--peach-soft), var(--coral-soft));
   font-family: var(--serif);
   font-weight: 500;
   font-size: 38px;
@@ -400,9 +404,9 @@ section {
 .pf-role {
   display: block;
   font-family: var(--script);
-  font-style: italic;
-  font-size: 17px;
-  color: var(--lav);
+  font-style: normal;
+  font-size: 22px;
+  color: var(--coral);
 }
 
 .pf-card:first-child .pf-role::after { content: ' · Groom'; }
@@ -488,7 +492,7 @@ section {
   height: 72px;
   border-radius: 50%;
   background: var(--card);
-  box-shadow: inset 0 0 0 1.5px var(--lav-soft), var(--shadow);
+  box-shadow: inset 0 0 0 1.5px var(--coral-soft), var(--shadow);
 }
 
 .dd-cell b {
@@ -496,7 +500,7 @@ section {
   font-weight: 500;
   font-size: 22px;
   line-height: 1.1;
-  color: var(--lav-deep);
+  color: var(--coral-deep);
   font-variant-numeric: tabular-nums;
 }
 
@@ -533,7 +537,7 @@ section {
   font-weight: 500;
   font-size: 16px;
   letter-spacing: 0.12em;
-  color: var(--lav-deep);
+  color: var(--coral-deep);
 }
 
 .cal table {
@@ -553,7 +557,7 @@ section {
 .cal td:first-child .d { color: #d0707a; }
 
 .cal th:last-child,
-.cal td:last-child .d { color: var(--lav); }
+.cal td:last-child .d { color: #8f7dbf; }
 
 .cal td {
   padding: 3px 0;
@@ -631,13 +635,13 @@ section {
   padding: 12px 8px;
   border: 0;
   border-radius: 99px;
-  background: var(--lav-mist);
+  background: var(--coral-mist);
   font-family: var(--sans);
   font-size: 14px;
   font-weight: 400;
   text-align: center;
   text-decoration: none;
-  color: var(--lav-deep);
+  color: var(--coral-deep);
   cursor: pointer;
   transition: background 0.25s, color 0.25s, transform 0.15s;
 }
@@ -645,7 +649,7 @@ section {
 .btn:active { transform: scale(0.97); }
 
 @media (hover: hover) {
-  .btn:hover { background: var(--lav); color: #fff; }
+  .btn:hover { background: var(--coral); color: #fff; }
 }
 
 .map-embed {
@@ -653,7 +657,7 @@ section {
   margin-top: 18px;
   overflow: hidden;
   border-radius: var(--radius);
-  background: var(--lav-mist);
+  background: var(--coral-mist);
   box-shadow: var(--shadow);
 }
 
@@ -695,7 +699,7 @@ section {
   margin-bottom: 4px;
   font-size: 14.5px;
   font-weight: 500;
-  color: var(--lav-deep);
+  color: var(--coral-deep);
 }
 
 
@@ -712,7 +716,7 @@ section {
   aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: 12px;
-  background: var(--lav-mist);
+  background: var(--coral-mist);
   cursor: zoom-in;
 }
 
@@ -751,7 +755,7 @@ section {
   appearance: none;
   border: 0;
   border-radius: 50%;
-  background: var(--lav-mist);
+  background: var(--coral-mist);
   font-family: var(--sans);
   font-size: 13px;
   color: var(--soft);
@@ -759,7 +763,7 @@ section {
 }
 
 .gallery-pager .pg-btn.active {
-  background: var(--lav);
+  background: var(--coral);
   color: #fff;
   -webkit-text-fill-color: #fff;
 }
@@ -777,7 +781,7 @@ section {
   gap: 6px;
   width: 100%;
   height: 100%;
-  background: linear-gradient(140deg, var(--peach-soft), var(--lav-soft));
+  background: linear-gradient(140deg, var(--peach-soft), var(--coral-soft));
   border-radius: inherit;
   text-align: center;
 }
@@ -793,7 +797,7 @@ section {
   display: none;
   align-items: center;
   justify-content: center;
-  background: rgba(36, 28, 56, 0.92);
+  background: rgba(46, 33, 28, 0.92);
   backdrop-filter: blur(8px);
 }
 
@@ -812,7 +816,7 @@ section {
   left: 50%;
   transform: translateX(-50%);
   font-size: 13px;
-  color: #d9d2ea;
+  color: #ecdcd2;
 }
 
 .lightbox button {
@@ -883,7 +887,7 @@ details.gift summary::before {
   background: var(--peach);
 }
 
-details.gift + details.gift summary::before { background: var(--lav); }
+details.gift + details.gift summary::before { background: var(--lilac); }
 
 details.gift summary::-webkit-details-marker { display: none; }
 
@@ -898,7 +902,7 @@ details.gift[open] summary .arrow { transform: rotate(90deg); }
 details.gift .acc-list {
   margin: 0 14px 14px;
   border-radius: 14px;
-  background: var(--lav-mist);
+  background: var(--coral-mist);
 }
 
 .acc {
@@ -932,7 +936,7 @@ details.gift .acc-list {
   background: #fff;
   font-family: var(--sans);
   font-size: 12.5px;
-  color: var(--lav-deep);
+  color: var(--coral-deep);
   cursor: pointer;
   transition: background 0.25s, color 0.25s;
 }
@@ -962,7 +966,7 @@ details.gift .acc-list {
   max-width: 340px;
   margin: 0 auto 6px;
   padding: 13px 18px;
-  border: 1.5px solid var(--lav-soft);
+  border: 1.5px solid var(--coral-soft);
   border-radius: 99px;
   background: #fff;
   font-family: inherit;
@@ -972,7 +976,7 @@ details.gift .acc-list {
 }
 
 .bless-input::placeholder { color: var(--faint); }
-.bless-input:focus { outline: none; border-color: var(--lav); }
+.bless-input:focus { outline: none; border-color: var(--coral); }
 
 .input-hint {
   margin: 0 0 14px;
@@ -994,13 +998,13 @@ details.gift .acc-list {
   padding: 14px 34px;
   border: 0;
   border-radius: 99px;
-  background: linear-gradient(120deg, var(--lav), var(--peach));
+  background: linear-gradient(120deg, var(--coral), var(--peach));
   font-family: var(--sans);
   font-size: 15.5px;
   font-weight: 500;
   color: #fff;
   cursor: pointer;
-  box-shadow: 0 14px 28px -16px rgba(108, 90, 168, 0.6);
+  box-shadow: 0 14px 28px -16px rgba(200, 110, 80, 0.5);
   transition: transform 0.15s, opacity 0.3s;
 }
 
@@ -1011,7 +1015,7 @@ details.gift .acc-list {
   min-height: 24px;
   margin-top: 16px;
   font-size: 14.5px;
-  color: var(--lav-deep);
+  color: var(--coral-deep);
   opacity: 0;
   transition: opacity 0.6s;
 }
@@ -1035,11 +1039,11 @@ details.gift .acc-list {
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
-  scrollbar-color: var(--lav-soft) transparent;
+  scrollbar-color: var(--coral-soft) transparent;
 }
 
 .bless-log .bl-lines::-webkit-scrollbar { width: 4px; }
-.bless-log .bl-lines::-webkit-scrollbar-thumb { background: var(--lav-soft); border-radius: 99px; }
+.bless-log .bl-lines::-webkit-scrollbar-thumb { background: var(--coral-soft); border-radius: 99px; }
 
 .bless-log .bl-line {
   color: var(--soft);
@@ -1049,7 +1053,7 @@ details.gift .acc-list {
 }
 
 .bless-log .bl-line + .bl-line { margin-top: 7px; }
-.bless-log .bl-line .ts { color: var(--lav); }
+.bless-log .bl-line .ts { color: var(--coral); }
 
 .bless-log .bl-more {
   display: block;
@@ -1058,10 +1062,10 @@ details.gift .acc-list {
   padding: 9px 12px;
   border: 0;
   border-radius: 99px;
-  background: var(--lav-mist);
+  background: var(--coral-mist);
   font-family: inherit;
   font-size: 13px;
-  color: var(--lav-deep);
+  color: var(--coral-deep);
   cursor: pointer;
 }
 
@@ -1110,7 +1114,7 @@ details.gift .acc-list {
 
 footer {
   padding: 46px 24px 64px;
-  background: linear-gradient(180deg, var(--paper), var(--lav-mist));
+  background: linear-gradient(180deg, var(--paper), var(--coral-mist));
   text-align: center;
   font-size: 14px;
   line-height: 2.2;
@@ -1136,9 +1140,9 @@ footer .thanks-line + div {
 
 footer .thanks-line + div + div {
   font-family: var(--script);
-  font-style: italic;
-  font-size: 19px;
-  color: var(--lav);
+  font-style: normal;
+  font-size: 26px;
+  color: var(--coral);
 }
 
 footer .version-links {
@@ -1150,18 +1154,18 @@ footer .version-link {
   flex: 1;
   padding: 11px 8px;
   border-radius: 99px;
-  border: 1.5px dashed var(--lav-soft);
+  border: 1.5px dashed var(--coral-soft);
   background: transparent;
   font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
   font-size: 12.5px;
   text-decoration: none;
-  color: var(--lav-deep);
+  color: var(--coral-deep);
   white-space: nowrap;
   transition: border-color 0.25s, background 0.25s;
 }
 
 @media (hover: hover) {
-  footer .version-link:hover { border-color: var(--lav); background: #fff; }
+  footer .version-link:hover { border-color: var(--coral); background: #fff; }
 }
 
 footer .share-btn {
@@ -1171,13 +1175,13 @@ footer .share-btn {
   padding: 14px 12px;
   border: 0;
   border-radius: 99px;
-  background: linear-gradient(120deg, var(--lav), var(--peach));
+  background: linear-gradient(120deg, var(--coral), var(--peach));
   font-family: var(--sans);
   font-size: 15px;
   font-weight: 500;
   color: #fff;
   cursor: pointer;
-  box-shadow: 0 14px 28px -16px rgba(108, 90, 168, 0.6);
+  box-shadow: 0 14px 28px -16px rgba(200, 110, 80, 0.5);
   transition: transform 0.15s;
 }
 
@@ -1192,4 +1196,40 @@ footer .share-btn:active { transform: scale(0.97); }
     transition: none !important;
   }
   .rv { opacity: 1; transform: none; }
+}
+
+
+/* 14. 손글씨 포인트와 부드러운 countdown */
+
+/* 남은 날 안내는 손글씨로 */
+.dday-note {
+  font-family: var(--script);
+  font-size: 23px;
+  line-height: 1.5;
+  color: var(--soft);
+}
+
+.dday-note b { font-weight: 400; color: var(--coral-deep); }
+
+/* 나눔명조는 400/700/800 뿐이라 제목 굵기를 700으로 맞춘다 */
+.cover h1,
+.label-title,
+.pf-name,
+.when-date,
+.when-time,
+.venue-card .vc-name { font-weight: 700; }
+
+.greeting { line-height: 2.2; }
+
+/* countdown 숫자가 바뀔 때 아래에서 위로 살짝 올라온다 (js/config.js 의 setCountValue) */
+.dd-cell b { display: block; }
+.dd-cell b.tick { animation: count-up 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+@keyframes count-up {
+  from { opacity: 0.3; transform: translateY(40%); filter: blur(1px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dd-cell b.tick { animation: none; }
 }
