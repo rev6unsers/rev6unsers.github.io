@@ -26,10 +26,10 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <!-- 본문은 Gowun Dodum, 제목은 Gowun Batang -->
-  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+  <!-- 제목은 Noto Serif KR, 본문은 Noto Sans KR, 영문 장식은 Cormorant Garamond italic -->
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400;1,500&family=Noto+Sans+KR:wght@300;400;500&family=Noto+Serif+KR:wght@300;500&display=swap" rel="stylesheet" />
 
-  <!-- main version style. base layout과 theme를 합친 단일 파일이다.
+  <!-- 라벤더와 피치 톤의 파스텔 version style.
        동작은 js/main.js가, 날짜와 사진과 profile 같은 내용은 js/config.js가 관리한다. -->
   <link rel="stylesheet" href="css/main.css" />
 </head>
@@ -37,32 +37,36 @@
 <body>
 <div class="paper">
 
-  <!-- 표지 -->
+  <!-- 표지: 날짜를 먼저, 그다음 사진(둥근 액자)과 이름 -->
   <section class="cover">
-    <div class="small-cap rv in">WEDDING INVITATION</div>
+    <div class="cover-eyebrow rv in">Save the date</div>
+    <div class="cover-dot-date rv in">{{WEDDING_DATE_DOT}}</div>
 
-    <h1 class="rv in">
-      {{GROOM_NAME}}<span class="and">♥</span>{{BRIDE_NAME}}
+    <div class="cover-frame rv in">
+      <div class="cover-photo" id="mainPhoto"></div>
+    </div>
+
+    <h1 class="rv d1">
+      <span class="nm">{{GROOM_NAME}}</span>
+      <span class="and">&amp;</span>
+      <span class="nm">{{BRIDE_NAME}}</span>
     </h1>
 
-    <div class="cover-date rv in">{{WEDDING_DATETIME_KO}}</div>
-    <div class="cover-venue rv in">{{VENUE_NAME}} {{VENUE_HALL}}<br />{{VENUE_ADDRESS_FULL}}</div>
-
-    <!-- main 사진 (아치 frame) -->
-    <div class="arch-photo rv d1" id="mainPhoto"></div>
+    <div class="cover-date rv d2">{{WEDDING_DATETIME_KO}}</div>
+    <div class="cover-venue rv d2">{{VENUE_NAME}} {{VENUE_FLOOR}}</div>
 
     <!-- hidden page 입구. 예식 후에 노출된다. -->
     <a class="release-banner" id="releaseBanner" href="release.html">
-      🌿 저희 부부가 되었어요 - 감사 인사 보기
+      저희 부부가 되었어요 · 감사 인사 보기 →
     </a>
   </section>
 
-  <div class="divider">❀</div>
+  <div class="divider" aria-hidden="true"><i></i></div>
 
 
   <!-- 인사말 -->
   <section>
-    <div class="label rv">INVITATION</div>
+    <div class="label rv">Invitation</div>
     <div class="label-title rv">소중한 분들을 초대합니다</div>
 
     <div class="greeting rv d1">
@@ -92,13 +96,13 @@
     </div>
   </section>
 
-  <div class="divider">✿</div>
+  <div class="divider" aria-hidden="true"><i></i></div>
 
 
   <!-- 신랑, 신부 profile -->
   <!-- 내용은 js/config.js의 CONFIG.profile에서 가져온다. -->
   <section>
-    <div class="label rv">THE COUPLE</div>
+    <div class="label rv">Groom &amp; Bride</div>
     <div class="label-title rv">신랑 &amp; 신부</div>
 
     <div class="profile rv d1" id="profile">
@@ -106,12 +110,12 @@
     </div>
   </section>
 
-  <div class="divider">❀</div>
+  <div class="divider" aria-hidden="true"><i></i></div>
 
 
   <!-- 예식 안내 -->
   <section>
-    <div class="label rv">THE WEDDING DAY</div>
+    <div class="label rv">Wedding Day</div>
     <div class="label-title rv">예식 안내</div>
 
     <div class="rv d1">
@@ -136,12 +140,12 @@
     </div>
   </section>
 
-  <div class="divider">❀</div>
+  <div class="divider" aria-hidden="true"><i></i></div>
 
 
   <!-- 오시는 길 -->
   <section>
-    <div class="label rv">LOCATION</div>
+    <div class="label rv">Location</div>
     <div class="label-title rv">오시는 길</div>
 
     <div class="venue-card rv d1">
@@ -178,12 +182,12 @@
     </div>
   </section>
 
-  <div class="divider">✿</div>
+  <div class="divider" aria-hidden="true"><i></i></div>
 
 
   <!-- gallery -->
   <section>
-    <div class="label rv">GALLERY</div>
+    <div class="label rv">Gallery</div>
     <div class="label-title rv">웨딩 갤러리</div>
 
     <div class="gallery" id="gallery">
@@ -192,12 +196,12 @@
     <div class="gallery-hint rv">사진을 누르면 크게 보여요</div>
   </section>
 
-  <div class="divider">✿</div>
+  <div class="divider" aria-hidden="true"><i></i></div>
 
 
   <!-- 마음 전하실 곳 -->
   <section>
-    <div class="label rv">WITH LOVE</div>
+    <div class="label rv">With Love</div>
     <div class="label-title rv">축하의 마음을 전하기</div>
 
     <p class="gift-note rv">
@@ -219,12 +223,12 @@
     </details>
   </section>
 
-  <div class="divider">❀</div>
+  <div class="divider" aria-hidden="true"><i></i></div>
 
 
   <!-- 축하 전하기 -->
   <section id="bless">
-    <div class="label rv">CONGRATULATIONS</div>
+    <div class="label rv">Congratulations</div>
     <div class="label-title rv">축하 전하기</div>
 
     <!-- '마음 전하실 곳'의 안내문(.gift-note)과 글씨체, 색, 자간, 하단 간격(22px)을 맞춘다. -->

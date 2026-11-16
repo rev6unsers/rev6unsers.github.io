@@ -7,8 +7,7 @@
   <title>성연 ❤ 희진 결혼식에 초대합니다</title>
   <meta name="description" content="2027년 10월 30일 토요일 오후 5시 트라디노이 . 성연 ♥ 희진 결혼식에 초대합니다." />
 
-  <!-- 카카오톡/SNS 공유 미리보기 (Open Graph)
-       ?v= cache busting은 배포마다 server가 자동 부여. 사진 교체 후엔 카카오 디버거로 재스크랩. -->
+  <!-- 카카오톡/SNS 공유 미리보기 (Open Graph) -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="성연 ❤ 희진 결혼식에 초대합니다" />
   <meta property="og:locale" content="ko_KR" />
@@ -24,174 +23,173 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500&family=Noto+Serif+KR:wght@500&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/developer.css?v=28f238af" />
+  <!-- Laravel 콘셉트의 개발자 version. 색은 css/developer.css 의 theme 변수가 정한다. -->
+  <link rel="stylesheet" href="css/developer.css?v=3e55caf2" />
 </head>
 
 <body>
 <div class="phone">
 
-  <!-- editor 상단바 -->
+  <!-- editor 상단바: 열린 파일 tab -->
   <header class="editor-bar">
     <div class="dots"><i></i><i></i><i></i></div>
-    <div class="tab"><b>seongyeon</b> ♥ <em>heejin</em><span class="fname"> — invitation.md</span></div>
+    <div class="tab"><span class="tab-ico">🐘</span>wedding.blade.php</div>
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">☾</button>
   </header>
 
 
-  <!-- HERO: terminal, 이름, 장소, main 사진 -->
+  <!-- HERO: artisan 터미널, 이름, 장소, main 사진 -->
   <section id="hero">
 
-    <!-- terminal 창: git merge typing 연출 -->
+    <!-- artisan typing 연출 (js/developer.js 의 TERMINAL_LINES) -->
     <div class="term">
       <div class="term-head">
-        <span>guest@wedding ~</span>
-        <span>zsh — 80×24</span>
+        <span>~/our-life</span>
+        <span>php artisan</span>
       </div>
       <div class="term-body" id="termBody"></div>
     </div>
 
-    <!-- 두 branch가 하나로 합쳐지는 graph -->
-    <svg class="merge-fig rv" viewBox="0 0 220 90" aria-hidden="true">
-      <path class="br-g" d="M20 14 C 80 14, 90 45, 110 45 L 200 45" />
-      <path class="br-b" d="M20 76 C 80 76, 90 45, 110 45 L 200 45" />
-      <circle class="dot-g" cx="20" cy="14" r="4" />
-      <circle class="dot-b" cx="20" cy="76" r="4" />
-      <circle class="dot-m" cx="200" cy="45" r="5" />
-    </svg>
+    <!-- route 한 줄 -->
+    <div class="route-chip rv">
+      <span class="verb">POST</span>
+      <span class="uri">/wedding</span>
+      <span class="arrow">→</span>
+      <span class="act">WeddingController@store</span>
+    </div>
 
     <div class="hero-names rv d1">
-      <div class="ver">WEDDING — RELEASE v1.0.0</div>
-      <h1>이성연<span class="amp">&amp;&amp;</span>천희진</h1>
+      <div class="ver">APP_ENV=forever</div>
+      <h1>이성연<span class="amp">&amp;</span>천희진</h1>
       <div class="eng">Seongyeon Lee &amp; Heejin Cheon</div>
       <div class="date-line">
         <b id="heroDate">2027.10.30 SAT PM 5:00</b>
       </div>
     </div>
 
-    <!-- 장소 banner. 사진보다 먼저, 또렷하게 보여준다. -->
     <div class="venue-banner rv d2">
       <div class="vb-label">LOCATION</div>
-      <div class="vb-name">트라디노이 <small></small></div>
-      <div class="vb-addr">서울특별시 강남구 도곡로99길 16 6층</div>
+      <div class="vb-name">트라디노이 <small>6층</small></div>
+      <div class="vb-addr">서울특별시 강남구 도곡로99길 16</div>
       <div class="vb-sub">삼성역 인근</div>
     </div>
 
     <!-- hidden page 입구. 예식 시각이 지나면 JS가 노출한다. -->
     <a class="release-banner" id="releaseBanner" href="release.html">
-      🎉 deploy 완료! — RELEASE NOTES v1.0.0 보기 →
+      ✓ migrated — 감사 인사 보기 →
     </a>
 
-    <!-- main 웨딩 사진 (image viewer frame) -->
+    <!-- main 웨딩 사진 -->
     <div class="photo-frame rv d3">
       <div class="ph-head">
-        <span>main.jpg — preview</span>
-        <span>3024 × 4032</span>
+        <span>storage/app/public/us.jpg</span>
+        <span>image/jpeg</span>
       </div>
       <div class="ph-body" id="mainPhoto"></div>
     </div>
   </section>
 
 
-  <!-- 초대 문구 -->
+  <!-- 초대 문구: blade view -->
   <section id="invite">
-    <div class="sec-label rv">section: invitation — README.md</div>
+    <div class="sec-label rv">resources/views/invitation.blade.php</div>
 
-    <div class="readme rv d1">
-      <p>
-        서로 다른 환경에서<br />
-        각자의 <span class="hl-g">branch</span>에 코드를 쓰던 두 사람이<br />
-        이제 하나의 <span class="hl-g">repository</span>로<br />
-        함께 <span class="hl-b">merge</span>하기로 했습니다.
-      </p>
-      <p>
-        버그 같은 날엔 함께 <span class="hl-b">debug</span>하고<br />
-        좋은 날엔 <span class="hl-g">git log</span>를 보고 기뻐하며<br />
-        서로의 든든한 <span class="hl-g">pair</span>로<br />
-        정성껏 <span class="hl-b">commit</span>하겠습니다.
-      </p>
-      <p class="small">
-        저희의 첫 <span class="hl-b">deploy</span>에<br />
-        귀한 걸음으로 <span class="hl-g">LGTM approve</span> 해주시면<br />
-        더없는 기쁨으로 간직하겠습니다.
-      </p>
+    <div class="code-card blade rv d1">
+      <div class="cl"><span class="bd">@extends</span>(<span class="s">'layouts.wedding'</span>)</div>
+      <div class="cl">&nbsp;</div>
+      <div class="cl"><span class="bd">@section</span>(<span class="s">'content'</span>)</div>
+      <div class="letter">
+        <p>
+          서로 다른 두 사람이<br />
+          하나의 길을 걸어가고자 합니다.
+        </p>
+        <p>
+          오랜 기다림 속에서<br />
+          한 마음 되어 사랑의 결실을 맺게 되었습니다.
+        </p>
+        <p class="small">
+          귀한 걸음 하시어<br />
+          따뜻한 마음으로 축복해 주시면<br />
+          더없는 기쁨이 되겠습니다.
+        </p>
+      </div>
+      <div class="cl"><span class="bd">@endsection</span></div>
     </div>
   </section>
 
 
-  <!-- 신랑 & 신부 -->
+  <!-- 신랑 & 신부: seeder -->
   <section id="couple">
-    <div class="sec-label rv">section: couple — couple.yaml</div>
+    <div class="sec-label rv">database/seeders/CoupleSeeder.php</div>
 
-    <div class="yaml-card groom rv d1">
+    <div class="code-card person groom rv d1">
       <span class="who">GROOM</span>
-      <div><span class="key">groom</span>:</div>
-      <div>&nbsp;&nbsp;<span class="key">name</span>: <span class="big-name">이성연</span></div>
-      <div>&nbsp;&nbsp;<span class="key">name_en</span>: <span class="str">"Seongyeon Lee"</span></div>
-      <div>&nbsp;&nbsp;<span class="key">birth</span>: <span class="str">"1994.04.03"</span></div>
-      <div>&nbsp;&nbsp;<span class="key">parents</span>: [<span class="str">"OOO"</span>, <span class="str">"OOO"</span>]</div>
-      <div>&nbsp;&nbsp;<span class="key">rank</span>: <span class="str">son</span>  <span class="cmt"># 아들</span></div>
+      <div class="cl"><span class="cls">Person</span>::<span class="fn">create</span>([</div>
+      <div class="cl in1"><span class="s">'name'</span>    =&gt; <span class="big-name">'이성연'</span>,</div>
+      <div class="cl in1"><span class="s">'name_en'</span> =&gt; <span class="s">'Seongyeon Lee'</span>,</div>
+      <div class="cl in1"><span class="s">'birth'</span>   =&gt; <span class="s">'1994.04.03'</span>,</div>
+      <div class="cl in1"><span class="s">'parents'</span> =&gt; [<span class="s">'OOO'</span>, <span class="s">'OOO'</span>],</div>
+      <div class="cl in1"><span class="s">'role'</span>    =&gt; <span class="cls">Role</span>::<span class="const">Groom</span>, <span class="c">// 아들</span></div>
+      <div class="cl">]);</div>
     </div>
 
-    <div class="yaml-card bride rv d2">
+    <div class="code-card person bride rv d2">
       <span class="who">BRIDE</span>
-      <div><span class="key">bride</span>:</div>
-      <div>&nbsp;&nbsp;<span class="key">name</span>: <span class="big-name">천희진</span></div>
-      <div>&nbsp;&nbsp;<span class="key">name_en</span>: <span class="str">"Heejin Cheon"</span></div>
-      <div>&nbsp;&nbsp;<span class="key">birth</span>: <span class="str">"1997.03.26"</span></div>
-      <div>&nbsp;&nbsp;<span class="key">parents</span>: [<span class="str">"OOO"</span>, <span class="str">"OOO"</span>]</div>
-      <div>&nbsp;&nbsp;<span class="key">rank</span>: <span class="str">daughter</span>  <span class="cmt"># 딸</span></div>
+      <div class="cl"><span class="cls">Person</span>::<span class="fn">create</span>([</div>
+      <div class="cl in1"><span class="s">'name'</span>    =&gt; <span class="big-name">'천희진'</span>,</div>
+      <div class="cl in1"><span class="s">'name_en'</span> =&gt; <span class="s">'Heejin Cheon'</span>,</div>
+      <div class="cl in1"><span class="s">'birth'</span>   =&gt; <span class="s">'1997.03.26'</span>,</div>
+      <div class="cl in1"><span class="s">'parents'</span> =&gt; [<span class="s">'OOO'</span>, <span class="s">'OOO'</span>],</div>
+      <div class="cl in1"><span class="s">'role'</span>    =&gt; <span class="cls">Role</span>::<span class="const">Bride</span>, <span class="c">// 딸</span></div>
+      <div class="cl">]);</div>
     </div>
   </section>
 
 
-  <!-- gallery (가로 swipe) -->
+  <!-- gallery -->
   <section id="gallery-sec">
-    <div class="sec-label rv">section: gallery — photos/*.jpg</div>
+    <div class="sec-label rv">storage/app/public/gallery/*.jpg</div>
     <div class="gallery" id="gallery">
       <!-- js/developer.js가 CONFIG.photos.gallery를 보고 자동 생성한다 -->
     </div>
-    <div class="gallery-hint rv">// click to zoom</div>
+    <div class="gallery-hint rv">// 사진을 누르면 크게 보여요</div>
   </section>
 
 
-  <!-- 우리의 기록 (git log) -->
+  <!-- 우리의 이야기: route:list -->
   <section id="timeline">
-    <div class="sec-label rv">section: our-history — git log --graph</div>
+    <div class="sec-label rv">php artisan route:list --path=love</div>
 
     <pre class="gitlog rv d1">
-<span class="dim">$ git log --graph --format='%h%d%n%s'</span>
+<span class="dim">$ php artisan route:list --path=love</span>
 
-<span class="g">*</span>   <span class="h">e5f6a7b</span> <span class="head">(HEAD -&gt; main, </span><span class="tag">tag: v1.0.0</span><span class="head">)</span>
-<span class="g">|</span><span class="b">\</span>  <span class="msg">Merge pull request #1: 평생을 함께하기로 하다</span>
-<span class="g">|</span> <span class="b">*</span> <span class="h">d4e5f6a</span>
-<span class="g">|</span> <span class="b">|</span> <span class="msg">feat(heejin): "yes" 반환 — LGTM, approve</span>
-<span class="g">*</span> <span class="b">|</span> <span class="h">c3d4e5f</span>
-<span class="g">|</span> <span class="b">|</span> <span class="msg">feat(seongyeon): 프러포즈 PR open</span>
-<span class="g">|</span><span class="b">/</span>
-<span class="g">*</span> <span class="h">b2c3d4e</span>
-<span class="g">|</span> <span class="msg">build(deps): 서로를 dependency로 추가</span>
-<span class="g">*</span> <span class="h">a1b2c3d</span>
-  <span class="msg">init: 첫 만남 — repository 생성</span>
+  <span class="vb-get">GET|HEAD</span>  love/first-meet <span class="ld">....</span> <span class="ctl">Couple@meet</span>
+  <span class="vb-post">POST</span>      love/propose <span class="ld">.......</span> <span class="ctl">Groom@propose</span>
+  <span class="vb-patch">PATCH</span>     love/answer <span class="ld">........</span> <span class="ctl">Bride@yes</span>
+  <span class="vb-put">PUT</span>       love/families <span class="ld">......</span> <span class="ctl">Family@join</span>
+  <span class="vb-post">POST</span>      love/wedding <span class="ld">.......</span> <span class="ctl">Wedding@store</span>
+
+                           <span class="dim">Showing [5] routes</span>
     </pre>
   </section>
 
 
-  <!-- pipeline + D-day + 달력 -->
+  <!-- 배포 pipeline + D-day + 달력 -->
   <section id="dday-sec">
-    <div class="sec-label rv">section: ci/cd — marriage-pipeline.yml</div>
+    <div class="sec-label rv">.github/workflows/deploy.yml</div>
 
     <div class="pipeline rv d1" id="pipeline">
-      <div class="pl-step"><span class="ic">✓</span><span class="nm">build: 두 사람의 마음을 하나로 build</span><span class="st">PENDING</span></div>
-      <div class="pl-step"><span class="ic">✓</span><span class="nm">test: 연애 전 구간 test 통과</span><span class="st">PENDING</span></div>
-      <div class="pl-step"><span class="ic">✓</span><span class="nm">security-scan: 빈틈없는 사이, vulnerability 0건</span><span class="st">PENDING</span></div>
-      <div class="pl-step"><span class="ic">✓</span><span class="nm">approve: 양가 부모님 승인 완료</span><span class="st">PENDING</span></div>
-      <div class="pl-step"><span class="ic">✓</span><span class="nm">deploy: 결혼식 - 평생의 시작</span><span class="st">PENDING</span></div>
+      <div class="pl-step"><span class="ic">✓</span><span class="nm">composer install — 두 사람의 마음 설치</span><span class="st">PENDING</span></div>
+      <div class="pl-step"><span class="ic">✓</span><span class="nm">php artisan test — 연애 전 구간 통과</span><span class="st">PENDING</span></div>
+      <div class="pl-step"><span class="ic">✓</span><span class="nm">composer audit — 빈틈없는 사이, 취약점 0건</span><span class="st">PENDING</span></div>
+      <div class="pl-step"><span class="ic">✓</span><span class="nm">review — 양가 부모님 승인 완료</span><span class="st">PENDING</span></div>
+      <div class="pl-step"><span class="ic">✓</span><span class="nm">php artisan migrate — 결혼식, 평생의 시작</span><span class="st">PENDING</span></div>
     </div>
 
     <div class="dday-wrap rv d2">
-      <div class="dday-label">DEPLOY COUNTDOWN — D-<span id="ddayNum">000</span></div>
+      <div class="dday-label">WEDDING COUNTDOWN — D-<span id="ddayNum">000</span></div>
       <div class="dday">
         <div class="dd-cell"><b id="cdD">00</b><span>DAYS</span></div>
         <div class="dd-sep">:</div>
@@ -210,38 +208,35 @@
   </section>
 
 
-  <!-- 예식 정보 -->
+  <!-- 예식 정보: .env -->
   <section id="info">
-    <div class="sec-label rv">section: wedding-info — production.env</div>
+    <div class="sec-label rv">.env</div>
 
     <div class="envblock rv d1">
       <div><span class="c"># 예식 안내</span></div>
+      <div><span class="k">APP_NAME</span>=<span class="v">"OurWedding"</span></div>
       <div><span class="k">WEDDING_DATE</span>=<span class="v" id="envDate">"2027-10-30 (토)"</span></div>
-      <div><span class="k">WEDDING_TIME</span>=<span class="v" id="envTime">"오전 11시"</span></div>
+      <div><span class="k">WEDDING_TIME</span>=<span class="v" id="envTime">"오후 5시"</span></div>
       <div><span class="k">VENUE_NAME</span>=<span class="v">"트라디노이"</span></div>
-      <div><span class="k">VENUE_ADDR</span>=<span class="v">"서울특별시 강남구 도곡로99길 16 6층"</span></div>
       <div><span class="k">VENUE_TEL</span>=<span class="v">"02-567-9916"</span></div>
     </div>
   </section>
 
 
-  <!-- 오시는 길 -->
+  <!-- 오시는 길: config/venue.php -->
   <section id="location">
-    <div class="sec-label rv">section: location — curl</div>
+    <div class="sec-label rv">config/venue.php</div>
 
-    <div class="envblock rv d1">
-      <div><span class="p">$</span> curl -s rev6unsers.github.io/api/venue | jq .</div>
-      <div>{</div>
-      <div>&nbsp;&nbsp;<span class="k">"name"</span>: <span class="v">"트라디노이"</span>,</div>
-      <div>&nbsp;&nbsp;<span class="k">"address"</span>: <span class="v">"서울특별시 강남구 도곡로99길 16 6층"</span>,</div>
-      <div>&nbsp;&nbsp;<span class="k">"tel"</span>: <span class="v">"02-567-9916"</span>,</div>
-      <div>&nbsp;&nbsp;<span class="k">"subway"</span>: [</div>
-      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="v">"삼성역"</span></div>
-      <div>&nbsp;&nbsp;]</div>
-      <div>}</div>
+    <div class="code-card rv d1">
+      <div class="cl"><span class="kw">return</span> [</div>
+      <div class="cl in1"><span class="s">'name'</span>    =&gt; <span class="s">'트라디노이'</span>,</div>
+      <div class="cl in1"><span class="s">'address'</span> =&gt; <span class="s">'서울특별시 강남구 도곡로99길 16 6층'</span>,</div>
+      <div class="cl in1"><span class="s">'tel'</span>     =&gt; <span class="s">'02-567-9916'</span>,</div>
+      <div class="cl in1"><span class="s">'subway'</span>  =&gt; <span class="s">'삼성역'</span>,</div>
+      <div class="cl">];</div>
     </div>
 
-    <!-- 네이버 지도 embed. 키가 있으면 js/config.js가 지도를 그린다. -->
+    <!-- 지도. 네이버 지도 key가 없으면 js/config.js가 구글 지도를 띄운다. -->
     <div class="map-embed" id="naverMap" aria-label="예식장 위치 지도">
       <div class="map-note">// 네이버 지도 혹은 카카오맵 버튼으로 길찾기를 열어주세요</div>
     </div>
@@ -257,9 +252,6 @@
       <div class="v">삼성역 3번 출구 도보 8분</div>
       <div><span class="c"># 버스 — bus</span></div>
       <div class="v">강남01, 강남06, 지선4319<br />대치2동주민센터, 래미안하이스턴 하차</div>
-    </div>
-
-    <div class="envblock rv d3">
       <div><span class="c"># 자가용 — car</span></div>
       <div class="v">도곡로 99길 16 (구주소: 대치동 98)</div>
     </div>
@@ -268,7 +260,7 @@
 
   <!-- 마음 전하실 곳 -->
   <section id="gift">
-    <div class="sec-label rv">section: gift — 축하의 마음을 전하기</div>
+    <div class="sec-label rv">축하의 마음을 전하기</div>
     <p class="gift-note rv">
       참석이 어려우신 분들을 위해 기재했습니다.<br />
       전해주시는 따뜻한 마음, 소중히 간직하겠습니다.
@@ -277,71 +269,72 @@
     <!-- 계좌는 invitation.conf 에만 있다.
          심어 둔 난독화 blob을 js/private.js가 풀어 그리며, 정적 파일에는 평문이 없다. -->
     <details class="gift rv d1">
-      <summary><span style="color: var(--mint)">❯</span> 신랑 측 마음 전하실 곳 <span class="arrow">›</span></summary>
+      <summary><span class="g-dot groom"></span>신랑 측 마음 전하실 곳 <span class="arrow">›</span></summary>
       <div class="acc-list" data-acc="groom" data-copy-label="copy"></div>
     </details>
 
     <details class="gift rv d2">
-      <summary><span style="color: var(--rose)">❯</span> 신부 측 마음 전하실 곳 <span class="arrow">›</span></summary>
+      <summary><span class="g-dot bride"></span>신부 측 마음 전하실 곳 <span class="arrow">›</span></summary>
       <div class="acc-list" data-acc="bride" data-copy-label="copy"></div>
     </details>
   </section>
 
 
-  <!-- RSVP (deploy) -->
+  <!-- tinker: 하객에게 건네는 한마디 -->
   <section id="deploy">
-    <div class="sec-label rv">section: rsvp — 마지막 승인</div>
-    <p class="readme rv d1" style="font-size: 18px">
-      저희 두 사람의 시작을<br />축하의 마음으로 approve해 주세요.
+    <div class="sec-label rv">php artisan tinker</div>
+
+    <pre class="tinker rv d1">
+<span class="dim">$ php artisan tinker</span>
+<span class="pr">&gt;</span> <span class="cls">Wedding</span>::<span class="fn">first</span>()-&gt;couple
+<span class="eq">=</span> <span class="s">"성연 ♥ 희진"</span>
+
+<span class="pr">&gt;</span> <span class="cls">Wedding</span>::<span class="fn">first</span>()-&gt;venue
+<span class="eq">=</span> <span class="s">"트라디노이"</span>
+
+<span class="pr">&gt;</span> <span class="cls">Guest</span>::<span class="fn">where</span>(<span class="s">'invited'</span>, <span class="kw">true</span>)-&gt;<span class="fn">exists</span>()
+<span class="eq">=</span> <span class="kw">true</span>
+
+<span class="pr">&gt;</span> <span class="c">// 꼭 와 주실 거죠? 😊</span>
+    </pre>
+
+    <!-- 축하 한마디 입력. 저장할 API가 없는 정적 배포에서는 js/config.js 가 감춘다. -->
+    <p class="readme rv d1" style="font-size: 17px">
+      저희 두 사람의 시작을<br />축하의 마음으로 함께해 주세요.
     </p>
-
-    <!-- AI agent들의 축하. SVG 캐릭터가 차례로 한 마디씩 한다(js/developer.js에서 생성). -->
-    <div class="ai-guests rv d2">
-      <div class="ai-head">// AI agent들의 축하가 먼저 도착했습니다</div>
-      <div class="ai-cast" id="aiCast" aria-hidden="true"></div>
-      <div class="ai-msg" id="aiMsg"></div>
-    </div>
-
     <div class="deploy-line rv d3">
       <span class="deploy-prompt" aria-hidden="true">$</span>
       <input class="deploy-input" id="deployInput" type="text" maxlength="50"
-             placeholder="echo '축하 한마디' (선택, 최대 50자)" autocomplete="off" />
+             placeholder="축하 한마디 (선택, 최대 50자)" autocomplete="off" />
     </div>
     <p class="input-hint rv d3">// 입력하지 않으시면 랜덤한 축하 메세지가 발송됩니다</p>
-    <button class="deploy-btn rv d3" id="deployBtn" type="button">$ approve --deploy wedding</button>
+    <button class="deploy-btn rv d3" id="deployBtn" type="button">$ php artisan congrats:send</button>
     <div class="deploy-msg" id="deployMsg"></div>
 
-    <!-- 축하 log: 누가(익명) 언제 승인했는지 tail -f 처럼 표시 -->
     <div class="approval-log rv d4">
-      <!-- 개발자 version은 git 명령어로 통일한다. 아래 '더보기' button도 git log다. terminal version은 tail을 쓴다. -->
-      <div class="al-head"><span class="p">$</span> <span class="cmd">git log --oneline --all</span></div>
-      <!-- 목록(.al-lines)만 세로로 scroll한다. 합계(.al-total)는 scroll 영역 밖에 둬 항상 보인다.
-           맨 끝의 '더보기'를 누르면 20건씩 이어 붙는다(config.js의 loadMoreApprovals). -->
+      <div class="al-head"><span class="p">$</span> <span class="cmd">php artisan congrats:list</span></div>
       <div class="al-lines" id="alLines"></div>
       <div class="al-total" id="alTotal"></div>
     </div>
   </section>
 
 
-  <!-- footer (strace) -->
+  <!-- footer -->
   <footer>
     <div class="version-links">
       <a class="version-link" href="main.html">🤵👰 일반 버전으로 보기</a>
     </div>
-    <button class="share-btn" id="shareBtn" type="button">$ ./share --invite</button>
+    <button class="share-btn" id="shareBtn" type="button">$ php artisan invite:share</button>
 
-    <div class="ft-line"><span class="p" style="color: var(--green)">$</span> sudo insmod marriage.ko</div>
-    <div class="ft-line"><span class="p" style="color: var(--green)">$</span> dmesg | grep marriage:</div>
-    <div class="ft-line"><span class="dim">[ 1030.170001]</span> <span class="sys">marriage:</span> module loaded <span class="str">("forever")</span></div>
-    <div class="ft-line"><span class="dim">[ 1030.170002]</span> <span class="sys">marriage:</span> hearts linked, refcount = <span class="num">∞</span></div>
-    <div class="ft-line"><span class="dim">[ 1030.170003]</span> <span class="sys">marriage:</span> <span class="str">thank you for blessing us <span class="heart">♥</span></span></div>
-    <div class="ft-line"><span class="p" style="color: var(--green)">$</span> sudo rmmod marriage</div>
-    <div class="ft-line exit"><span class="err">rmmod: ERROR:</span> Module marriage is in use — <span class="heart">forever</span></div>
+    <div class="ft-line"><span class="p">$</span> php artisan inspire</div>
+    <div class="ft-line quote">“ Love is patient, love is kind. ”</div>
+    <div class="ft-line quote dim">— 1 Corinthians 13:4</div>
+    <div class="ft-line"><span class="p">$</span> <span class="c">// 축하해 주셔서 감사합니다 <span class="heart">♥</span></span></div>
   </footer>
 </div>
 
 
-<!-- lightbox (사진 크게 보기) -->
+<!-- lightbox -->
 <div class="lightbox" id="lightbox" role="dialog" aria-label="사진 크게 보기">
   <img id="lightboxImg" src="" alt="웨딩 사진" />
   <div class="lb-cap" id="lightboxCap"></div>
@@ -350,8 +343,8 @@
   <button class="lb-next" id="lbNext" type="button" aria-label="다음 사진">›</button>
 </div>
 
-<script src="js/data.js?v=28f238af"></script><script src="js/config.js?v=28f238af"></script>
-<script src="js/private.js?v=28f238af"></script>
-<script src="js/developer.js?v=28f238af"></script>
+<script src="js/data.js?v=3e55caf2"></script><script src="js/config.js?v=3e55caf2"></script>
+<script src="js/private.js?v=3e55caf2"></script>
+<script src="js/developer.js?v=3e55caf2"></script>
 </body>
 </html>

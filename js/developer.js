@@ -6,7 +6,7 @@
    01. CONFIG        : js/config.js에서 load
    02. theme toggle      : dark와 light, localStorage 저장
    03. 날짜 rendering    : hero와 .env block의 날짜 자동 갱신
-   04. terminal typing  : hero의 git merge 연출
+   04. terminal typing  : hero의 artisan 연출
    05. scroll reveal    : IntersectionObserver
    06. pipeline     : CI/CD 단계 순차 통과 연출
    07. countdown     : D-day 실시간 갱신
@@ -77,30 +77,20 @@ document.getElementById('envTime').textContent =
 
 /* 04. terminal typing */
 
-/* git log 연출의 branch 이름. 'Anga Kim' -> 'anga-kim'
-   이 파일에는 이름을 박아 두지 않는다. CONFIG.people 은 invitation.conf 에서 주입된 값이다. */
-const branchName = (person) =>
-  String((person || {}).en || '')
-    .trim()
-    .toLowerCase()
-    .split(/\s+/)
-    .filter(Boolean)
-    .join('-');
-
-const GROOM_BRANCH = branchName(CONFIG.people.groom);
-const BRIDE_BRANCH = branchName(CONFIG.people.bride);
+/* Laravel artisan 연출. 출력 문구는 Laravel 10 이상의 make:model, migrate 출력 모양을 따른다.
+   migration 파일 이름의 timestamp는 예식 일시에서 만든다. (예: 2027_10_30_170000) */
+const MIGRATION_TS =
+  `${W.getFullYear()}_${pad(W.getMonth() + 1)}_${pad(W.getDate())}_` +
+  `${pad(W.getHours())}${pad(W.getMinutes())}00`;
 
 const TERMINAL_LINES = [
-  { type: 'cmd', text: 'git checkout -b our-life' },
-  { type: 'out', text: "Switched to a new branch 'our-life'" },
-  { type: 'cmd', text: `git merge ${GROOM_BRANCH} ${BRIDE_BRANCH} --strategy=love` },
-  { type: 'out', text: 'Auto-merging hearts...' },
-  { type: 'out', text: '✓ 0 conflicts', cls: 't-green' },
-  // 두 branch를 한 번에 합치는 merge는 fast-forward가 될 수 없고 merge commit이 생긴다.
-  // 문구와 따옴표, 0인 항목을 생략하는 diffstat 모양은 실제 git 출력을 따른다.
-  { type: 'out', text: "Merge made by the 'love' strategy." },
-  { type: 'out', text: ' 2 lives changed, ∞ insertions(+)', cls: 't-amber' },
-  { type: 'cmd', text: 'cat invitation.md' },
+  { type: 'cmd', text: 'php artisan make:model Marriage -m' },
+  { type: 'out', text: '  INFO  Model [app/Models/Marriage.php] created successfully.', cls: 't-info' },
+  { type: 'out', text: `  INFO  Migration [database/migrations/${MIGRATION_TS}_create_marriages_table.php] created successfully.`, cls: 't-info' },
+  { type: 'cmd', text: 'php artisan migrate' },
+  { type: 'out', text: '  INFO  Running migrations.', cls: 't-info' },
+  { type: 'out', text: `  ${MIGRATION_TS}_create_marriages_table ... 6.78ms DONE`, cls: 't-green' },
+  { type: 'cmd', text: 'php artisan wedding:invite --all' },
   { type: 'out', text: '저희, 결혼합니다. 귀한 걸음 해주세요 ♥', cls: 't-rose' },
 ];
 
@@ -594,21 +584,21 @@ function timeAgo(iso) {
 const APPROVE_MSGS = [
   'guest approved ✓',
   'LGTM 👍 ship it!',
-  '+1 merged 🎉',
+  'migration ran: forever ✅',
   'deployed to ♥ 🚀',
-  'congrats commit complete ✅',
-  'PR approved, congrats ✨',
+  'php artisan test — all green 💚',
+  'Wedding::create() succeeded 🎉',
   '🥳 congrats on the release!',
-  'no conflicts, all green 💚',
-  'blessing pushed to main 📦',
+  'no exceptions, ever 💚',
+  'blessing queued & dispatched 📦',
   'ACK, be happy forever 🎊',
-  'git push origin happiness 💍',
+  'php artisan marry --force 💍',
   'build passed: happiness 100% 🟢',
   'reviewed & approved, congrats to you both 🙌',
-  'congrats on the merge 🔀',
+  'Couple::firstOrCreate() ✨',
   'uptime guaranteed for life, right? ✓',
   '⭐⭐⭐⭐⭐ would attend again',
-  'rebased on love 💕',
+  'composer require love/forever 💕',
   'checks passed, happiness ✅',
   'a perfect couple, no hotfix needed 💯',
   'newlyweds.tar.gz extracted 🎀',
@@ -661,7 +651,7 @@ function renderApprovals(count, recent) {
     more.disabled = busy;
     // 프롬프트, 명령어, 주석을 각각 다른 색으로 준다(.p, .cmd, .cm 은 developer.css).
     // 삽입값은 숫자뿐이라 이스케이프 대상 없음(메시지 본문은 위에서 esc() 처리).
-    more.innerHTML = '<span class="p">$</span> <span class="cmd">git log -n 20</span> '
+    more.innerHTML = '<span class="p">$</span> <span class="cmd">php artisan congrats:list --more</span> '
       + (busy
         ? '<span class="cm"># 불러오는 중 …</span>'
         : `<span class="cm"># 더보기 (${(count - recent.length).toLocaleString()}개 남음)</span>`);
@@ -734,84 +724,7 @@ if (isWeddingDeployed()) {
 
   // 카운트다운 라벨도 완료 문구로
   document.querySelector('.dday-label').innerHTML =
-    'DEPLOYED ✓ — marriage v1.0.0 <span style="color:var(--green)">live</span>';
+    'MIGRATED ✓ — marriages table <span style="color:var(--green)">forever</span>';
 }
 
 
-/*
-   14. AI guests: AI agent들의 축하
-   브랜드 아이콘(assets/ai/*.svg, LobeHub icons)을 인라인으로 불러와 일렬로 둥실거리게 하고,
-   자기 차례가 오면 폴짝 뛰며 축하 한마디를 건넨다. deploy 버튼을 누르면 전원이 환호한다.
-
-   SVG를 <img>가 아니라 인라인으로 넣는 이유는, openai와 grok 아이콘이
-   fill="currentColor" 단색이라 인라인이어야 테마의 글자색을 상속받기 때문이다. */
-
-const AI_GUESTS = [
-  { name: 'Claude', color: '#d97757', file: 'assets/ai/claude-color.svg',
-    msg: '두 분의 merge, 제가 본 가장 아름다운 PR이었어요.' },
-  { name: 'Codex', color: '#10a37f', file: 'assets/ai/openai.svg',
-    msg: 'LGTM 🎉 approved — no changes requested.' },
-  { name: 'Gemini', color: '#4796e3', file: 'assets/ai/gemini-color.svg',
-    msg: '두 분의 context window가 평생 이어지길!' },
-  { name: 'DeepSeek', color: '#4d6bfe', file: 'assets/ai/deepseek-color.svg',
-    msg: '아무리 deep하게 탐색해도 이만한 짝은 없습니다.' },
-  { name: 'Copilot', color: '#8b5cf6', file: 'assets/ai/copilot.svg',
-    msg: '자동완성이 필요 없네요. 이미 완벽한 두 분이라.' },
-  { name: 'Llama', color: '#0866ff', file: 'assets/ai/meta-color.svg',
-    msg: '이 사랑, 오픈소스처럼 모두에게 공유되길.' },
-  { name: 'Grok', color: '#8b97a5', file: 'assets/ai/grok.svg',
-    msg: '우주적 스케일로 검증 완료. 축하합니다!' },
-];
-
-// 캐릭터 행렬을 만든다. 아이콘 SVG를 인라인으로 넣는다.
-const aiCast = document.getElementById('aiCast');
-
-AI_GUESTS.forEach(async (agent) => {
-  const char = document.createElement('div');
-  char.className = 'ai-char';
-  char.style.setProperty('--c', agent.color);
-  char.innerHTML = `<span class="ai-ico"></span><span class="ai-nm">${agent.name}</span>`;
-  aiCast.appendChild(char);
-
-  try {
-    const res = await fetch(invAsset(agent.file));
-    char.querySelector('.ai-ico').innerHTML = await res.text();
-  } catch {
-    // 아이콘 로드에 실패하면 브랜드색 점으로 대체한다.
-    char.querySelector('.ai-ico').innerHTML =
-      `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="${agent.color}"/></svg>`;
-  }
-});
-
-const aiChars = [...aiCast.children];
-
-// 축하 메시지를 돌아가며 보여준다. 말하는 캐릭터가 폴짝 뛴다.
-const aiMsg = document.getElementById('aiMsg');
-let aiIndex = 0;
-
-function showAiMessage() {
-  const agent = AI_GUESTS[aiIndex];
-
-  aiChars.forEach((c, i) => c.classList.toggle('speaking', i === aiIndex));
-  aiMsg.innerHTML =
-    `<span class="who" style="color:${agent.color}">${agent.name}</span>` +
-    `<span class="txt">"${agent.msg}"</span>`;
-
-  aiIndex = (aiIndex + 1) % AI_GUESTS.length;
-}
-
-showAiMessage();
-
-setInterval(() => {
-  aiMsg.classList.add('fade');
-  setTimeout(() => {
-    showAiMessage();
-    aiMsg.classList.remove('fade');
-  }, 450);
-}, 3400);
-
-// deploy 승인 순간에 전원이 환호한다.
-document.getElementById('deployBtn').addEventListener('click', () => {
-  aiCast.classList.add('party');
-  setTimeout(() => aiCast.classList.remove('party'), 2300);
-});

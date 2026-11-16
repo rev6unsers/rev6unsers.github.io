@@ -23,70 +23,69 @@
  */
 
 
-/* 01. theme 변수 */
+/* 01. theme 변수
+   Laravel 콘셉트. dark는 zinc 계열 회색 위에 Laravel red, light는 따뜻한 흰 바탕.
+   변수 이름(--panel, --line, --text, --comment, --mint, --amber, --blue, --green)은
+   js/config.js 의 공유 sheet skin도 쓰므로 바꾸지 않는다. */
 
 :root {
-  /* dark theme(기본). 잉크 네이비 IDE. */
-  --bg: #0a0e15;
-  --bg-deep: #070a10;
-  --panel: #10151f;
-  --panel-2: #141a26;
-  --line: #1e2735;
-  --line-soft: #182030;
+  --bg: #18181b;
+  --bg-deep: #0f0f11;
+  --panel: #202024;
+  --panel-2: #27272b;
+  --line: #34343a;
+  --line-soft: #2a2a2f;
 
-  --text: #cdd8e4;
-  --text-bright: #eef3f9;
-  --text-dim: #97a6b9;
-  --comment: #8294ab;          /* 주석. 대비를 높인 값. */
+  --text: #d6d6dc;
+  --text-bright: #fafafa;
+  --text-dim: #a1a1aa;
+  --comment: #8b8b96;
 
-  --mint: #7fe0c3;             /* 신랑 */
-  --rose: #f2a7c3;             /* 신부 */
-  --amber: #e8c07d;            /* 문자열 */
-  --blue: #82aaff;             /* 키워드 */
-  --green: #9ece6a;            /* 성공 */
-  --red: #f7768e;
+  --laravel: #ff2d20;          /* 포인트 */
+  --mint: #60c5f1;             /* 신랑 */
+  --rose: #ff7a8a;             /* 신부 */
+  --amber: #f6c26b;            /* 문자열 */
+  --blue: #a78bfa;             /* class 이름 */
+  --green: #6ee7a8;            /* 성공 */
+  --red: #ff5a52;
 
-  --on-rose: #1a0d13;          /* rose 배경 위 글자색 */
+  --on-rose: #1a0d10;
 
-  --bar-bg: rgba(12, 17, 26, 0.87);
-  --scanline: rgba(0, 0, 0, 0.07);
-  --grain-opacity: 1;
-  --shadow-panel: 0 24px 60px -24px rgba(0, 0, 0, 0.8),
-                  0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+  --bar-bg: rgba(24, 24, 27, 0.9);
+  --scanline: transparent;
+  --grain-opacity: 0;
+  --shadow-panel: 0 22px 50px -26px rgba(0, 0, 0, 0.85);
 
-  --mono: 'JetBrains Mono', 'IBM Plex Sans KR', monospace;
-  --serif: 'Gowun Batang', serif;
-  --sans: 'IBM Plex Sans KR', sans-serif;
+  --mono: 'Fira Code', 'Noto Sans KR', monospace;
+  --serif: 'Noto Serif KR', serif;
+  --sans: 'Noto Sans KR', sans-serif;
 }
 
 [data-theme='light'] {
-  /* light theme. 따뜻한 종이 질감의 페이퍼 IDE. */
-  --bg: #faf8f3;
-  --bg-deep: #f0ede5;
+  --bg: #fdfcfb;
+  --bg-deep: #f4f2ef;
   --panel: #ffffff;
-  --panel-2: #f5f2ea;
-  --line: #e1dccf;
-  --line-soft: #eae5d9;
+  --panel-2: #f7f5f2;
+  --line: #e6e1db;
+  --line-soft: #efebe6;
 
-  --text: #4a463e;
-  --text-bright: #28251f;
-  --text-dim: #6d675c;
-  --comment: #837b6c;
+  --text: #3f3f46;
+  --text-bright: #18181b;
+  --text-dim: #63636d;
+  --comment: #7c7c86;
 
-  --mint: #0c8f6f;
-  --rose: #c94f7c;
-  --amber: #9a6a12;
-  --blue: #2f63c9;
-  --green: #4e8a23;
-  --red: #d6336c;
+  --laravel: #e3241a;
+  --mint: #0b7fb3;
+  --rose: #d6345a;
+  --amber: #a15c00;
+  --blue: #6d4fd8;
+  --green: #15803d;
+  --red: #dc2626;
 
   --on-rose: #ffffff;
 
-  --bar-bg: rgba(255, 253, 248, 0.88);
-  --scanline: rgba(0, 0, 0, 0.025);
-  --grain-opacity: 0.55;
-  --shadow-panel: 0 18px 44px -22px rgba(80, 70, 50, 0.35),
-                  0 0 0 1px rgba(0, 0, 0, 0.015) inset;
+  --bar-bg: rgba(253, 252, 251, 0.9);
+  --shadow-panel: 0 16px 40px -24px rgba(60, 40, 30, 0.3);
 }
 
 
@@ -1852,3 +1851,302 @@ footer .share-btn:active { transform: scale(0.98); }
     transform: none;
   }
 }
+
+
+/* ==========================================================================
+   19. Laravel 테마
+   위의 기본 layout 위에 Laravel 콘셉트의 모양을 덧입힌다.
+   PHP 코드 card(.code-card), route 목록, tinker, artisan 터미널 출력이 여기 있다.
+   ========================================================================== */
+
+/* 배경: grain과 scanline을 끄고, 맨 위에 Laravel red 빛을 아주 옅게 */
+body::before,
+body::after { display: none; }
+
+.phone {
+  background:
+    radial-gradient(110% 40% at 50% -8%, color-mix(in srgb, var(--laravel) 9%, transparent) 0%, transparent 62%),
+    var(--bg);
+}
+
+section + section { border-top: 1px solid var(--line-soft); }
+
+/* 상단바: IDE의 열린 tab 하나. 아래에 Laravel red 밑줄 */
+.dots i:nth-child(1) { background: #ff5f57; }
+.dots i:nth-child(2) { background: #febc2e; }
+.dots i:nth-child(3) { background: #28c840; }
+
+.editor-bar .tab {
+  margin-left: 14px;
+  margin-right: auto;
+  padding: 4px 12px 5px;
+  border-radius: 8px 8px 0 0;
+  background: var(--panel);
+  border-bottom: 2px solid var(--laravel);
+  font-size: 12.5px;
+  color: var(--text);
+}
+
+.editor-bar .tab .tab-ico { margin-right: 6px; }
+
+.theme-toggle:hover { color: var(--laravel); border-color: var(--laravel); }
+
+/* section label: 파일 경로. '// ' 대신 파일 icon 점 */
+.sec-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.02em;
+  font-size: 12.5px;
+  color: var(--text-dim);
+}
+
+.sec-label::before {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--laravel);
+  opacity: 1;
+}
+
+.sec-label::after {
+  flex: 1;
+  width: auto;
+  margin-left: 4px;
+}
+
+/* artisan 터미널 */
+.term { border-radius: 14px; }
+
+.term-head span:first-child::before {
+  content: '●';
+  margin-right: 8px;
+  color: var(--laravel);
+}
+
+.term-body {
+  min-height: 400px;
+  font-size: 12.5px;
+  line-height: 1.85;
+}
+
+.t-prompt { color: var(--laravel); }
+.t-info   { color: var(--text-dim); }
+.cursor   { background: var(--laravel); }
+
+/* route 한 줄 */
+.route-chip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: fit-content;
+  max-width: 100%;
+  margin: 36px auto 0;
+  padding: 9px 14px;
+  border: 1px dashed var(--line);
+  border-radius: 99px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+}
+
+.route-chip .verb {
+  padding: 1px 8px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--amber) 18%, transparent);
+  color: var(--amber);
+  font-weight: 600;
+}
+
+.route-chip .uri   { color: var(--text-bright); }
+.route-chip .arrow { color: var(--comment); }
+.route-chip .act   { color: var(--blue); }
+
+/* 이름 */
+.hero-names { margin-top: 44px; }
+
+.hero-names .ver {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--laravel) 14%, transparent);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--laravel);
+}
+
+.hero-names h1 {
+  font-weight: 500;
+  font-size: 34px;
+  letter-spacing: 0.04em;
+}
+
+.hero-names h1 .amp {
+  display: block;
+  margin: 2px 0;
+  font-family: var(--mono);
+  font-size: 22px;
+  letter-spacing: 0;
+  color: var(--laravel);
+}
+
+.hero-names .eng { letter-spacing: 0.06em; }
+.hero-names .date-line b { color: var(--amber); }
+
+/* 장소: 왼쪽 Laravel red 막대 */
+.venue-banner {
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--laravel);
+  box-shadow: var(--shadow-panel);
+}
+
+.venue-banner .vb-label { color: var(--laravel); }
+
+/* PHP / Blade 코드 card */
+.code-card {
+  position: relative;
+  overflow: hidden;
+  padding: 20px 18px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow-panel);
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 2;
+  color: var(--text);
+}
+
+.code-card + .code-card { margin-top: 16px; }
+
+.code-card .cl { white-space: pre-wrap; overflow-wrap: anywhere; }
+.code-card .in1 { padding-left: 2ch; }
+
+/* PHP syntax 색 */
+.code-card .kw,  .tinker .kw  { color: var(--rose); }
+.code-card .cls, .tinker .cls { color: var(--blue); }
+.code-card .fn,  .tinker .fn  { color: var(--mint); }
+.code-card .s,   .tinker .s   { color: var(--amber); }
+.code-card .const             { color: var(--green); }
+.code-card .c,   .tinker .c   { color: var(--comment); font-style: italic; }
+.code-card .bd                { color: var(--laravel); }
+
+/* blade view 안의 초대 문구는 글로 읽히게 serif로 */
+.code-card .letter {
+  margin: 12px 0 12px 2ch;
+  padding: 16px 4px 16px 16px;
+  border-left: 2px solid color-mix(in srgb, var(--laravel) 45%, transparent);
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 2.05;
+  color: var(--text-bright);
+  word-break: keep-all;
+}
+
+.code-card .letter p + p { margin-top: 18px; }
+.code-card .letter .small { font-size: 14.5px; color: var(--text-dim); }
+
+/* 신랑 신부 seeder card */
+.code-card.person { padding-top: 46px; }
+
+.code-card.person::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.code-card.groom::before { background: var(--mint); }
+.code-card.bride::before { background: var(--rose); }
+
+.code-card .who {
+  position: absolute;
+  top: 14px;
+  left: 18px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  font-weight: 600;
+}
+
+.code-card.groom .who { color: var(--mint); }
+.code-card.bride .who { color: var(--rose); }
+
+.code-card .big-name {
+  font-family: var(--serif);
+  font-size: 19px;
+  color: var(--text-bright);
+}
+
+/* route:list */
+.gitlog { font-size: 11.5px; line-height: 2.1; }
+.gitlog .vb-get   { color: var(--mint); }
+.gitlog .vb-post  { color: var(--amber); }
+.gitlog .vb-patch { color: var(--blue); }
+.gitlog .vb-put   { color: var(--rose); }
+.gitlog .ld       { color: var(--comment); opacity: 0.6; }
+.gitlog .ctl      { color: var(--text-bright); }
+
+/* tinker */
+.tinker {
+  overflow-x: auto;
+  padding: 20px 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow-panel);
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 2;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--text);
+}
+
+.tinker .dim { color: var(--comment); }
+.tinker .pr  { color: var(--laravel); }
+.tinker .eq  { color: var(--green); }
+
+/* 계좌 summary 앞의 신랑(하늘)·신부(분홍) 점 */
+.g-dot {
+  flex: none;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.g-dot.groom { background: var(--mint); }
+.g-dot.bride { background: var(--rose); }
+
+/* footer: artisan inspire */
+footer { font-size: 12px; }
+footer .p { color: var(--laravel); }
+footer .c { color: var(--comment); }
+
+footer .ft-line.quote {
+  padding-left: 2ch;
+  color: var(--text);
+}
+
+footer .ft-line.quote.dim { color: var(--comment); }
+
+footer .share-btn {
+  border: 0;
+  background: var(--laravel);
+  color: #fff;
+  font-weight: 500;
+}
+
+footer .share-btn:hover { background: color-mix(in srgb, var(--laravel) 85%, #000); color: #fff; }
+
+footer .version-link:hover { border-color: var(--laravel); color: var(--laravel); }
+
+/* Fira Code 합자(=> -> ::)를 끈다. 코드가 실제로 친 글자 그대로 보이게 한다. */
+body { font-variant-ligatures: none; }
+
+.tinker { text-align: left; }

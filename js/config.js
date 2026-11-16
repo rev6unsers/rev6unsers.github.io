@@ -425,7 +425,7 @@ function copyLink(url, btn) {
 function shareViaSms(d) {
   var p = (typeof CONFIG !== 'undefined' && CONFIG.profile) || null;
   var title = (p && p.groom && p.bride)
-    ? p.groom.name + ' ♥ ' + p.bride.name + ' 결혼합니다'
+    ? p.groom.name + ' ♥ ' + p.bride.name + ' 결혼식에 초대합니다'
     : String(d.title || '').replace(/\s*&+\s*/g, ' ');
   var body = title + '\n' + d.desc + '\n' + d.url;
   var ios = /iP(hone|ad|od)/i.test(navigator.userAgent || '');
