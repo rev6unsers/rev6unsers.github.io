@@ -35,6 +35,8 @@
 </head>
 
 <body>
+<!-- 읽은 만큼 차오르는 맨 위 진행 바 (css/main.css 의 '17. 연출') -->
+<div class="scroll-bar" aria-hidden="true"></div>
 <div class="paper">
 
   <!-- 표지: 날짜를 먼저, 그다음 사진(둥근 액자)과 이름 -->
@@ -122,6 +124,9 @@
       <div class="when-date">{{WEDDING_DATE_KO}}</div>
       <div class="when-time">{{WEDDING_TIME_KO}}</div>
     </div>
+
+    <!-- 크게 반짝이는 D-day. 숫자는 js/main.js 의 countdown이 채운다. -->
+    <div class="dday-big rv d2" aria-hidden="true"><span class="dd-d">D</span><span class="dd-minus">-</span><b id="ddayBig">0</b></div>
 
     <div class="dday rv d2">
       <div class="dd-cell"><b id="cdD">0</b><span>일</span></div>
@@ -287,6 +292,8 @@
 <script src="js/config.js"></script>
 <!--#PRIVATE#--><script src="js/private.js"></script>
 <script src="js/main.js"></script>
+<!-- 화려한 연출(오프닝, 꽃잎, 하트, 제목 등장 등). 없어도 청첩장은 그대로 동작한다. -->
+<script src="js/fx.js"></script>
 
 <!-- 신랑과 신부 profile render. main version 전용이며 CONFIG.profile을 쓴다. -->
 <script>

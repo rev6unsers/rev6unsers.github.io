@@ -100,7 +100,7 @@ const galleryItems = GALLERY.map((src, i) => {
   const item = document.createElement('figure');
   item.className = 'g-item';
   item.appendChild(createPhoto(src, { caption: `웨딩 사진 ${i + 1}` }));
-  item.addEventListener('click', () => openLightbox(src));
+  item.addEventListener('click', () => openLightbox(src, item.querySelector('img')));
   return item;
 });
 galleryEl.replaceChildren(...galleryItems);
@@ -117,12 +117,18 @@ const galleryCount = galleryNav.querySelector('b');
 let galleryIndex = 0;
 
 // 가운데에 가장 가까운 사진을 현재 사진으로 본다. 그 사진만 또렷하게(.on) 둔다.
+// 3D 커버플로우: 가운데에서 떨어진 정도(-1~1)를 --d, 그 절댓값을 --ad 로 넘긴다.
+// 회전, 크기, 투명도는 css/main.css 의 '17. 연출'이 이 값으로 계산한다.
 function syncGallery() {
   const mid = galleryEl.scrollLeft + galleryEl.clientWidth / 2;
   let best = 0, bestDist = Infinity;
   galleryItems.forEach((it, i) => {
-    const d = Math.abs(it.offsetLeft + it.offsetWidth / 2 - mid);
+    const center = it.offsetLeft + it.offsetWidth / 2;
+    const d = Math.abs(center - mid);
     if (d < bestDist) { bestDist = d; best = i; }
+    const rel = Math.max(-1, Math.min(1, (center - mid) / (it.offsetWidth || 1)));
+    it.style.setProperty('--d', rel.toFixed(3));
+    it.style.setProperty('--ad', Math.abs(rel).toFixed(3));
   });
   galleryIndex = best;
   galleryCount.textContent = String(best + 1);
@@ -166,16 +172,46 @@ const lightboxImg = document.getElementById('lightboxImg');
 const lightboxCap = document.getElementById('lightboxCap');
 let lightboxIndex = 0;
 
-function openLightbox(src) {
+function openLightboxNow(src) {
   lightboxIndex = loadedPhotos.indexOf(src);
   showLightboxPhoto();
   lightbox.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
-function closeLightbox() {
+// 누른 사진이 화면 가득 자연스럽게 커지도록 View Transitions API로 연다.
+// 같은 view-transition-name 을 누른 사진 → 크게 보기 사진으로 넘겨주면 browser가 둘 사이를 morph한다.
+// 지원하지 않는 browser나 움직임 줄이기 설정에서는 바로 연다.
+let lbFromImg = null;
+function openLightbox(src, fromImg) {
+  if (!document.startViewTransition || !fromImg || REDUCE_MOTION) { openLightboxNow(src); return; }
+  lbFromImg = fromImg;
+  fromImg.style.viewTransitionName = 'wedding-photo';
+  const t = document.startViewTransition(() => {
+    fromImg.style.viewTransitionName = '';
+    lightboxImg.style.viewTransitionName = 'wedding-photo';
+    openLightboxNow(src);
+  });
+  t.finished.finally(() => { lightboxImg.style.viewTransitionName = ''; });
+}
+
+function closeLightboxNow() {
   lightbox.classList.remove('open');
   document.body.style.overflow = '';
+}
+
+// 닫을 때는 처음 누른 사진으로 되돌아가며 줄어든다. 다른 사진으로 넘겼다면 그냥 닫는다.
+function closeLightbox() {
+  const back = lbFromImg && photoSrc(loadedPhotos[lightboxIndex]) === lbFromImg.getAttribute('src') ? lbFromImg : null;
+  lbFromImg = null;
+  if (!document.startViewTransition || !back || REDUCE_MOTION) { closeLightboxNow(); return; }
+  lightboxImg.style.viewTransitionName = 'wedding-photo';
+  const t = document.startViewTransition(() => {
+    lightboxImg.style.viewTransitionName = '';
+    back.style.viewTransitionName = 'wedding-photo';
+    closeLightboxNow();
+  });
+  t.finished.finally(() => { back.style.viewTransitionName = ''; });
 }
 
 function showLightboxPhoto() {
@@ -241,7 +277,10 @@ function remaining() {
   };
 }
 
+const ddayBigEl = document.getElementById('ddayBig');
+
 function showCount(d, h, m, s) {
+  if (ddayBigEl) ddayBigEl.textContent = d;
   document.getElementById('cdD').textContent = d;
   document.getElementById('cdH').textContent = pad(h);
   document.getElementById('cdM').textContent = pad(m);
@@ -254,6 +293,10 @@ let countUpDone = REDUCE_MOTION;
 function tickCountdown() {
   const r = remaining();
   if (countUpDone) showCount(r.days, r.hours, r.minutes, r.seconds);
+  if (countUpDone && r.diff <= 0 && ddayBigEl) {
+    ddayBigEl.textContent = 'DAY';          // 예식 당일부터는 'D-DAY'
+    ddayBigEl.closest('.dday-big').classList.add('is-day');
+  }
 
   document.getElementById('ddayNote').innerHTML =
     r.diff > 0
