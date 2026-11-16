@@ -158,10 +158,9 @@ section {
 .cover-frame::before {
   content: '';
   position: absolute;
-  inset: 0;
-  transform: translate(12px, 12px);
+  inset: -9px;
   border: 1.5px solid var(--peach);
-  border-radius: 160px 160px 28px 28px;
+  border-radius: 169px 169px 37px 37px;
 }
 
 .cover-photo {
@@ -498,7 +497,7 @@ section {
 .dd-cell b {
   font-family: var(--serif);
   font-weight: 500;
-  font-size: 22px;
+  font-size: 18px;
   line-height: 1.1;
   color: var(--coral-deep);
   font-variant-numeric: tabular-nums;

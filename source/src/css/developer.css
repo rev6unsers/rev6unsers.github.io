@@ -1012,7 +1012,7 @@ section + section {
   display: block;
   font-family: var(--mono);
   font-weight: 500;
-  font-size: clamp(22px, 7vw, 29px);
+  font-size: clamp(18px, 5.4vw, 23px);
   color: var(--mint);
   font-variant-numeric: tabular-nums;
 }
