@@ -10,7 +10,7 @@
    HTML container 규약:
      [data-acc="groom|bride"]   계좌 목록을 채울 곳
      data-copy-label="복사"      복사 button 글자. theme마다 복사, copy, cp를 쓴다.
-     data-open                  tap이나 펼침 없이 즉시 render(terminal version)
+     data-open                  tap이나 펼침 없이 즉시 render
      data-reveal-label="..."    펼침 button 글자. details 안에 있으면 필요 없다.
  */
 (function () {
@@ -105,7 +105,7 @@
   function gate(container, render) {
     if (container.dataset.filled) return;
 
-    // data-open이면 tap이나 펼침 없이 즉시 render한다. terminal의 '마음 전하실 곳'이 그렇다.
+    // data-open이면 tap이나 펼침 없이 즉시 render한다.
     if (container.hasAttribute('data-open')) {
       container.dataset.filled = '1';
       render(container);

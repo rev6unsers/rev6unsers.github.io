@@ -126,6 +126,7 @@
 
     <div class="code-card person groom rv d1">
       <span class="who">GROOM</span>
+      <div class="cl"><span class="c">// CoupleSeeder::run()</span></div>
       <div class="cl"><span class="cls">Person</span>::<span class="fn">create</span>([</div>
       <div class="cl in1"><span class="s">'name'</span>    =&gt; <span class="big-name">'{{GROOM_NAME}}'</span>,</div>
       <div class="cl in1"><span class="s">'name_en'</span> =&gt; <span class="s">'{{GROOM_NAME_EN}}'</span>,</div>
@@ -137,6 +138,7 @@
 
     <div class="code-card person bride rv d2">
       <span class="who">BRIDE</span>
+      <div class="cl"><span class="c">// CoupleSeeder::run()</span></div>
       <div class="cl"><span class="cls">Person</span>::<span class="fn">create</span>([</div>
       <div class="cl in1"><span class="s">'name'</span>    =&gt; <span class="big-name">'{{BRIDE_NAME}}'</span>,</div>
       <div class="cl in1"><span class="s">'name_en'</span> =&gt; <span class="s">'{{BRIDE_NAME_EN}}'</span>,</div>
@@ -185,7 +187,7 @@
       <div class="pl-step"><span class="ic">✓</span><span class="nm"><code>php artisan test</code><em>연애 전 구간 통과</em></span><span class="st">PENDING</span></div>
       <div class="pl-step"><span class="ic">✓</span><span class="nm"><code>composer audit</code><em>빈틈없는 사이, 취약점 0건</em></span><span class="st">PENDING</span></div>
       <div class="pl-step"><span class="ic">✓</span><span class="nm"><code>review</code><em>양가 부모님 승인 완료</em></span><span class="st">PENDING</span></div>
-      <div class="pl-step"><span class="ic">✓</span><span class="nm"><code>php artisan migrate</code><em>결혼식, 평생의 시작</em></span><span class="st">PENDING</span></div>
+      <div class="pl-step"><span class="ic">✓</span><span class="nm"><code>php artisan migrate --force</code><em>결혼식, 평생의 시작</em></span><span class="st">PENDING</span></div>
     </div>
 
     <div class="dday-wrap rv d2">
@@ -228,6 +230,8 @@
     <div class="sec-label rv">config/venue.php</div>
 
     <div class="code-card rv d1">
+      <div class="cl"><span class="kw">&lt;?php</span></div>
+      <div class="cl">&nbsp;</div>
       <div class="cl"><span class="kw">return</span> [</div>
       <div class="cl in1"><span class="s">'name'</span>    =&gt; <span class="s">'{{VENUE_NAME}}'</span>,</div>
       <div class="cl in1"><span class="s">'address'</span> =&gt; <span class="s">'{{VENUE_ADDRESS_FULL}}'</span>,</div>

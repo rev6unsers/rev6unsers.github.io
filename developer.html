@@ -26,7 +26,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500&family=Noto+Serif+KR:wght@500&display=swap" rel="stylesheet" />
 
   <!-- Laravel 콘셉트의 개발자 version. 색은 css/developer.css 의 theme 변수가 정한다. -->
-  <link rel="stylesheet" href="css/developer.css?v=56ffaf11" />
+  <link rel="stylesheet" href="css/developer.css?v=5b981f4f" />
 </head>
 
 <body>
@@ -126,6 +126,7 @@
 
     <div class="code-card person groom rv d1">
       <span class="who">GROOM</span>
+      <div class="cl"><span class="c">// CoupleSeeder::run()</span></div>
       <div class="cl"><span class="cls">Person</span>::<span class="fn">create</span>([</div>
       <div class="cl in1"><span class="s">'name'</span>    =&gt; <span class="big-name">'이성연'</span>,</div>
       <div class="cl in1"><span class="s">'name_en'</span> =&gt; <span class="s">'Lee Sung Yeon'</span>,</div>
@@ -137,6 +138,7 @@
 
     <div class="code-card person bride rv d2">
       <span class="who">BRIDE</span>
+      <div class="cl"><span class="c">// CoupleSeeder::run()</span></div>
       <div class="cl"><span class="cls">Person</span>::<span class="fn">create</span>([</div>
       <div class="cl in1"><span class="s">'name'</span>    =&gt; <span class="big-name">'천희진'</span>,</div>
       <div class="cl in1"><span class="s">'name_en'</span> =&gt; <span class="s">'Chun Hui Jin'</span>,</div>
@@ -185,7 +187,7 @@
       <div class="pl-step"><span class="ic">✓</span><span class="nm"><code>php artisan test</code><em>연애 전 구간 통과</em></span><span class="st">PENDING</span></div>
       <div class="pl-step"><span class="ic">✓</span><span class="nm"><code>composer audit</code><em>빈틈없는 사이, 취약점 0건</em></span><span class="st">PENDING</span></div>
       <div class="pl-step"><span class="ic">✓</span><span class="nm"><code>review</code><em>양가 부모님 승인 완료</em></span><span class="st">PENDING</span></div>
-      <div class="pl-step"><span class="ic">✓</span><span class="nm"><code>php artisan migrate</code><em>결혼식, 평생의 시작</em></span><span class="st">PENDING</span></div>
+      <div class="pl-step"><span class="ic">✓</span><span class="nm"><code>php artisan migrate --force</code><em>결혼식, 평생의 시작</em></span><span class="st">PENDING</span></div>
     </div>
 
     <div class="dday-wrap rv d2">
@@ -228,6 +230,8 @@
     <div class="sec-label rv">config/venue.php</div>
 
     <div class="code-card rv d1">
+      <div class="cl"><span class="kw">&lt;?php</span></div>
+      <div class="cl">&nbsp;</div>
       <div class="cl"><span class="kw">return</span> [</div>
       <div class="cl in1"><span class="s">'name'</span>    =&gt; <span class="s">'트라디노이'</span>,</div>
       <div class="cl in1"><span class="s">'address'</span> =&gt; <span class="s">'서울특별시 강남구 도곡로99길 16 6층'</span>,</div>
@@ -343,8 +347,8 @@
   <button class="lb-next" id="lbNext" type="button" aria-label="다음 사진">›</button>
 </div>
 
-<script src="js/data.js?v=56ffaf11"></script><script src="js/config.js?v=56ffaf11"></script>
-<script src="js/private.js?v=56ffaf11"></script>
-<script src="js/developer.js?v=56ffaf11"></script>
+<script src="js/data.js?v=5b981f4f"></script><script src="js/config.js?v=5b981f4f"></script>
+<script src="js/private.js?v=5b981f4f"></script>
+<script src="js/developer.js?v=5b981f4f"></script>
 </body>
 </html>

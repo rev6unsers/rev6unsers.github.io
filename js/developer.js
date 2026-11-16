@@ -16,7 +16,6 @@
    11. confetti        : approve(deploy) button 연출
    12. 축하 log      : 익명 승인 기록
    13. hidden page 공개 : 예식 시각 이후
-   14. AI guests     : AI agent들의 축하
  */
 
 

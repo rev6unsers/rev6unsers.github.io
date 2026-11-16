@@ -1,5 +1,5 @@
 /*
-   공용 설정. 네 page(index, developer, terminal, release)가 모두 공유한다.
+   공용 설정. 세 page(main, developer, release)가 모두 공유한다.
    날짜, 주소, API, 사진 등 공개 정보는 이 파일에서만 수정하면 된다.
 
    주의: 계좌번호 같은 개인정보는 여기 두지 않는다.
@@ -11,7 +11,7 @@
    static은 build.sh 가 js/data.js 로 만들어 둔다. with-guestbook은 server가 요청마다 주입한다.
    추적되는 소스에는 이름도 예식 정보도 없고, 전부 여기서 읽어 쓴다.
    주입이 없으면 빈 값으로 떨어져 화면만 비어 보인다. */
-/* 이 파일 안에서만 쓰는 이름이다. main.js, developer.js, terminal.js 가 각자
+/* 이 파일 안에서만 쓰는 이름이다. main.js, developer.js 가 각자
    const W = CONFIG.date 를 최상위에 선언하므로, 여기서 W 를 쓰면 전역에서 부딪쳐
    'Identifier W has already been declared' SyntaxError 로 그 파일들이 통째로 죽는다. */
 var WDATA = (typeof window !== 'undefined' && window.__WEDDING__) || {};
@@ -31,7 +31,7 @@ function profileOf(p, role) {
 const CONFIG = {
   // 예식 일시. countdown, 달력, D-day가 여기서 자동으로 계산된다.
   date: new Date(WDATA.at || 0),
-  // 두 사람이 처음 만난 날. terminal version의 uptime과 진행 bar 기준점.
+  // 두 사람이 처음 만난 날. 지금 화면에서는 쓰지 않는다.
   firstMet: new Date(WDATA.firstMetAt || WDATA.at || 0),
 
   // 주소 복사 button이 clipboard에 넣는 문자열
@@ -68,7 +68,7 @@ const CONFIG = {
     bride: profileOf(WDATA.bride, '신부'),
   },
 
-  // terminal version의 struct person card가 쓰는 원본(부모, 서열, 직업까지)
+  // 신랑신부 원본 정보(부모, 서열 등). 콘솔 인사가 영문 이름을 여기서 읽는다.
   people: { groom: WDATA.groom || {}, bride: WDATA.bride || {} },
 
   // 네이버 지도 embed. key(ncpKeyId)는 invitation.conf 의 NAVER_MAP_KEY_ID 에 넣는다.
@@ -84,10 +84,9 @@ const CONFIG = {
 };
 
 /* 축하 한마디를 저장할 곳이 없는 정적 배포에서는 입력창과 기록 목록을 감춘다.
-   build.sh 가 window.__NO_API__ 를 넣어 알려 준다.
+   build.ps1 이 window.__NO_API__ 를 넣어 알려 준다.
    그대로 두면 하객이 글을 남겨도 그 사람 browser에만 남고 신랑신부에게 오지 않는데,
    화면은 잘 보낸 것처럼 보여서 하객을 속이게 된다.
-   AI agent들의 축하는 저장이 필요 없으므로 그대로 둔다.
    element를 지우지 않고 감추기만 하는 이유는, 각 version의 js가 이 element들을
    getElementById로 잡아 두기 때문이다. 지우면 null을 참조해 그 파일이 통째로 멈춘다.
    GUESTBOOK_API_BASE 를 채워 API를 붙이면 __NO_API__ 가 없으므로 다시 보인다. */
@@ -98,28 +97,10 @@ const CONFIG = {
   st.textContent =
     // main version. section 전체가 축하 기능이다. 아래 전체폭 사진은 section 밖이라 남는다.
     '#bless{display:none}' +
-    // developer version. AI 축하(.ai-guests)는 남기고 나머지를 감춘다.
-    // .readme 는 'approve해 주세요' 안내문이다. 누를 button이 없으니 함께 감춘다.
+    // developer version. tinker 블록은 남기고 축하 입력과 기록을 감춘다.
     '#deploy .readme,#deploy .deploy-line,#deploy .input-hint,' +
-    '#deployBtn,#deployMsg,#deploy .approval-log{display:none}' +
-    // terminal version. AI 축하(.ai)는 남기고 나머지를 감춘다.
-    '#rsvp .body-text,#rsvp .rsvp-line,#rsvp .input-hint,' +
-    '#rsvpBtn,#rsvpMsg,#rsvp .log{display:none}';
+    '#deployBtn,#deployMsg,#deploy .approval-log{display:none}';
   (document.head || document.documentElement).appendChild(st);
-
-  /* AI 축하 머리글의 '먼저'를 뺀다. 하객 축하를 받지 않으므로 뒤따라 올 것이 없는데
-     '먼저 도착했습니다'는 곧 다른 축하가 온다는 뜻으로 읽힌다. */
-  function dropMeonjeo() {
-    var heads = document.querySelectorAll('#deploy .ai-head, #rsvp .ai-head');
-    for (var i = 0; i < heads.length; i++) {
-      heads[i].textContent = heads[i].textContent.replace('먼저 도착', '도착');
-    }
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', dropMeonjeo);
-  } else {
-    dropMeonjeo();
-  }
 })();
 
 
@@ -287,7 +268,7 @@ async function loadMoreApprovals(render) {
 
 
 /* 자동 축하 메시지 선택. 세 version이 각자의 풀을 넘겨 함께 쓴다.
-   풀은 version마다 다르다. main은 BLESS_MSGS, developer는 APPROVE_MSGS, terminal은 LOG_MSGS.
+   풀은 version마다 다르다. main은 BLESS_MSGS, developer는 APPROVE_MSGS.
    직접 입력이 없는(msg가 빈) 승인은 이 풀에서 문구를 뽑아 표시한다.
    ts hash로 안정적으로 고르되, avoid(바로 직전 2개 메시지)와 겹치면 풀에서 다음 후보로
    밀어 같은 문구가 연속으로 뜨는 것을 막는다. */
@@ -337,7 +318,7 @@ function siteOrigin() {
   return (typeof window !== 'undefined' && window.__ORIGIN__) || location.origin;
 }
 
-/* 현재 환경 domain에서 scheme을 뺀 호스트만. terminal과 개발자 version의 장식 text(ssh, curl)에 쓴다.
+/* 현재 환경 domain에서 scheme을 뺀 호스트만. 장식 text에 쓸 수 있다.
    domain을 hardcoding하지 않기 위한 것이다. */
 function siteHost() {
   return String(siteOrigin()).replace(/^https?:\/\//, '');
@@ -418,7 +399,7 @@ function copyLink(url, btn) {
 /* 2) 문자(SMS). 본문은 제목, 일자와 장소, link로 만든다.
    scheme은 iOS가 sms:&body=, 나머지는 sms:?body= 를 쓴다.
    제목은 version별 og:title 대신 CONFIG.profile의 이름으로 만든 하객용 한국어 문구를 쓴다.
-   terminal version의 og:title은 'marriage: A && B' 꼴인데, 일부 문자앱이 그 '&'를
+   제목에 '&'가 들어가면 일부 문자앱이 그 '&'를
    sms: 본문의 구분자로 오인해 뒤를 잘라낸다. 그대로 두면 첫 이름까지만 남는다.
    또 어느 version에서 공유하든 하객이 똑같이 읽기 좋은 문구를 받게 된다.
    fallback 경로에서도 '&'는 제거한다. */
@@ -456,7 +437,7 @@ function buildShareSheet() {
       '.shs-btn:active{background:#e6e6e9}' +
       '.shs-btn .i{font-size:19px;width:24px;flex:0 0 24px;text-align:center}' +
       // main version은 카카오 button에 실제 카카오톡 icon을 쓴다.
-      // terminal과 개발자 skin은 .i 를 숨기므로 icon이 자동으로 안 보인다.
+      // 개발자 skin은 .i 를 숨기므로 icon이 자동으로 안 보인다.
       '.shs-btn.kakao .i img{display:block;width:22px;height:22px;border-radius:5px;margin:0 auto}' +
       '.shs-btn.kakao{background:#FEE500;color:#181600}' +
       '.shs-btn.kakao:active{background:#f3da00}' +
@@ -464,26 +445,9 @@ function buildShareSheet() {
       '.shs-btn.sys{background:#e7eefb;color:#284a86}.shs-btn.sys:active{background:#d6e4f8}' +
       '.shs-btn.copy{background:#f0eaf8;color:#4a3a6b}.shs-btn.copy:active{background:#e4daf3}' +
       '.shs-cancel{background:transparent;color:#999;font-weight:600;justify-content:center;margin-top:2px}' +
-      // terminal version은 CRT 모노스페이스 phosphor skin이다. terminal theme 변수
-      // (--bg, --fg, --fg-dim, --accent, --mono)를 쓰므로 녹색과 amber toggle을 자동으로 따라간다.
-      '.shs-back.term .shs{background:var(--bg);color:var(--fg);border-top:1px solid var(--fg-dim);border-radius:0;font-family:var(--mono);box-shadow:0 -8px 40px rgba(0,0,0,.7)}' +
-      '.shs-back.term .shs-grip{background:var(--fg-dim)}' +
-      '.shs-back.term .shs-ttl{color:var(--fg-dim);letter-spacing:.08em}' +
-      '.shs-back.term .shs-btn{background:transparent;color:var(--fg);border:1px solid var(--fg-dim);border-radius:0;font-family:var(--mono);font-weight:400;font-size:14px}' +
-      '.shs-back.term .shs-btn:active{background:var(--fg-dim);color:var(--bg)}' +
-      '.shs-back.term .shs-btn .i{display:none}' +
-      '.shs-back.term .shs-btn::before{content:"$ ";color:var(--fg-dim)}' +
-      // button별 ANSI 컬러와 shell prompt (bash $, zsh %, fish >, starship ❯)
-      '.shs-back.term .shs-btn.kakao{color:#e5c07b;border-color:#e5c07b}.shs-back.term .shs-btn.kakao::before{content:"$ ";color:#e5c07b}.shs-back.term .shs-btn.kakao:active{background:#e5c07b;color:var(--bg)}' +
-      '.shs-back.term .shs-btn.sms{color:#98c379;border-color:#98c379}.shs-back.term .shs-btn.sms::before{content:"% ";color:#98c379}.shs-back.term .shs-btn.sms:active{background:#98c379;color:var(--bg)}' +
-      '.shs-back.term .shs-btn.sys{color:#56b6c2;border-color:#56b6c2}.shs-back.term .shs-btn.sys::before{content:"> ";color:#56b6c2}.shs-back.term .shs-btn.sys:active{background:#56b6c2;color:var(--bg)}' +
-      '.shs-back.term .shs-btn.copy{color:#c678dd;border-color:#c678dd}.shs-back.term .shs-btn.copy::before{content:"❯ ";color:#c678dd}.shs-back.term .shs-btn.copy:active{background:#c678dd;color:var(--bg)}' +
-      '.shs-back.term .shs-cancel{border-color:transparent;color:var(--fg-dim)}' +
-      '.shs-back.term .shs-cancel::before{content:""}' +
       // 개발자 version은 editor(IDE) skin이다. developer.css의 theme 변수
       // (--panel, --line, --text, --comment, --mint 등)를 따라가므로 dark와 light가 자동으로 붙는다.
-      // button은 couple.yaml처럼 'key: value' 꼴이고 앞 token이 채널 이름 겸 syntax color다.
-      // 덕분에 terminal(CRT) skin과 확실히 구분된다.
+      // button은 'key: value' 꼴이고 앞 token이 채널 이름 겸 syntax color다.
       '.shs-back.dev .shs{background:var(--panel);color:var(--text);border:1px solid var(--line);border-bottom:0;border-radius:12px 12px 0 0;font-family:var(--mono);box-shadow:0 -10px 44px rgba(0,0,0,.5)}' +
       '.shs-back.dev .shs-grip{background:var(--line)}' +
       '.shs-back.dev .shs-ttl{color:var(--comment);letter-spacing:.04em}' +
@@ -512,21 +476,16 @@ function buildShareSheet() {
     '<button class="shs-btn copy" data-act="copy"><span class="i">🔗</span>모바일 청첩장 링크 복사하기</button>' +
     '<button class="shs-btn shs-cancel" data-act="close">닫기</button>' +
     '</div>';
-  // version별 skin을 고른다. terminal.css가 걸려 있으면 CRT, .editor-bar header가 있으면
-  // editor IDE, 둘 다 아니면 main의 기본 pastel이다.
-  if (document.querySelector('link[href*="terminal.css"]')) {
-    back.classList.add('term');
-    var ttlT = back.querySelector('.shs-ttl');
-    if (ttlT) ttlT.textContent = '$ ./share.sh';
-  } else if (document.querySelector('.editor-bar')) {
+  // version별 skin을 고른다. .editor-bar header가 있으면 개발자(Laravel) skin, 아니면 파스텔이다.
+  if (document.querySelector('.editor-bar')) {
     back.classList.add('dev');
     var ttlD = back.querySelector('.shs-ttl');
-    if (ttlD) ttlD.textContent = '$ ./share --invite';
+    if (ttlD) ttlD.textContent = '$ php artisan invite:share';
   }
-  // terminal과 개발자 skin은 icon emoji(.i)를 쓰지 않는다. CSS의 display:none에 더해
+  // 개발자 skin은 icon emoji(.i)를 쓰지 않는다. CSS의 display:none에 더해
   // node 자체를 제거해서, 예전 cache된 사본이나 render 예외 상황에서도 emoji가 절대 안 보이게 한다.
-  // main version은 icon을 그대로 둔다.
-  if (back.classList.contains('term') || back.classList.contains('dev')) {
+  // 파스텔 version은 icon을 그대로 둔다.
+  if (back.classList.contains('dev')) {
     [].forEach.call(back.querySelectorAll('.shs-btn .i'), function (ic) {
       if (ic.parentNode) ic.parentNode.removeChild(ic);
     });
@@ -795,10 +754,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 /* easter egg: 개발자 console 인사(전 version 공통)
-   개발자도구 console을 열면 terminal version의 부부 사진(our_wedding.jpg) ASCII art와
-   영어 감사 인사를 console.log로 남긴다. config.js는 세 version과 release가 모두 가장 먼저
+   개발자도구 console을 열면 부부 그림(our_wedding.jpg) ASCII art와
+   영어 감사 인사를 console.log로 남긴다. config.js는 모든 page가 가장 먼저
    load하므로 어느 URL에서든 똑같이 보인다.
-   도형은 terminal.js의 renderPhoto()에 있는 polaroid 커플과 같고, 여기서는 평문으로 재현한다.
    ※ console.log라서 기본 console 레벨(Info)에서 항상 보인다. */
 (function consoleEasterEgg() {
   try {
@@ -824,8 +782,8 @@ document.addEventListener('DOMContentLoaded', function () {
       .concat(body.map(function (b) { return '│' + padIn(b) + '│'; }))
       .concat([bar('└', '┘')])
       .join('\n');
-    var gn = String((CONFIG.people.groom || {}).en || '').split(' ')[0];
-    var bn = String((CONFIG.people.bride || {}).en || '').split(' ')[0];
+    var gn = String((CONFIG.people.groom || {}).en || '');
+    var bn = String((CONFIG.people.bride || {}).en || '');
     var msg = 'Dear developer, thank you for celebrating our marriage! ♥\n'
             + 'With love, ' + gn + ' ♥ ' + bn;
     var mono = 'font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace';
