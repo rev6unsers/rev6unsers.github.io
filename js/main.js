@@ -133,6 +133,40 @@ function syncGallery() {
   galleryIndex = best;
   galleryCount.textContent = String(best + 1);
   galleryItems.forEach((it, i) => it.classList.toggle('on', i === best));
+  syncThumbs(best);
+}
+
+// 썸네일 줄(필름). 지금 사진을 표시하고, 그 썸네일이 줄 가운데 오도록 줄만 옆으로 민다.
+// scrollIntoView는 page 전체를 위아래로 움직일 수 있어 쓰지 않는다.
+const galleryThumbs = document.createElement('div');
+galleryThumbs.className = 'gallery-thumbs';
+GALLERY.forEach((src, i) => {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'gt';
+  b.setAttribute('aria-label', `${i + 1}번째 사진 보기`);
+  const im = document.createElement('img');
+  im.src = photoSrc(src);
+  im.alt = '';
+  im.loading = 'lazy';
+  b.appendChild(im);
+  b.addEventListener('click', () => { pauseAutoplay(); goGallery(i); });
+  galleryThumbs.appendChild(b);
+});
+galleryNav.insertAdjacentElement('afterend', galleryThumbs);
+
+let lastThumb = -1;
+function syncThumbs(i) {
+  if (i === lastThumb) return;
+  lastThumb = i;
+  [...galleryThumbs.children].forEach((b, k) => b.classList.toggle('on', k === i));
+  const b = galleryThumbs.children[i];
+  if (b) {
+    galleryThumbs.scrollTo({
+      left: b.offsetLeft - (galleryThumbs.clientWidth - b.offsetWidth) / 2,
+      behavior: REDUCE_MOTION ? 'auto' : 'smooth',
+    });
+  }
 }
 
 function goGallery(i) {
@@ -154,8 +188,48 @@ galleryEl.addEventListener('scroll', () => {
 
 galleryNav.addEventListener('click', (e) => {
   const b = e.target.closest('.gn-btn');
-  if (b) goGallery(galleryIndex + Number(b.dataset.step));
+  if (b) { pauseAutoplay(); goGallery(galleryIndex + Number(b.dataset.step)); }
 });
+
+/* 자동 넘김: 갤러리가 화면에 보이는 동안 4초마다 다음 사진으로, 마지막 다음은 처음으로.
+   손가락을 대거나 button을 누르면 잠시 멈췄다가 8초 뒤 다시 이어진다.
+   지금 사진 아래 진행 바(css의 .autoplay .g-item.on::after)가 다음 사진까지 남은 시간을 보여준다. */
+const AUTOPLAY_MS = 4000;
+let autoTimer = 0, resumeTimer = 0, galleryVisible = false, autoPaused = false;
+
+function scheduleNext() {
+  clearTimeout(autoTimer);
+  if (!galleryVisible || autoPaused || REDUCE_MOTION || galleryItems.length < 2) {
+    galleryEl.classList.remove('autoplay');
+    return;
+  }
+  galleryEl.classList.add('autoplay');
+  galleryEl.style.setProperty('--autoplay', AUTOPLAY_MS + 'ms');
+  autoTimer = setTimeout(() => {
+    goGallery((galleryIndex + 1) % galleryItems.length);
+    // 진행 바를 새 사진에서 처음부터 다시 그리도록 한 번 끊었다 잇는다.
+    galleryEl.classList.remove('autoplay');
+    setTimeout(scheduleNext, 450);
+  }, AUTOPLAY_MS);
+}
+
+function pauseAutoplay() {
+  autoPaused = true;
+  clearTimeout(autoTimer);
+  clearTimeout(resumeTimer);
+  galleryEl.classList.remove('autoplay');
+  resumeTimer = setTimeout(() => { autoPaused = false; scheduleNext(); }, 8000);
+}
+
+['pointerdown', 'touchstart', 'wheel'].forEach((ev) =>
+  galleryEl.addEventListener(ev, pauseAutoplay, { passive: true }));
+
+if (galleryItems.length) {
+  new IntersectionObserver((es) => {
+    galleryVisible = es[0].isIntersecting;
+    scheduleNext();
+  }, { threshold: 0.6 }).observe(galleryEl);
+}
 
 syncGallery();
 

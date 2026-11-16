@@ -117,7 +117,7 @@ INFO_MEAL=""
 PHOTO_MAIN="thumbnail.jpg"
 PHOTO_MAIN_DEV="thumbnail.jpg"
 PHOTO_BLESS=""
-PHOTO_GALLERY=""
+PHOTO_GALLERY="thumbnail.jpg,thumbnail.jpg,thumbnail.jpg,thumbnail.jpg,thumbnail.jpg,thumbnail.jpg"
 
 GALLERY_ORDER_MAIN=""
 GALLERY_ORDER_DEV=""
