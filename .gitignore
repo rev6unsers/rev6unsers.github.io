@@ -1,0 +1,13 @@
+# 계좌번호 등 개인정보가 평문으로 들어 있는 파일입니다. public 저장소에 올리지 않습니다.
+# 내 PC에만 있으므로 따로 백업해 두시기 바랍니다.
+source/invitation.conf
+
+# build 중간 산출물입니다. publish.ps1 이 이 내용을 맨 위로 복사합니다.
+source/dist/
+
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# 로컬 작업 노트입니다. 저장소에 올리지 않습니다.
+/README.md

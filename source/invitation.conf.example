@@ -1,0 +1,142 @@
+# 성연 ♥ 희진 청첩장의 모든 정보를 담는 파일입니다.
+# src/ 아래 HTML과 JS에는 실제 값이 없고 {{GROOM_NAME}} 같은 token만 있습니다.
+# build.ps1 이 이 파일을 읽어 token을 치환합니다.
+#
+# 쓰는 방법
+#   1) 이 파일을 invitation.conf 로 복사합니다. (이미 있으면 그 파일을 고칩니다)
+#        Copy-Item invitation.conf.example invitation.conf
+#   2) 아래 값을 실제 정보로 바꿉니다. OOO, 000 으로 된 곳이 아직 채우지 않은 자리입니다.
+#   3) 저장소 맨 위에서 .\publish.ps1 을 돌립니다.
+#
+#   invitation.conf 는 .gitignore 대상이라 commit되지 않습니다.
+#   계좌번호를 평문으로 public 저장소에 올리지 않기 위해서입니다.
+#   대신 내 PC에만 있으므로 따로 백업해 두시기 바랍니다.
+#
+# 적는 규칙
+#   - 값은 늘 따옴표로 감쌉니다.  VENUE_NAME="트라디노이"
+#   - 값 안의 \n 은 줄바꿈입니다.
+#   - 목록은 콤마로 구분합니다.
+#   - # 으로 시작하는 줄은 주석입니다.
+
+
+# --- 이 청첩장을 올릴 주소 ---
+# 카카오톡 공유 미리보기(og:image)는 절대 URL이어야 읽힙니다.
+SITE_ORIGIN="https://rev6unsers.github.io"
+
+# 축하 한마디를 받을 API 주소입니다. GitHub Pages는 저장할 곳이 없으므로 비워 둡니다.
+GUESTBOOK_API_BASE=""
+
+# 처음 열었을 때 보여줄 version입니다. main(파스텔) 또는 developer 입니다.
+DEFAULT_VERSION="main"
+
+
+# --- 신랑 ---
+GROOM_NAME="이성연"
+GROOM_NAME_SHORT="성연"
+# 영문 이름입니다. developer version에 나오고, 앞 이름이 handle(seongyeon)이 됩니다.
+GROOM_NAME_EN="Seongyeon Lee"
+# 사진이 없을 때 대신 보여줄 한 글자입니다.
+GROOM_INITIAL="성"
+GROOM_BIRTH="1994.04.03"
+# 부모 이름입니다. 표시 순서대로 콤마로 구분합니다.
+GROOM_PARENTS="OOO,OOO"
+# '부모님 의 ___ 성연' 자리에 들어갑니다. 장남, 차남 등으로 바꿔도 됩니다.
+GROOM_RANK_KO="아들"
+# developer version의 장식 문구입니다.
+GROOM_RANK_EXPR="son"
+# 비워 두면 화면에 나오지 않습니다.
+GROOM_ROLE=""
+GROOM_MBTI=""
+GROOM_HOBBY=""
+GROOM_NOTE=""
+# 프로필 사진입니다. src/photos/ 아래 파일 이름을 적습니다. 비우면 이니셜로 나옵니다.
+GROOM_PHOTO=""
+GROOM_PHOTO_FOCUS="50% 30%"
+GROOM_PHOTO_ZOOM="1"
+
+
+# --- 신부 ---
+BRIDE_NAME="천희진"
+BRIDE_NAME_SHORT="희진"
+BRIDE_NAME_EN="Heejin Cheon"
+BRIDE_INITIAL="희"
+BRIDE_BIRTH="1997.03.26"
+BRIDE_PARENTS="OOO,OOO"
+BRIDE_RANK_KO="딸"
+BRIDE_RANK_EXPR="daughter"
+BRIDE_ROLE=""
+BRIDE_MBTI=""
+BRIDE_HOBBY=""
+BRIDE_NOTE=""
+BRIDE_PHOTO=""
+BRIDE_PHOTO_FOCUS="50% 30%"
+BRIDE_PHOTO_ZOOM="1"
+
+
+# --- 예식 일시 ---
+# offset을 포함한 ISO 8601로 적습니다. countdown, 달력, 요일이 여기서 자동 계산됩니다.
+WEDDING_AT="2027-03-13T17:00:00+09:00"
+# 두 사람이 처음 만난 날입니다. developer version의 git log 첫 줄 날짜로 쓰입니다.
+# 비우면 예식 일시로 대신합니다.
+FIRST_MET_AT=""
+
+
+# --- 예식장 ---
+VENUE_NAME="트라디노이"
+VENUE_HALL=""
+VENUE_ADDRESS="서울특별시 강남구 도곡로99길 16"
+VENUE_FLOOR="6층"
+VENUE_TEL="02-567-9916"
+# 주소 복사 button이 clipboard에 넣는 문자열입니다.
+VENUE_ADDRESS_COPY="서울특별시 강남구 도곡로99길 16 트라디노이 6층"
+VENUE_SUBWAY="삼성역"
+VENUE_SUBWAY_SHORT="삼성역"
+
+# 지도 좌표입니다. 네이버 지도 key가 없으면 이 좌표로 구글 지도를 띄웁니다.
+VENUE_LAT="37.5018594"
+VENUE_LNG="127.0660032"
+VENUE_MAP_ZOOM="16"
+
+# 길찾기 button이 여는 외부 지도 link입니다.
+MAP_NAVER_URL="https://map.naver.com/v5/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EA%B0%95%EB%82%A8%EA%B5%AC%20%EB%8F%84%EA%B3%A1%EB%A1%9C99%EA%B8%B8%2016%206%EC%B8%B5"
+MAP_KAKAO_URL="https://map.kakao.com/link/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EA%B0%95%EB%82%A8%EA%B5%AC%20%EB%8F%84%EA%B3%A1%EB%A1%9C99%EA%B8%B8%2016%206%EC%B8%B5"
+
+
+# --- 오시는 길 안내 ---
+INFO_SUBWAY="삼성역 3번 출구 도보 8분"
+INFO_BUS="강남01, 강남06, 지선4319\n대치2동주민센터, 래미안하이스턴 하차"
+INFO_PARKING="도곡로 99길 16 (구주소: 대치동 98)"
+INFO_MEAL=""
+
+
+# --- 사진 ---
+# src/photos/ 아래 파일 이름을 적습니다. 비워 두면 자리 표시가 나옵니다.
+#   PHOTO_MAIN      main version 표지 (아치 frame)
+#   PHOTO_MAIN_DEV  developer version 표지
+#   PHOTO_BLESS     축하 전하기 아래 전체폭 사진
+#   PHOTO_GALLERY   gallery 목록. 3x3 pagination이라 9장이 한 page입니다.
+PHOTO_MAIN="thumbnail.jpg"
+PHOTO_MAIN_DEV="thumbnail.jpg"
+PHOTO_BLESS=""
+PHOTO_GALLERY=""
+
+GALLERY_ORDER_MAIN=""
+GALLERY_ORDER_DEV=""
+
+# 공유 card 이미지(og:image)입니다. 비우면 각 version의 표지를 씁니다.
+PHOTO_OG_MAIN="thumbnail.jpg"
+PHOTO_OG_DEV="thumbnail.jpg"
+
+
+# --- 계좌 ---
+# 형식은 이름|은행|계좌번호 이고 사람은 콤마로 구분합니다.
+# 난독화해서 넣으므로 결과물에 평문 계좌번호가 남지 않습니다.
+GROOM_ACCOUNTS="이성연|국민은행|000-0000-0000-00,OOO (아버지)|신한은행|000-000-000000,OOO (어머니)|우리은행|000-000-000000"
+BRIDE_ACCOUNTS="천희진|우리은행|0000-000-000000,OOO (아버지)|하나은행|000-000000-00000,OOO (어머니)|농협|000-0000-0000-00"
+
+
+# --- 외부 서비스 key (선택) ---
+# 발급 절차는 source/README.md 에 있습니다. 비워도 정상 동작합니다.
+NAVER_MAP_KEY_ID=""
+KAKAO_JS_KEY=""
+GA_MEASUREMENT_ID=""
