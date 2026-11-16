@@ -11,6 +11,9 @@
    05. 섹션 제목       : 한글 제목을 글자 단위로 나눠 차례로 떠오르게 한다
    06. 달력            : 날짜가 차례로 톡톡 나타나도록 순번을 매긴다
    07. 배경색          : 스크롤에 따라 배경색이 은은하게 바뀐다 (CSS scroll-timeline 미지원 시 JS)
+   08. 프로필 카드     : 손가락을 댄 자리에 빛이 따라오고 PC에서는 3D로 기운다
+   09. 복사·공유 하트  : 복사·공유 button을 누르면 하트가 터지고 짧게 진동한다
+   10. 마지막 장면     : Thank You 손글씨와 아래에서 떠오르는 하트
  */
 
 const FX_MOTION = !(typeof REDUCE_MOTION !== 'undefined' && REDUCE_MOTION);
@@ -285,4 +288,122 @@ fxSafe('tint', () => {
     if (!ticking) { ticking = true; requestAnimationFrame(update); }
   }, { passive: true });
   update();
+});
+
+
+/* 08. 프로필 카드: 손가락이나 마우스를 댄 자리에 빛이 따라오고, PC에서는 살짝 3D로 기운다. */
+
+fxSafe('cards', () => {
+  if (!FX_MOTION) return;
+  const canHover = window.matchMedia('(hover: hover)').matches;
+  // 카드는 main.html 끝의 profile script가 만든다. 그 script가 끝난 뒤(DOMContentLoaded)에 연결한다.
+  const attach = () => document.querySelectorAll('.pf-card').forEach((card) => {
+    function move(e) {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width;
+      const y = (e.clientY - r.top) / r.height;
+      card.style.setProperty('--mx', (x * 100).toFixed(1) + '%');
+      card.style.setProperty('--my', (y * 100).toFixed(1) + '%');
+      if (canHover) {
+        card.style.setProperty('--tx', ((0.5 - y) * 10).toFixed(2) + 'deg');
+        card.style.setProperty('--ty', ((x - 0.5) * 12).toFixed(2) + 'deg');
+      }
+      card.classList.add('lit');
+    }
+    function leave() {
+      card.classList.remove('lit');
+      card.style.setProperty('--tx', '0deg');
+      card.style.setProperty('--ty', '0deg');
+    }
+    card.addEventListener('pointermove', move, { passive: true });
+    card.addEventListener('pointerdown', move, { passive: true });
+    card.addEventListener('pointerleave', leave, { passive: true });
+    card.addEventListener('pointercancel', leave, { passive: true });
+    card.addEventListener('pointerup', () => setTimeout(leave, 600), { passive: true });
+  });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', attach);
+  else attach();
+});
+
+
+/* 09. 복사·공유 하트: 계좌 복사, 주소 복사, 공유하기를 누르면 그 자리에서 하트가 터진다.
+   안드로이드에서는 짧게 진동한다(iOS는 지원하지 않아 조용히 넘어간다). */
+
+fxSafe('burst', () => {
+  if (!FX_MOTION) return;
+  const layer = document.createElement('div');
+  layer.className = 'fx-layer';
+  layer.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(layer);
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.acc button, #copyAddr, #shareBtn');
+    if (!btn) return;
+    let x = e.clientX, y = e.clientY;
+    if (!x && !y) {                          // 키보드로 누른 경우 button 가운데에서
+      const r = btn.getBoundingClientRect();
+      x = r.left + r.width / 2; y = r.top + r.height / 2;
+    }
+    for (let i = 0; i < 9; i++) {
+      const h = document.createElement('span');
+      h.className = 'burst-heart';
+      h.textContent = i % 3 === 0 ? '♡' : '♥';
+      h.style.left = x + 'px';
+      h.style.top = y + 'px';
+      const ang = (Math.PI * 2 * i) / 9 + Math.random() * 0.4;
+      const dist = 40 + Math.random() * 40;
+      h.style.setProperty('--dx', (Math.cos(ang) * dist).toFixed(0) + 'px');
+      h.style.setProperty('--dy', (Math.sin(ang) * dist - 30).toFixed(0) + 'px');
+      h.style.setProperty('--rot', ((Math.random() - 0.5) * 80).toFixed(0) + 'deg');
+      h.style.setProperty('--sz', (11 + Math.random() * 9).toFixed(0) + 'px');
+      layer.appendChild(h);
+      setTimeout(() => h.remove(), 1200);
+    }
+    if (navigator.vibrate) { try { navigator.vibrate(12); } catch (err) {} }
+  });
+});
+
+
+/* 10. 마지막 장면: footer가 보이면 'Thank You'를 손글씨로 그리고 아래에서 하트가 천천히 떠오른다. */
+
+fxSafe('finale', () => {
+  const footer = document.querySelector('footer');
+  const thanks = footer && footer.querySelector('.ft-thanks');
+  if (!footer || !thanks) return;
+
+  // 'Thank You' 글자를 손글씨 획 SVG로 바꾼다. 화면 읽기 프로그램에는 원래 글자를 알려 준다.
+  const label = thanks.textContent.trim();
+  thanks.setAttribute('aria-label', label);
+  thanks.innerHTML =
+    '<svg class="ft-sign" viewBox="0 0 260 64" aria-hidden="true">' +
+    `<text x="130" y="46" text-anchor="middle">${label}</text></svg>`;
+  if (!FX_MOTION) { thanks.classList.add('play'); return; }
+
+  const bubbles = document.createElement('div');
+  bubbles.className = 'ft-bubbles';
+  bubbles.setAttribute('aria-hidden', 'true');
+  footer.prepend(bubbles);
+
+  let timer = 0;
+  function bubble() {
+    if (bubbles.childElementCount > 10) return;
+    const h = document.createElement('span');
+    h.textContent = Math.random() < 0.3 ? '♡' : '♥';
+    h.style.left = (8 + Math.random() * 84).toFixed(1) + '%';
+    h.style.setProperty('--sz', (10 + Math.random() * 12).toFixed(0) + 'px');
+    h.style.setProperty('--sway', ((Math.random() - 0.5) * 50).toFixed(0) + 'px');
+    h.style.setProperty('--dur', (5 + Math.random() * 3).toFixed(1) + 's');
+    bubbles.appendChild(h);
+    setTimeout(() => h.remove(), 8500);
+  }
+
+  new IntersectionObserver((es) => {
+    const on = es[0].isIntersecting;
+    if (on) {
+      thanks.classList.add('play');
+      if (!timer) { bubble(); timer = setInterval(bubble, 900); }
+    } else if (timer) {
+      clearInterval(timer); timer = 0;
+    }
+  }, { threshold: 0.25 }).observe(footer);
 });
