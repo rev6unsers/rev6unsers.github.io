@@ -4,141 +4,155 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 
-  <title>RELEASE v1.0.0 — {{GROOM_NAME}} ❤️ {{BRIDE_NAME}}</title>
-  <meta name="description" content="marriage v1.0.0 — production 배포 완료" />
+  <title>감사합니다 — {{GROOM_NAME_SHORT}} ❤ {{BRIDE_NAME_SHORT}}</title>
+  <meta name="description" content="{{GROOM_NAME_SHORT}} ♥ {{BRIDE_NAME_SHORT}}, 축하해 주셔서 감사합니다." />
   <meta name="robots" content="noindex" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500&family=Noto+Serif+KR:wght@500&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="css/developer.css" />
 
   <style>
-    /* 403 잠금 화면 */
+    /* 예식 전: Laravel 점검 모드(php artisan down) 화면 */
     #locked {
       display: none;
       min-height: calc(100dvh - 60px);
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 14px;
+      gap: 12px;
       padding: 40px 24px;
       text-align: center;
       font-family: var(--mono);
     }
 
     #locked .code {
-      font-size: 72px;
-      font-weight: 700;
-      color: var(--red);
-      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 20px;
+      letter-spacing: 0.04em;
+      color: var(--text-dim);
     }
 
-    #locked .reason {
-      font-size: 15px;
-      color: var(--text);
+    #locked .code b {
+      padding-right: 14px;
+      border-right: 1px solid var(--line);
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--laravel);
     }
 
     #locked .detail {
+      margin-top: 18px;
       font-size: 13px;
       line-height: 2;
       color: var(--text-dim);
     }
 
     #locked .countdown {
-      margin-top: 10px;
+      margin-top: 6px;
       font-size: 14px;
       color: var(--amber);
+      font-variant-numeric: tabular-nums;
     }
 
     #locked .back {
       margin-top: 26px;
-      padding: 13px 22px;
+      padding: 12px 22px;
       border: 1px solid var(--line);
       border-radius: 10px;
-      font-size: 13.5px;
+      font-size: 13px;
       color: var(--text-dim);
       text-decoration: none;
       transition: border-color 0.25s, color 0.25s;
     }
 
-    #locked .back:hover {
-      border-color: var(--mint);
-      color: var(--mint);
-    }
+    #locked .back:hover { border-color: var(--laravel); color: var(--laravel); }
 
-    /* release 노트 화면 */
-    #released {
-      display: none;
-    }
+    /* 예식 후 */
+    #released { display: none; }
 
     .release-head {
-      padding: 64px 24px 20px;
+      padding: 60px 24px 16px;
       text-align: center;
     }
 
-    .release-head .tag-badge {
-      display: inline-block;
+    .release-head .up {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
       padding: 6px 16px;
-      border: 1px solid color-mix(in srgb, var(--green) 45%, transparent);
       border-radius: 99px;
-      background: color-mix(in srgb, var(--green) 8%, transparent);
+      background: var(--panel);
+      border: 1px solid var(--line);
       font-family: var(--mono);
-      font-size: 13.5px;
-      letter-spacing: 0.12em;
-      color: var(--green);
+      font-size: 12.5px;
+      color: var(--text-dim);
+    }
+
+    .release-head .up .info {
+      padding: 1px 7px;
+      border-radius: 4px;
+      background: var(--mint);
+      color: #0f0f11;
+      font-weight: 600;
+      font-size: 11px;
     }
 
     .release-head h1 {
-      margin-top: 22px;
+      margin-top: 24px;
       font-family: var(--serif);
-      font-weight: 400;
-      font-size: 32px;
-      letter-spacing: 0.05em;
+      font-weight: 500;
+      font-size: 30px;
+      letter-spacing: 0.04em;
       color: var(--text-bright);
     }
 
     .release-head .sub {
-      margin-top: 10px;
+      margin-top: 8px;
       font-family: var(--mono);
-      font-size: 13.5px;
+      font-size: 13px;
       color: var(--text-dim);
     }
 
-    /* systemctl 상태 block */
-    .unit-status .dot {
-      color: var(--green);
-    }
+    .release-head .sub .amp { color: var(--laravel); }
 
-    .unit-status .uptime {
-      color: var(--mint);
-      font-variant-numeric: tabular-nums;
-    }
+    /* php artisan about */
+    .about { font-family: var(--mono); font-size: 12.5px; line-height: 2.1; }
+    .about .row { display: flex; gap: 6px; white-space: nowrap; }
+    .about .row .k { color: var(--text); }
+    .about .row .fill { flex: 1; overflow: hidden; color: var(--line); }
+    .about .row .fill::before { content: '..................................................'; }
+    .about .row .v { color: var(--amber); }
+    .about .row .v.live { color: var(--green); }
+    .about .head { color: var(--green); font-weight: 600; }
+    .about .uptime { font-variant-numeric: tabular-nums; }
 
     /* CHANGELOG */
-    .changelog .ver-line {
-      color: var(--text-bright);
-      font-weight: 500;
-    }
-
-    .changelog .add  { color: var(--green); }
-    .changelog .brk  { color: var(--red); }
-    .changelog .dep  { color: var(--comment); text-decoration: line-through; }
+    .changelog .ver-line { color: var(--text-bright); font-weight: 500; }
+    .changelog .h3  { color: var(--blue); }
+    .changelog .add { color: var(--green); }
+    .changelog .chg { color: var(--amber); }
+    .changelog .rem { color: var(--comment); text-decoration: line-through; }
+    .changelog .brk { color: var(--laravel); font-weight: 600; }
 
     /* 감사 인사 */
     .thanks {
       font-family: var(--serif);
-      font-size: 19px;
-      line-height: 2.2;
+      font-size: 17px;
+      line-height: 2.15;
       text-align: center;
       word-break: keep-all;
       color: var(--text);
     }
 
     .thanks .names {
-      margin-top: 26px;
-      font-size: 16px;
+      display: block;
+      margin-top: 24px;
+      font-size: 15px;
       color: var(--text-dim);
     }
   </style>
@@ -150,69 +164,73 @@
   <!-- editor 상단바 -->
   <header class="editor-bar">
     <div class="dots"><i></i><i></i><i></i></div>
-    <div class="tab"><b>{{GROOM_HANDLE}}</b> ♥ <em>{{BRIDE_HANDLE}}</em><span class="fname"> — RELEASE.md</span></div>
+    <div class="tab"><span class="tab-ico">🐘</span>thanks.blade.php</div>
     <a class="theme-toggle" href="main.html" title="청첩장으로 돌아가기" style="text-decoration: none;">←</a>
   </header>
 
 
-  <!-- 잠금 화면 (예식 전) -->
+  <!-- 예식 전: 점검 모드 화면 -->
   <div id="locked">
-    <div class="code">403</div>
-    <div class="reason">Forbidden — release not yet published</div>
+    <div class="code"><b>503</b>SERVICE UNAVAILABLE</div>
     <div class="detail">
       이 페이지는 {{WEDDING_DATETIME_KO}},<br />
-      두 사람의 배포가 완료되는 순간 열립니다.
+      <span style="color: var(--text)">php artisan up</span> 과 함께 열립니다.
     </div>
     <div class="countdown" id="lockCountdown">T-000:00:00:00</div>
-    <a class="back" href="main.html">$ cd ../invitation</a>
+    <a class="back" href="main.html">← 청첩장으로 돌아가기</a>
   </div>
 
 
-  <!-- release 노트 (예식 후) -->
+  <!-- 예식 후: 감사 인사 -->
   <div id="released">
 
     <div class="release-head">
-      <span class="tag-badge">🎉 tag: v1.0.0 — production</span>
+      <span class="up"><span class="p" style="color: var(--laravel)">$</span> php artisan up</span>
+      <div class="sub" style="margin-top: 14px"><span class="up" style="border: 0; background: none; padding: 0"><span class="info">INFO</span> Application is now live.</span></div>
       <h1>저희, 부부가 되었습니다</h1>
-      <div class="sub">{{GROOM_NAME_EN}} &amp;&amp; {{BRIDE_NAME_EN}} — now on main</div>
+      <div class="sub">{{GROOM_NAME_EN}} <span class="amp">&amp;</span> {{BRIDE_NAME_EN}}</div>
     </div>
 
-    <!-- 서비스 상태. 결혼 이후 경과 시간이 실시간으로 흐른다. -->
+    <!-- 결혼 이후 경과 시간이 실시간으로 흐른다 -->
     <section>
-      <div class="sec-label">status: systemctl status marriage</div>
-      <div class="envblock unit-status">
-        <div><span class="dot">●</span> marriage.service — {{GROOM_EN_LAST}} &amp; {{BRIDE_EN_LAST}}</div>
-        <div>&nbsp;&nbsp;&nbsp;Loaded: <span class="v">loaded (enabled; preset: forever)</span></div>
-        <div>&nbsp;&nbsp;&nbsp;Active: <span class="p">active (running)</span></div>
-        <div>&nbsp;&nbsp;&nbsp;&nbsp;since: <span class="v">{{WEDDING_CLOCK_KST}}</span></div>
-        <div>&nbsp;&nbsp;&nbsp;Uptime: <span class="uptime" id="uptime">0d 0h 0m 0s</span></div>
+      <div class="sec-label">php artisan about --only=marriage</div>
+      <div class="envblock about">
+        <div class="row"><span class="head">Marriage</span></div>
+        <div class="row"><span class="k">Couple</span><span class="fill"></span><span class="v">{{GROOM_NAME_SHORT}} ♥ {{BRIDE_NAME_SHORT}}</span></div>
+        <div class="row"><span class="k">Venue</span><span class="fill"></span><span class="v">{{VENUE_NAME}}</span></div>
+        <div class="row"><span class="k">Since</span><span class="fill"></span><span class="v">{{WEDDING_DATE_ISO}} {{WEDDING_TIME_EN}}</span></div>
+        <div class="row"><span class="k">Status</span><span class="fill"></span><span class="v live">LIVE</span></div>
+        <div class="row"><span class="k">Uptime</span><span class="fill"></span><span class="v uptime" id="uptime">0d 0h 0m 0s</span></div>
       </div>
     </section>
 
     <section>
-      <div class="sec-label">changelog: CHANGELOG.md</div>
+      <div class="sec-label">CHANGELOG.md</div>
       <div class="envblock changelog">
         <div class="ver-line">## [1.0.0] — {{WEDDING_DATE_ISO}}</div>
         <div>&nbsp;</div>
-        <div><span class="add">+ Added</span>: 평생의 동반자</div>
-        <div><span class="add">+ Added</span>: 두 가족의 새로운 연결</div>
-        <div><span class="add">+ Merged</span>: {{GROOM_BRANCH}} ← {{BRIDE_BRANCH}}</div>
-        <div><span class="dep">- Deprecated: 각자의 솔로 생활</span></div>
+        <div class="h3">### Added</div>
+        <div><span class="add">-</span> 평생의 동반자</div>
+        <div><span class="add">-</span> 두 가족의 새로운 연결</div>
+        <div class="h3">### Changed</div>
+        <div><span class="chg">-</span> Person 두 명 → Family 하나</div>
+        <div class="h3">### Removed</div>
+        <div><span class="rem">- 각자의 솔로 생활</span></div>
         <div>&nbsp;</div>
-        <div><span class="brk">BREAKING CHANGE</span>: 이제 모든 결정은</div>
+        <div><span class="brk">BREAKING</span>: 이제 모든 결정은</div>
         <div>&nbsp;&nbsp;둘이 함께 내립니다.</div>
       </div>
     </section>
 
     <section>
-      <div class="sec-label">message: 감사 인사</div>
+      <div class="sec-label">resources/views/thanks.blade.php</div>
       <p class="thanks">
         축하해 주신 모든 분들 덕분에<br />
-        저희의 첫 배포가 무사히 끝났습니다.<br /><br />
+        저희의 결혼식을 무사히 마쳤습니다.<br /><br />
         보내주신 따뜻한 마음을 기억하며<br />
-        오래도록 안정적으로,<br />
-        서로에게 다정한 부부로 살겠습니다.
-        <span class="names">— {{GROOM_NAME}}, {{BRIDE_NAME}} 올림</span>
+        서로를 아끼고 존중하며,<br />
+        늘 건강하고 행복한 부부가 되겠습니다.
+        <span class="names">— {{GROOM_NAME_SHORT}} · {{BRIDE_NAME_SHORT}} 올림</span>
       </p>
     </section>
 
@@ -224,7 +242,9 @@
     </section>
 
     <footer>
-      <div class="ft-line exit">+++ now running: forever +++</div>
+      <div class="ft-line"><span class="p">$</span> php artisan inspire</div>
+      <div class="ft-line quote">“ Love never fails. ”</div>
+      <div class="ft-line quote dim">— 1 Corinthians 13:8</div>
     </footer>
   </div>
 </div>
@@ -234,14 +254,12 @@
   /* theme는 청첩장에서 고른 값(localStorage)을 그대로 따라간다.
      URL에 ?theme=dark 또는 ?theme=light 를 붙이면 강제로 지정할 수 있다. */
   const urlTheme = new URLSearchParams(location.search).get('theme');
-  const savedTheme = localStorage.getItem('wedding-theme');
-  const systemLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-  document.documentElement.dataset.theme =
-    urlTheme || savedTheme || (systemLight ? 'light' : 'dark');
+  let savedTheme = null;
+  try { savedTheme = localStorage.getItem('wedding-theme'); } catch (e) {}
+  document.documentElement.dataset.theme = urlTheme || savedTheme || 'dark';
 
-  /* 예식 시각 전이면 403 화면을, 지났으면 release 노트를 보여준다.
-     미리보기는 /release?preview=1 로 연다. */
-
+  /* 예식 시각 전이면 점검 모드(503) 화면을, 지났으면 감사 인사를 보여준다.
+     미리보기는 release.html?preview=1 로 연다. */
   const locked = document.getElementById('locked');
   const released = document.getElementById('released');
 
@@ -265,7 +283,7 @@
   } else {
     locked.style.display = 'flex';
 
-    // 열리기까지 남은 시간을 countdown한다.
+    // 열리기까지 남은 시간
     const cdEl = document.getElementById('lockCountdown');
     const pad2 = (n) => String(n).padStart(2, '0');
 
