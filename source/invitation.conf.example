@@ -104,7 +104,7 @@ MAP_KAKAO_URL="https://map.kakao.com/link/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%
 # --- 오시는 길 안내 ---
 INFO_SUBWAY="삼성역 3번 출구 도보 8분"
 INFO_BUS="강남01, 강남06, 지선4319\n대치2동주민센터, 래미안하이스턴 하차"
-INFO_PARKING="도곡로 99길 16 (구주소: 대치동 98)"
+INFO_PARKING="도곡로 99길 16 (구주소: 대치동 984)"
 INFO_MEAL=""
 
 
