@@ -10,6 +10,7 @@
    05. 복사 button
    06. 축하 전하기 (꽃잎 confetti, 승인 API)
    07. hidden page banner
+   08. scroll 연출 (표지 확대, 인사말 한 줄씩)
  */
 
 const W = CONFIG.date;
@@ -17,6 +18,8 @@ const pad = (n) => String(n).padStart(2, '0');
 // D-day 문구에 쓸 짧은 이름. invitation.conf 의 *_NAME_SHORT 에서 온다.
 const SHORT_G = (CONFIG.people.groom || {}).short || '';
 const SHORT_B = (CONFIG.people.bride || {}).short || '';
+// 움직임 줄이기를 켠 기기에서는 scroll 연출(표지 확대, 한 줄씩, 숫자 올리기)을 하지 않는다.
+const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 
 /* 01. scroll reveal */
@@ -73,11 +76,10 @@ const blessPhotoEl = document.getElementById('blessPhoto');
 if (blessPhotoEl && CONFIG.photos.bless) blessPhotoEl.src = photoSrc(CONFIG.photos.bless);
 else if (blessPhotoEl) blessPhotoEl.style.display = 'none';   // 사진이 없으면 깨진 image 대신 감춘다
 
-// gallery. 3x3 pagination이라 한 page에 9장씩 나눠 보여준다.
+// gallery. 사진을 가로 한 줄로 늘어놓고 양옆으로 넘긴다(CSS scroll-snap).
 const galleryEl = document.getElementById('gallery');
-const GALLERY_PAGE = 9;   // 3x3, 한 page 9장
 
-// main(main) version의 page 순서로 재배열한 gallery. config.js의 orderedGallery가 page 단위로 옮긴다.
+// 표시 순서. config.js의 orderedGallery가 invitation.conf 의 순서 설정을 반영한다.
 const GALLERY = orderedGallery((CONFIG.photos.galleryPageOrder || {}).main);
 
 // 사진이 한 장도 없으면 gallery section과 그 아래 구분선을 감춘다.
@@ -93,84 +95,63 @@ if (!GALLERY.length) {
 // lightbox는 page와 무관하게 gallery 전체를 순환한다.
 GALLERY.forEach((src) => loadedPhotos.push(src));
 
-// 아이템을 한 번만 만들어 두면 page를 넘겨도 다시 내려받지 않는다.
+// 사진 card. 누르면 lightbox로 크게 본다.
 const galleryItems = GALLERY.map((src, i) => {
   const item = document.createElement('figure');
   item.className = 'g-item';
-  item.style.cursor = 'zoom-in';
   item.appendChild(createPhoto(src, { caption: `웨딩 사진 ${i + 1}` }));
   item.addEventListener('click', () => openLightbox(src));
   return item;
 });
+galleryEl.replaceChildren(...galleryItems);
 
-const galleryPages = Math.max(1, Math.ceil(galleryItems.length / GALLERY_PAGE));
-let galleryPage = 0;
+// 아래쪽 '‹ 1 / N ›'. 손가락으로 넘겨도 되고 button을 눌러도 된다.
+const galleryNav = document.createElement('div');
+galleryNav.className = 'gallery-nav';
+galleryNav.innerHTML =
+  '<button type="button" class="gn-btn" data-step="-1" aria-label="이전 사진">‹</button>' +
+  '<span class="gn-count"><b>1</b> / ' + galleryItems.length + '</span>' +
+  '<button type="button" class="gn-btn" data-step="1" aria-label="다음 사진">›</button>';
+galleryEl.insertAdjacentElement('afterend', galleryNav);
+const galleryCount = galleryNav.querySelector('b');
+let galleryIndex = 0;
 
-const galleryPager = document.createElement('div');
-galleryPager.className = 'gallery-pager';
-galleryEl.insertAdjacentElement('afterend', galleryPager);
-
-function renderGallery(p) {
-  const target = Math.min(Math.max(0, p), galleryPages - 1);
-  const dir = Math.sign(target - galleryPage);   // 다음(+1) 또는 이전(-1) 방향으로 slide 인
-  galleryPage = target;
-  const start = galleryPage * GALLERY_PAGE;
-  galleryEl.replaceChildren(...galleryItems.slice(start, start + GALLERY_PAGE));
-  renderGalleryPager();
-  if (dir !== 0) {
-    galleryEl.style.transition = 'none';
-    galleryEl.style.transform = 'translateX(' + (dir * 26) + 'px)';
-    galleryEl.style.opacity = '0';
-    void galleryEl.offsetWidth;                   // reflow를 강제한 뒤에 transition을 건다
-    galleryEl.style.transition = 'transform .34s cubic-bezier(.22,1,.36,1), opacity .3s ease';
-    galleryEl.style.transform = 'translateX(0)';
-    galleryEl.style.opacity = '1';
-  }
+// 가운데에 가장 가까운 사진을 현재 사진으로 본다. 그 사진만 또렷하게(.on) 둔다.
+function syncGallery() {
+  const mid = galleryEl.scrollLeft + galleryEl.clientWidth / 2;
+  let best = 0, bestDist = Infinity;
+  galleryItems.forEach((it, i) => {
+    const d = Math.abs(it.offsetLeft + it.offsetWidth / 2 - mid);
+    if (d < bestDist) { bestDist = d; best = i; }
+  });
+  galleryIndex = best;
+  galleryCount.textContent = String(best + 1);
+  galleryItems.forEach((it, i) => it.classList.toggle('on', i === best));
 }
 
-function renderGalleryPager() {
-  if (galleryPages <= 1) { galleryPager.replaceChildren(); return; }
-  const frag = document.createDocumentFragment();
-  const btn = (label, page, opts = {}) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'pg-btn' + (opts.active ? ' active' : '');
-    b.textContent = label;
-    if (opts.disabled) b.disabled = true;
-    else b.addEventListener('click', () => renderGallery(page));
-    return b;
-  };
-  frag.appendChild(btn('‹', galleryPage - 1, { disabled: galleryPage === 0 }));
-  for (let i = 0; i < galleryPages; i++) {
-    frag.appendChild(btn(String(i + 1), i, { active: i === galleryPage }));
-  }
-  frag.appendChild(btn('›', galleryPage + 1, { disabled: galleryPage === galleryPages - 1 }));
-  galleryPager.replaceChildren(frag);
+function goGallery(i) {
+  const n = galleryItems.length;
+  if (!n) return;
+  const it = galleryItems[Math.min(Math.max(0, i), n - 1)];
+  galleryEl.scrollTo({
+    left: it.offsetLeft - (galleryEl.clientWidth - it.offsetWidth) / 2,
+    behavior: REDUCE_MOTION ? 'auto' : 'smooth',
+  });
 }
 
-renderGallery(0);
+let gTick = false;
+galleryEl.addEventListener('scroll', () => {
+  if (gTick) return;
+  gTick = true;
+  requestAnimationFrame(() => { gTick = false; syncGallery(); });
+}, { passive: true });
 
-// gallery 좌우 swipe로 page를 넘긴다. gesture 방향을 초기에 판정한다(directional lock).
-// 가로로 확정되면 세로 scroll을 막아, 대각선 swipe 시 page가 위아래로 밀리지 않게 한다.
-let gSwipeX = 0, gSwipeY = 0, gLock = null;   // gLock: null(미정) | 'h'(가로) | 'v'(세로)
-galleryEl.addEventListener('touchstart', (e) => {
-  gSwipeX = e.touches[0].clientX; gSwipeY = e.touches[0].clientY; gLock = null;
-}, { passive: true });
-galleryEl.addEventListener('touchmove', (e) => {
-  const dx = e.touches[0].clientX - gSwipeX;
-  const dy = e.touches[0].clientY - gSwipeY;
-  if (gLock === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
-    gLock = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
-  }
-  if (gLock === 'h') e.preventDefault();      // 가로 swipe 확정 → 세로 scroll 잠금
-}, { passive: false });
-galleryEl.addEventListener('touchend', (e) => {
-  const dx = e.changedTouches[0].clientX - gSwipeX;
-  if (gLock === 'h' && Math.abs(dx) > 48) {
-    renderGallery(galleryPage + (dx > 0 ? -1 : 1));   // 오른쪽=이전, 왼쪽=다음
-  }
-  gLock = null;
-}, { passive: true });
+galleryNav.addEventListener('click', (e) => {
+  const b = e.target.closest('.gn-btn');
+  if (b) goGallery(galleryIndex + Number(b.dataset.step));
+});
+
+syncGallery();
 
 // 첫 방문에도 좌우 swipe가 바로 보이도록, 초기 load 뒤 gallery 사진 전체를 미리 받아 cache에 올린다.
 const _preloaded = [];
@@ -248,23 +229,65 @@ lightbox.addEventListener('touchmove', (e) => { e.preventDefault(); }, { passive
 
 /* 03. D-day countdown */
 
-function tickCountdown() {
+// 남은 시간을 일, 시, 분, 초로 나눈다.
+function remaining() {
   const diff = Math.max(0, W - new Date());
+  return {
+    diff,
+    days: Math.floor(diff / 86400000),
+    hours: Math.floor(diff / 3600000) % 24,
+    minutes: Math.floor(diff / 60000) % 60,
+    seconds: Math.floor(diff / 1000) % 60,
+  };
+}
 
-  const days = Math.floor(diff / 86400000);
-  const hours = Math.floor(diff / 3600000) % 24;
-  const minutes = Math.floor(diff / 60000) % 60;
-  const seconds = Math.floor(diff / 1000) % 60;
+function showCount(d, h, m, s) {
+  document.getElementById('cdD').textContent = d;
+  document.getElementById('cdH').textContent = pad(h);
+  document.getElementById('cdM').textContent = pad(m);
+  document.getElementById('cdS').textContent = pad(s);
+}
 
-  document.getElementById('cdD').textContent = days;
-  document.getElementById('cdH').textContent = pad(hours);
-  document.getElementById('cdM').textContent = pad(minutes);
-  document.getElementById('cdS').textContent = pad(seconds);
+// countdown이 화면에 처음 들어오면 숫자를 0부터 올린다. 그 전에는 0으로 둔다.
+let countUpDone = REDUCE_MOTION;
+
+function tickCountdown() {
+  const r = remaining();
+  if (countUpDone) showCount(r.days, r.hours, r.minutes, r.seconds);
 
   document.getElementById('ddayNote').innerHTML =
-    diff > 0
-      ? `${SHORT_G} ♥ ${SHORT_B} 결혼식이 <b>${days}일</b> 남았습니다`
+    r.diff > 0
+      ? `${SHORT_G} ♥ ${SHORT_B} 결혼식이 <b>${r.days}일</b> 남았습니다`
       : `${SHORT_G} ♥ ${SHORT_B}, 부부가 되었습니다 ♥`;
+}
+
+function runCountUp() {
+  const DURATION = 1400;
+  const start = performance.now();
+  const ease = (t) => 1 - Math.pow(1 - t, 3);   // 끝으로 갈수록 천천히
+  (function frame(now) {
+    const t = Math.min(1, (now - start) / DURATION);
+    const k = ease(t);
+    const r = remaining();
+    showCount(
+      Math.round(r.days * k), Math.round(r.hours * k),
+      Math.round(r.minutes * k), Math.round(r.seconds * k)
+    );
+    if (t < 1) requestAnimationFrame(frame);
+    else { countUpDone = true; tickCountdown(); }
+  })(start);
+}
+
+if (!countUpDone) {
+  showCount(0, 0, 0, 0);
+  const ddayEl = document.querySelector('.dday');
+  const countObserver = new IntersectionObserver((entries) => {
+    if (entries.some((e) => e.isIntersecting)) {
+      countObserver.disconnect();
+      runCountUp();
+    }
+  }, { threshold: 0.5 });
+  countObserver.observe(ddayEl);
 }
 
 tickCountdown();
@@ -547,3 +570,34 @@ setInterval(fetchBlessings, 5000);   // 5초마다 폴링(첫 로드 즉시 + �
 if (isWeddingDeployed()) {
   document.getElementById('releaseBanner').classList.add('show');
 }
+
+
+/* 08. scroll 연출 */
+
+/* 표지: 아래로 내릴수록 사진이 살짝 확대되고 액자는 내려가고 이름은 올라와 겹친다.
+   진행도(0~1)를 CSS 변수 --p 로 넘기고, 실제 움직임은 css/main.css 의 '16. scroll 연출'이 맡는다. */
+(function coverParallax() {
+  const cover = document.querySelector('.cover');
+  if (!cover || REDUCE_MOTION) return;
+  let ticking = false;
+  function update() {
+    ticking = false;
+    const p = Math.min(1, Math.max(0, window.scrollY / cover.offsetHeight));
+    cover.style.setProperty('--p', p.toFixed(3));
+  }
+  window.addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  update();
+})();
+
+/* 인사말: 줄마다 감싸서, 화면에 들어오면 한 줄씩 차례로 나타나게 한다. */
+(function greetingLines() {
+  const box = document.querySelector('.greeting');
+  if (!box) return;
+  let n = 0;
+  box.querySelectorAll('p').forEach((p) => {
+    const lines = p.innerHTML.split(/<br\s*\/?>/i).map((s) => s.trim()).filter(Boolean);
+    p.innerHTML = lines.map((s) => `<span class="ln" style="--i:${n++}">${s}</span>`).join('<br />');
+  });
+})();

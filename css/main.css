@@ -1220,3 +1220,121 @@ footer .thanks-line + div { font-weight: 700; }
 .cover h1 { font-size: 34px; letter-spacing: 0.1em; }
 .label-title { font-size: 23px; letter-spacing: 0.1em; }
 .greeting { font-size: 17px; line-height: 2.15; }
+
+
+/* 16. scroll 연출
+   js/main.js 의 '08. scroll 연출'과 짝이다. 움직임 줄이기를 켠 기기에서는 JS가 값을 주지 않아 멈춰 있다.
+   transform 대신 개별 속성(translate, scale)을 써서 등장 효과(.rv)의 transform과 겹치지 않게 한다. */
+
+/* 1) 표지: --p 는 표지를 지나간 비율(0~1) */
+.cover-photo img {
+  scale: calc(1 + var(--p, 0) * 0.22);
+  transform-origin: 50% 40%;
+  will-change: scale;
+}
+
+.cover-frame { translate: 0 calc(var(--p, 0) * 70px); }
+
+.cover h1 {
+  translate: 0 calc(var(--p, 0) * -60px);
+  text-shadow: 0 0 18px var(--paper), 0 0 6px var(--paper);   /* 사진 위로 겹쳐도 읽히게 */
+  position: relative;
+  z-index: 2;
+}
+
+.cover-eyebrow,
+.cover-dot-date {
+  translate: 0 calc(var(--p, 0) * 40px);
+  opacity: calc(1 - var(--p, 0) * 1.6);
+}
+
+/* 2) 인사말: 묶음 전체는 바로 보이고, 줄마다 차례로 떠오른다 */
+.greeting.rv { opacity: 1; transform: none; }
+
+.greeting .ln {
+  display: inline-block;
+  opacity: 0;
+  translate: 0 14px;
+  filter: blur(4px);
+  transition: opacity 0.7s ease, translate 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.7s ease;
+  transition-delay: calc(var(--i, 0) * 0.22s + 0.1s);
+}
+
+.greeting.in .ln {
+  opacity: 1;
+  translate: 0 0;
+  filter: none;
+}
+
+/* 3) 갤러리: 가로 한 줄, 양옆으로 넘기는 카드. 가운데 사진만 또렷하게 */
+.gallery {
+  display: flex;
+  gap: 12px;
+  margin: 0 -24px;
+  padding: 8px 0 18px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  position: relative;
+}
+
+.gallery::-webkit-scrollbar { display: none; }
+
+/* 첫 사진과 마지막 사진도 가운데에 올 수 있게 양 끝에 빈 칸을 둔다.
+   빈 칸 12% + 사진 76% + 빈 칸 12% = 100% (gap 12px 두 번은 빈 칸에서 뺀다) */
+.gallery::before,
+.gallery::after {
+  content: "";
+  flex: 0 0 calc(12% - 12px);
+}
+
+.gallery .g-item {
+  flex: 0 0 76%;
+  aspect-ratio: 4 / 5;
+  scroll-snap-align: center;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  opacity: 0.55;
+  scale: 0.92;
+  transition: opacity 0.4s ease, scale 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.gallery .g-item.on { opacity: 1; scale: 1; }
+
+.gallery-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 6px;
+}
+
+.gallery-nav .gn-btn {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--coral-mist);
+  font-size: 18px;
+  color: var(--coral-deep);
+  cursor: pointer;
+}
+
+.gallery-nav .gn-count {
+  min-width: 56px;
+  text-align: center;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  color: var(--soft);
+}
+
+.gallery-nav .gn-count b { color: var(--coral-deep); font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+  .greeting .ln { opacity: 1; translate: none; filter: none; }
+  .gallery .g-item { opacity: 1; scale: 1; }
+}
