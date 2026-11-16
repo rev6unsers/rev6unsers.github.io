@@ -203,10 +203,10 @@ function tickCountdown() {
   const seconds = Math.floor(diff / 1000) % 60;
 
   document.getElementById('ddayNum').textContent = String(days).padStart(3, '0');
-  setCountValue('cdD', String(days).padStart(2, '0'));
-  setCountValue('cdH', pad(hours));
-  setCountValue('cdM', pad(minutes));
-  setCountValue('cdS', pad(seconds));
+  document.getElementById('cdD').textContent = String(days).padStart(2, '0');
+  document.getElementById('cdH').textContent = pad(hours);
+  document.getElementById('cdM').textContent = pad(minutes);
+  document.getElementById('cdS').textContent = pad(seconds);
 }
 
 tickCountdown();
