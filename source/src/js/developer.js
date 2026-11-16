@@ -95,9 +95,11 @@ const TERMINAL_LINES = [
   { type: 'out', text: "Switched to a new branch 'our-life'" },
   { type: 'cmd', text: `git merge ${GROOM_BRANCH} ${BRIDE_BRANCH} --strategy=love` },
   { type: 'out', text: 'Auto-merging hearts...' },
-  { type: 'out', text: '✓ 0 conflicts — fast-forward', cls: 't-green' },
-  { type: 'out', text: 'Merge made by the "love" strategy.' },
-  { type: 'out', text: ' 2 lives changed, ∞ insertions(+), 0 deletions(-)', cls: 't-amber' },
+  { type: 'out', text: '✓ 0 conflicts', cls: 't-green' },
+  // 두 branch를 한 번에 합치는 merge는 fast-forward가 될 수 없고 merge commit이 생긴다.
+  // 문구와 따옴표, 0인 항목을 생략하는 diffstat 모양은 실제 git 출력을 따른다.
+  { type: 'out', text: "Merge made by the 'love' strategy." },
+  { type: 'out', text: ' 2 lives changed, ∞ insertions(+)', cls: 't-amber' },
   { type: 'cmd', text: 'cat invitation.md' },
   { type: 'out', text: '저희, 결혼합니다. 귀한 걸음 해주세요 ♥', cls: 't-rose' },
 ];

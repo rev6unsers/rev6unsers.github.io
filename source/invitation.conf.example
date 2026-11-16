@@ -76,8 +76,7 @@ BRIDE_PHOTO_ZOOM="1"
 # --- 예식 일시 ---
 # offset을 포함한 ISO 8601로 적습니다. countdown, 달력, 요일이 여기서 자동 계산됩니다.
 WEDDING_AT="2027-10-30T17:00:00+09:00"
-# 두 사람이 처음 만난 날입니다. developer version의 git log 첫 줄 날짜로 쓰입니다.
-# 비우면 예식 일시로 대신합니다.
+# 두 사람이 처음 만난 날입니다. 지금 화면에서는 쓰이지 않습니다(원본의 terminal version 전용).
 FIRST_MET_AT=""
 
 

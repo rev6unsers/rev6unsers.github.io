@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/developer.css?v=d04506b5" />
+  <link rel="stylesheet" href="css/developer.css?v=28f238af" />
 </head>
 
 <body>
@@ -161,15 +161,19 @@
     <div class="sec-label rv">section: our-history — git log --graph</div>
 
     <pre class="gitlog rv d1">
-<span class="dim">$ git log --graph --date=short</span>
+<span class="dim">$ git log --graph --format='%h%d%n%s'</span>
 
-*   <span class="h">e5f6a7b</span> <span class="head">(HEAD -&gt; main, </span><span class="tag">tag: v1.0.0</span><span class="head">)</span>
-<span class="g">|</span><span class="b">\</span>  <span class="date">2027-10-30</span> <span class="msg">Merge pull request #1: 평생을 함께하기로 하다</span>
-<span class="g">|</span> <span class="b">*</span> <span class="h">d4e5f6a</span> <span class="msg">feat(heejin): "yes" 반환 — LGTM, approve</span>
-<span class="g">*</span> <span class="b">|</span> <span class="h">c3d4e5f</span> <span class="msg">feat(seongyeon): 프러포즈 PR open</span>
+<span class="g">*</span>   <span class="h">e5f6a7b</span> <span class="head">(HEAD -&gt; main, </span><span class="tag">tag: v1.0.0</span><span class="head">)</span>
+<span class="g">|</span><span class="b">\</span>  <span class="msg">Merge pull request #1: 평생을 함께하기로 하다</span>
+<span class="g">|</span> <span class="b">*</span> <span class="h">d4e5f6a</span>
+<span class="g">|</span> <span class="b">|</span> <span class="msg">feat(heejin): "yes" 반환 — LGTM, approve</span>
+<span class="g">*</span> <span class="b">|</span> <span class="h">c3d4e5f</span>
+<span class="g">|</span> <span class="b">|</span> <span class="msg">feat(seongyeon): 프러포즈 PR open</span>
 <span class="g">|</span><span class="b">/</span>
-<span class="g">*</span>   <span class="h">b2c3d4e</span> <span class="msg">build(deps): 서로를 dependency로 추가</span>
-<span class="g">*</span>   <span class="h">a1b2c3d</span> <span class="date">2027-10-30</span> <span class="msg">init: 첫 만남 — repository 생성</span>
+<span class="g">*</span> <span class="h">b2c3d4e</span>
+<span class="g">|</span> <span class="msg">build(deps): 서로를 dependency로 추가</span>
+<span class="g">*</span> <span class="h">a1b2c3d</span>
+  <span class="msg">init: 첫 만남 — repository 생성</span>
     </pre>
   </section>
 
@@ -321,18 +325,18 @@
 
   <!-- footer (strace) -->
   <footer>
-    <button class="share-btn" id="shareBtn" type="button">$ ./share --invite</button>
     <div class="version-links">
       <a class="version-link" href="main.html">🤵👰 일반 버전으로 보기</a>
     </div>
+    <button class="share-btn" id="shareBtn" type="button">$ ./share --invite</button>
 
     <div class="ft-line"><span class="p" style="color: var(--green)">$</span> sudo insmod marriage.ko</div>
     <div class="ft-line"><span class="p" style="color: var(--green)">$</span> dmesg | grep marriage:</div>
-    <div class="ft-line"><span class="dim">[11141.110]</span> <span class="sys">marriage:</span> module loaded <span class="str">("forever")</span></div>
-    <div class="ft-line"><span class="dim">[11141.111]</span> <span class="sys">marriage:</span> hearts linked, refcount = <span class="num">∞</span></div>
-    <div class="ft-line"><span class="dim">[11141.112]</span> <span class="sys">marriage:</span> <span class="str">thank you for blessing us <span class="heart">♥</span></span></div>
+    <div class="ft-line"><span class="dim">[ 1030.170001]</span> <span class="sys">marriage:</span> module loaded <span class="str">("forever")</span></div>
+    <div class="ft-line"><span class="dim">[ 1030.170002]</span> <span class="sys">marriage:</span> hearts linked, refcount = <span class="num">∞</span></div>
+    <div class="ft-line"><span class="dim">[ 1030.170003]</span> <span class="sys">marriage:</span> <span class="str">thank you for blessing us <span class="heart">♥</span></span></div>
     <div class="ft-line"><span class="p" style="color: var(--green)">$</span> sudo rmmod marriage</div>
-    <div class="ft-line exit"><span class="err">rmmod: ERROR:</span> marriage is in use — <span class="heart">forever</span></div>
+    <div class="ft-line exit"><span class="err">rmmod: ERROR:</span> Module marriage is in use — <span class="heart">forever</span></div>
   </footer>
 </div>
 
@@ -346,8 +350,8 @@
   <button class="lb-next" id="lbNext" type="button" aria-label="다음 사진">›</button>
 </div>
 
-<script src="js/data.js?v=d04506b5"></script><script src="js/config.js?v=d04506b5"></script>
-<script src="js/private.js?v=d04506b5"></script>
-<script src="js/developer.js?v=d04506b5"></script>
+<script src="js/data.js?v=28f238af"></script><script src="js/config.js?v=28f238af"></script>
+<script src="js/private.js?v=28f238af"></script>
+<script src="js/developer.js?v=28f238af"></script>
 </body>
 </html>
