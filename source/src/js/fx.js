@@ -10,6 +10,7 @@
    04. 진행 바         : 맨 위 얇은 바가 읽은 만큼 차오른다 (CSS scroll-timeline, 미지원 시 JS)
    05. 섹션 제목       : 한글 제목을 글자 단위로 나눠 차례로 떠오르게 한다
    06. 달력            : 날짜가 차례로 톡톡 나타나도록 순번을 매긴다
+   07. 배경색          : 스크롤에 따라 배경색이 은은하게 바뀐다 (CSS scroll-timeline 미지원 시 JS)
  */
 
 const FX_MOTION = !(typeof REDUCE_MOTION !== 'undefined' && REDUCE_MOTION);
@@ -244,4 +245,44 @@ fxSafe('titles', () => {
 
 fxSafe('calendar', () => {
   document.querySelectorAll('.cal .d').forEach((d, i) => d.style.setProperty('--i', i));
+});
+
+
+/* 07. 배경색: CSS scroll-timeline을 지원하지 않는 browser용. 색과 위치는 css/main.css 의 '18.'과 같다. */
+
+fxSafe('tint', () => {
+  if (!FX_MOTION) return;
+  if (window.CSS && CSS.supports && CSS.supports('animation-timeline: scroll()')) return;
+  const paper = document.querySelector('.paper');
+  if (!paper) return;
+  const STOPS = [
+    [0.00, [255, 248, 243]],
+    [0.22, [253, 238, 230]],
+    [0.45, [251, 242, 239]],
+    [0.62, [245, 240, 250]],
+    [0.82, [253, 239, 231]],
+    [1.00, [255, 248, 243]],
+  ];
+  function colorAt(t) {
+    for (let i = 1; i < STOPS.length; i++) {
+      const [t1, c1] = STOPS[i];
+      const [t0, c0] = STOPS[i - 1];
+      if (t <= t1) {
+        const k = (t - t0) / (t1 - t0 || 1);
+        return 'rgb(' + c0.map((v, j) => Math.round(v + (c1[j] - v) * k)).join(',') + ')';
+      }
+    }
+    return 'rgb(255,248,243)';
+  }
+  let ticking = false;
+  function update() {
+    ticking = false;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const t = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    paper.style.setProperty('--bgc', colorAt(t));
+  }
+  window.addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  update();
 });
