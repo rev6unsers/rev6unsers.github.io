@@ -1232,3 +1232,44 @@ footer .share-btn:active { transform: scale(0.97); }
 @media (prefers-reduced-motion: reduce) {
   .dd-cell b.tick { animation: none; }
 }
+
+
+/* 15. 둥근 제목체
+   손글씨(나눔펜) label 아래의 한글 제목, 날짜, 숫자, 이름을 감자꽃체로 부드럽게 맞춘다.
+   인사말 본문만 나눔명조로 남겨 편지 느낌을 준다. */
+
+:root { --round: 'Gamja Flower', 'Nanum Gothic', sans-serif; }
+
+.cover h1,
+.cover-dot-date,
+.label-title,
+.pf-name,
+.family b,
+.when-date,
+.when-time,
+.dd-cell b,
+.cal-title,
+.cal .d,
+.venue-card .vc-name,
+footer .thanks-line + div {
+  font-family: var(--round);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.cover h1 { font-size: 34px; }
+.label-title { font-size: 25px; }
+.pf-name { font-size: 24px; }
+.family b { font-size: 21px; }
+.when-date { font-size: 24px; }
+.when-time { font-size: 28px; }
+.dd-cell b { font-size: 22px; line-height: 1; }
+.cal-title { font-size: 20px; letter-spacing: 0.02em; }
+.cal .d { font-size: 17px; font-weight: 400; }
+.cal td .d.wedding-day { font-weight: 400; }
+.venue-card .vc-name { font-size: 26px; }
+footer .thanks-line + div { font-size: 21px; }
+.cover-dot-date { font-size: 18px; font-weight: 400; letter-spacing: 0.12em; }
+
+/* 인사말은 나눔명조 일반 굵기 */
+.greeting, footer .thanks-line { font-weight: 400; }
