@@ -39,7 +39,7 @@ GROOM_NAME_EN="Lee Sung Yeon"
 GROOM_INITIAL="성"
 GROOM_BIRTH="1994.04.03"
 # 부모 이름입니다. 표시 순서대로 콤마로 구분합니다.
-GROOM_PARENTS="OOO,OOO"
+GROOM_PARENTS="이상로,유연숙"
 # '부모님 의 ___ 성연' 자리에 들어갑니다. 장남, 차남 등으로 바꿔도 됩니다.
 GROOM_RANK_KO="아들"
 # developer version의 장식 문구입니다.
@@ -61,7 +61,7 @@ BRIDE_NAME_SHORT="희진"
 BRIDE_NAME_EN="Chun Hui Jin"
 BRIDE_INITIAL="희"
 BRIDE_BIRTH="1997.03.26"
-BRIDE_PARENTS="OOO,OOO"
+BRIDE_PARENTS="천재민,최지영"
 BRIDE_RANK_KO="딸"
 BRIDE_RANK_EXPR="daughter"
 BRIDE_ROLE=""
@@ -130,8 +130,8 @@ PHOTO_OG_DEV="thumbnail.jpg"
 # --- 계좌 ---
 # 형식은 이름|은행|계좌번호 이고 사람은 콤마로 구분합니다.
 # 난독화해서 넣으므로 결과물에 평문 계좌번호가 남지 않습니다.
-GROOM_ACCOUNTS="이성연|국민은행|000-0000-0000-00,OOO (아버지)|신한은행|000-000-000000,OOO (어머니)|우리은행|000-000-000000"
-BRIDE_ACCOUNTS="천희진|우리은행|0000-000-000000,OOO (아버지)|하나은행|000-000000-00000,OOO (어머니)|농협|000-0000-0000-00"
+GROOM_ACCOUNTS="이성연|국민은행|000-0000-0000-00,이상로 (아버지)|신한은행|000-000-000000,유연숙 (어머니)|우리은행|000-000-000000"
+BRIDE_ACCOUNTS="천희진|우리은행|0000-000-000000,천재민 (아버지)|하나은행|000-000000-00000,최지영 (어머니)|농협|000-0000-0000-00"
 
 
 # --- 외부 서비스 key (선택) ---
