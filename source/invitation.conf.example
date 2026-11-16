@@ -33,8 +33,8 @@ DEFAULT_VERSION="main"
 # --- 신랑 ---
 GROOM_NAME="이성연"
 GROOM_NAME_SHORT="성연"
-# 영문 이름입니다. developer version에 나오고, 앞 이름이 handle(seongyeon)이 됩니다.
-GROOM_NAME_EN="Seongyeon Lee"
+# 영문 이름입니다. developer version과 감사 인사 페이지에 적은 그대로 나옵니다.
+GROOM_NAME_EN="Lee Sung Yeon"
 # 사진이 없을 때 대신 보여줄 한 글자입니다.
 GROOM_INITIAL="성"
 GROOM_BIRTH="1994.04.03"
@@ -58,7 +58,7 @@ GROOM_PHOTO_ZOOM="1"
 # --- 신부 ---
 BRIDE_NAME="천희진"
 BRIDE_NAME_SHORT="희진"
-BRIDE_NAME_EN="Heejin Cheon"
+BRIDE_NAME_EN="Chun Hui Jin"
 BRIDE_INITIAL="희"
 BRIDE_BIRTH="1997.03.26"
 BRIDE_PARENTS="OOO,OOO"
