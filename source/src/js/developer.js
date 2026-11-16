@@ -287,11 +287,12 @@ const MAIN_PHOTO = CONFIG.photos.mainDev || CONFIG.photos.main;
 const mainPhotoImg = createPhoto(MAIN_PHOTO, { caption: '메인 웨딩 사진' });
 document.getElementById('mainPhoto').appendChild(mainPhotoImg);
 
-// gallery. 3x3 pagination이라 한 page에 9장씩 나눠 보여준다.
+// gallery. 사진을 가로 한 줄로 늘어놓고 양옆으로 넘긴다(CSS scroll-snap). 파스텔 version과 같은 구조다.
+// 움직임 줄이기를 켠 기기에서는 3D, 자동 넘김, morph를 하지 않는다.
+const DEV_REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const galleryEl = document.getElementById('gallery');
-const GALLERY_PAGE = 9;   // 3x3, 한 page 9장
 
-// 개발자(dev) version의 page 순서로 재배열한 gallery. config.js의 orderedGallery가 page 단위로 옮긴다.
+// 표시 순서. config.js의 orderedGallery가 invitation.conf 의 순서 설정을 반영한다.
 const GALLERY = orderedGallery((CONFIG.photos.galleryPageOrder || {}).dev);
 
 // 사진이 한 장도 없으면 gallery section을 감춘다.
@@ -300,86 +301,143 @@ if (!GALLERY.length) {
   if (sec) sec.style.display = 'none';
 }
 
-// lightbox는 page와 무관하게 gallery 전체를 순환한다.
+// lightbox는 gallery 전체를 순환한다.
 GALLERY.forEach((src) => loadedPhotos.push(src));
 
 const galleryItems = GALLERY.map((src, i) => {
   const item = document.createElement('figure');
   item.className = 'g-item';
-  item.style.cursor = 'zoom-in';
   item.appendChild(createPhoto(src, { caption: `웨딩 사진 ${i + 1}` }));
-  item.addEventListener('click', () => openLightbox(src));
+  item.addEventListener('click', () => openLightbox(src, item.querySelector('img')));
   return item;
 });
+galleryEl.replaceChildren(...galleryItems);
 
-const galleryPages = Math.max(1, Math.ceil(galleryItems.length / GALLERY_PAGE));
-let galleryPage = 0;
+// 아래쪽 '‹ [1/6] ›'
+const galleryNav = document.createElement('div');
+galleryNav.className = 'gallery-nav';
+galleryNav.innerHTML =
+  '<button type="button" class="gn-btn" data-step="-1" aria-label="이전 사진">‹</button>' +
+  '<span class="gn-count">[<b>1</b>/' + galleryItems.length + ']</span>' +
+  '<button type="button" class="gn-btn" data-step="1" aria-label="다음 사진">›</button>';
+galleryEl.insertAdjacentElement('afterend', galleryNav);
+const galleryCount = galleryNav.querySelector('b');
+let galleryIndex = 0;
 
-const galleryPager = document.createElement('div');
-galleryPager.className = 'gallery-pager';
-galleryEl.insertAdjacentElement('afterend', galleryPager);
+// 썸네일 줄. 누르면 그 사진으로 바로 간다.
+const galleryThumbs = document.createElement('div');
+galleryThumbs.className = 'gallery-thumbs';
+GALLERY.forEach((src, i) => {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'gt';
+  b.setAttribute('aria-label', `${i + 1}번째 사진 보기`);
+  const im = document.createElement('img');
+  im.src = photoSrc(src);
+  im.alt = '';
+  im.loading = 'lazy';
+  b.appendChild(im);
+  b.addEventListener('click', () => { pauseAutoplay(); goGallery(i); });
+  galleryThumbs.appendChild(b);
+});
+galleryNav.insertAdjacentElement('afterend', galleryThumbs);
 
-function renderGallery(p) {
-  const target = Math.min(Math.max(0, p), galleryPages - 1);
-  const dir = Math.sign(target - galleryPage);   // 다음(+1)/이전(-1) 방향으로 부드럽게 slide-인
-  galleryPage = target;
-  const start = galleryPage * GALLERY_PAGE;
-  galleryEl.replaceChildren(...galleryItems.slice(start, start + GALLERY_PAGE));
-  renderGalleryPager();
-  if (dir !== 0) {
-    galleryEl.style.transition = 'none';
-    galleryEl.style.transform = 'translateX(' + (dir * 26) + 'px)';
-    galleryEl.style.opacity = '0';
-    void galleryEl.offsetWidth;                   // reflow 후 transition 적용
-    galleryEl.style.transition = 'transform .34s cubic-bezier(.22,1,.36,1), opacity .3s ease';
-    galleryEl.style.transform = 'translateX(0)';
-    galleryEl.style.opacity = '1';
+// 가운데에 가장 가까운 사진을 현재 사진으로 본다(.on).
+// 3D 커버플로우: 가운데에서 떨어진 정도(-1~1)를 --d, 그 절댓값을 --ad 로 넘긴다.
+function syncGallery() {
+  const mid = galleryEl.scrollLeft + galleryEl.clientWidth / 2;
+  let best = 0, bestDist = Infinity;
+  galleryItems.forEach((it, i) => {
+    const center = it.offsetLeft + it.offsetWidth / 2;
+    const d = Math.abs(center - mid);
+    if (d < bestDist) { bestDist = d; best = i; }
+    const rel = Math.max(-1, Math.min(1, (center - mid) / (it.offsetWidth || 1)));
+    it.style.setProperty('--d', rel.toFixed(3));
+    it.style.setProperty('--ad', Math.abs(rel).toFixed(3));
+  });
+  galleryIndex = best;
+  galleryCount.textContent = String(best + 1);
+  galleryItems.forEach((it, i) => it.classList.toggle('on', i === best));
+  syncThumbs(best);
+}
+
+// 지금 썸네일이 줄 가운데 오도록 줄만 옆으로 민다(page는 움직이지 않는다).
+let lastThumb = -1;
+function syncThumbs(i) {
+  if (i === lastThumb) return;
+  lastThumb = i;
+  [...galleryThumbs.children].forEach((b, k) => b.classList.toggle('on', k === i));
+  const b = galleryThumbs.children[i];
+  if (b) {
+    galleryThumbs.scrollTo({
+      left: b.offsetLeft - (galleryThumbs.clientWidth - b.offsetWidth) / 2,
+      behavior: DEV_REDUCE ? 'auto' : 'smooth',
+    });
   }
 }
 
-function renderGalleryPager() {
-  if (galleryPages <= 1) { galleryPager.replaceChildren(); return; }
-  const frag = document.createDocumentFragment();
-  const btn = (label, page, opts = {}) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'pg-btn' + (opts.active ? ' active' : '');
-    b.textContent = label;
-    if (opts.disabled) b.disabled = true;
-    else b.addEventListener('click', () => renderGallery(page));
-    return b;
-  };
-  frag.appendChild(btn('‹', galleryPage - 1, { disabled: galleryPage === 0 }));
-  for (let i = 0; i < galleryPages; i++) {
-    frag.appendChild(btn(String(i + 1), i, { active: i === galleryPage }));
-  }
-  frag.appendChild(btn('›', galleryPage + 1, { disabled: galleryPage === galleryPages - 1 }));
-  galleryPager.replaceChildren(frag);
+function goGallery(i) {
+  const n = galleryItems.length;
+  if (!n) return;
+  const it = galleryItems[Math.min(Math.max(0, i), n - 1)];
+  galleryEl.scrollTo({
+    left: it.offsetLeft - (galleryEl.clientWidth - it.offsetWidth) / 2,
+    behavior: DEV_REDUCE ? 'auto' : 'smooth',
+  });
 }
 
-renderGallery(0);
+let gTick = false;
+galleryEl.addEventListener('scroll', () => {
+  if (gTick) return;
+  gTick = true;
+  requestAnimationFrame(() => { gTick = false; syncGallery(); });
+}, { passive: true });
 
-// gallery 좌우 swipe로 page를 넘긴다. gesture 방향을 초기에 판정한다(directional lock).
-// 가로로 확정되면 세로 scroll을 막아, 대각선 swipe 시 page가 위아래로 밀리지 않게 한다.
-let gSwipeX = 0, gSwipeY = 0, gLock = null;   // gLock: null(미정) | 'h'(가로) | 'v'(세로)
-galleryEl.addEventListener('touchstart', (e) => {
-  gSwipeX = e.touches[0].clientX; gSwipeY = e.touches[0].clientY; gLock = null;
-}, { passive: true });
-galleryEl.addEventListener('touchmove', (e) => {
-  const dx = e.touches[0].clientX - gSwipeX;
-  const dy = e.touches[0].clientY - gSwipeY;
-  if (gLock === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
-    gLock = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+galleryNav.addEventListener('click', (e) => {
+  const b = e.target.closest('.gn-btn');
+  if (b) { pauseAutoplay(); goGallery(galleryIndex + Number(b.dataset.step)); }
+});
+
+/* 자동 넘김: 화면에 보이는 동안 4초마다 다음 사진으로, 마지막 다음은 처음으로.
+   손가락을 대거나 button을 누르면 멈췄다가 8초 뒤 다시 이어진다.
+   지금 사진 아래 진행 바(css의 .autoplay .g-item.on::after)가 남은 시간을 보여준다. */
+const AUTOPLAY_MS = 4000;
+let autoTimer = 0, resumeTimer = 0, galleryVisible = false, autoPaused = false;
+
+function scheduleNext() {
+  clearTimeout(autoTimer);
+  if (!galleryVisible || autoPaused || DEV_REDUCE || galleryItems.length < 2) {
+    galleryEl.classList.remove('autoplay');
+    return;
   }
-  if (gLock === 'h') e.preventDefault();      // 가로 swipe 확정 → 세로 scroll 잠금
-}, { passive: false });
-galleryEl.addEventListener('touchend', (e) => {
-  const dx = e.changedTouches[0].clientX - gSwipeX;
-  if (gLock === 'h' && Math.abs(dx) > 48) {
-    renderGallery(galleryPage + (dx > 0 ? -1 : 1));   // 오른쪽=이전, 왼쪽=다음
-  }
-  gLock = null;
-}, { passive: true });
+  galleryEl.classList.add('autoplay');
+  galleryEl.style.setProperty('--autoplay', AUTOPLAY_MS + 'ms');
+  autoTimer = setTimeout(() => {
+    goGallery((galleryIndex + 1) % galleryItems.length);
+    galleryEl.classList.remove('autoplay');   // 진행 바를 새 사진에서 처음부터 다시 그린다
+    setTimeout(scheduleNext, 450);
+  }, AUTOPLAY_MS);
+}
+
+function pauseAutoplay() {
+  autoPaused = true;
+  clearTimeout(autoTimer);
+  clearTimeout(resumeTimer);
+  galleryEl.classList.remove('autoplay');
+  resumeTimer = setTimeout(() => { autoPaused = false; scheduleNext(); }, 8000);
+}
+
+['pointerdown', 'touchstart', 'wheel'].forEach((ev) =>
+  galleryEl.addEventListener(ev, pauseAutoplay, { passive: true }));
+
+if (galleryItems.length) {
+  new IntersectionObserver((es) => {
+    galleryVisible = es[0].isIntersecting;
+    scheduleNext();
+  }, { threshold: 0.6 }).observe(galleryEl);
+}
+
+syncGallery();
 
 // 첫 방문에도 좌우 swipe가 바로 보이도록, 초기 load 뒤 gallery 사진 전체를 미리 받아 cache에 올린다.
 const _preloaded = [];
@@ -394,16 +452,44 @@ const lightboxImg = document.getElementById('lightboxImg');
 const lightboxCap = document.getElementById('lightboxCap');
 let lightboxIndex = 0;
 
-function openLightbox(src) {
+function openLightboxNow(src) {
   lightboxIndex = loadedPhotos.indexOf(src);
   showLightboxPhoto();
   lightbox.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
-function closeLightbox() {
+// 누른 사진이 화면 가득 커지도록 View Transitions API로 연다. 미지원이면 바로 연다.
+let lbFromImg = null;
+function openLightbox(src, fromImg) {
+  if (!document.startViewTransition || !fromImg || DEV_REDUCE) { openLightboxNow(src); return; }
+  lbFromImg = fromImg;
+  fromImg.style.viewTransitionName = 'wedding-photo';
+  const t = document.startViewTransition(() => {
+    fromImg.style.viewTransitionName = '';
+    lightboxImg.style.viewTransitionName = 'wedding-photo';
+    openLightboxNow(src);
+  });
+  t.finished.finally(() => { lightboxImg.style.viewTransitionName = ''; });
+}
+
+function closeLightboxNow() {
   lightbox.classList.remove('open');
   document.body.style.overflow = '';
+}
+
+// 닫을 때는 처음 누른 사진 자리로 줄어든다. 다른 사진으로 넘겼다면 그냥 닫는다.
+function closeLightbox() {
+  const back = lbFromImg && photoSrc(loadedPhotos[lightboxIndex]) === lbFromImg.getAttribute('src') ? lbFromImg : null;
+  lbFromImg = null;
+  if (!document.startViewTransition || !back || DEV_REDUCE) { closeLightboxNow(); return; }
+  lightboxImg.style.viewTransitionName = 'wedding-photo';
+  const t = document.startViewTransition(() => {
+    lightboxImg.style.viewTransitionName = '';
+    back.style.viewTransitionName = 'wedding-photo';
+    closeLightboxNow();
+  });
+  t.finished.finally(() => { back.style.viewTransitionName = ''; });
 }
 
 function showLightboxPhoto() {

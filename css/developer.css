@@ -1909,3 +1909,169 @@ body { font-variant-ligatures: none; }
   font-size: 13px;
   color: var(--text-dim);
 }
+
+/* 20. 갤러리: 가로 스와이프, 3D 커버플로우, 자동 넘김 진행 바, 썸네일 줄 (js/developer.js 와 짝) */
+.gallery {
+  display: flex;
+  gap: 12px;
+  margin: 0 -24px;
+  padding: 8px 0 18px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  perspective: 1000px;
+}
+
+.gallery::-webkit-scrollbar { display: none; }
+
+/* 첫 사진과 마지막 사진도 가운데에 오도록 양 끝 빈 칸 (12% + 76% + 12%) */
+.gallery::before,
+.gallery::after {
+  content: "";
+  flex: 0 0 calc(12% - 12px);
+}
+
+.gallery .g-item {
+  flex: 0 0 76%;
+  aspect-ratio: 4 / 5;
+  scroll-snap-align: center;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow-panel);
+  cursor: zoom-in;
+  opacity: calc(1 - var(--ad, 0) * 0.5);
+  transform: rotateY(calc(var(--d, 0) * -38deg)) scale(calc(1 - var(--ad, 0) * 0.12));
+  transition: opacity 0.15s linear, border-color 0.3s ease;
+  will-change: transform;
+}
+
+.gallery .g-item.on { border-color: color-mix(in srgb, var(--laravel) 55%, var(--line)); }
+
+.gallery .g-item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 지금 사진 아래 Laravel red 진행 바 */
+.gallery .g-item::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 10px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--laravel);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--laravel) 60%, transparent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gallery.autoplay .g-item.on::after {
+  opacity: 1;
+  animation: gal-progress var(--autoplay, 4000ms) linear forwards;
+}
+
+@keyframes gal-progress {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* '‹ [1/6] ›' */
+.gallery-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 4px;
+  font-family: var(--mono);
+}
+
+.gallery-nav .gn-btn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+@media (hover: hover) {
+  .gallery-nav .gn-btn:hover { color: var(--laravel); border-color: var(--laravel); }
+}
+
+.gallery-nav .gn-count {
+  min-width: 56px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--comment);
+}
+
+.gallery-nav .gn-count b { color: var(--amber); font-weight: 500; }
+
+/* 썸네일 줄 */
+.gallery-thumbs {
+  display: flex;
+  gap: 8px;
+  margin: 14px -24px 0;
+  padding: 6px 24px 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gallery-thumbs::-webkit-scrollbar { display: none; }
+.gallery-thumbs::before,
+.gallery-thumbs::after { content: ""; margin: auto; }
+
+.gallery-thumbs .gt {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 56px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--panel);
+  opacity: 0.45;
+  scale: 0.9;
+  cursor: pointer;
+  transition: opacity 0.3s ease, scale 0.3s ease, border-color 0.3s ease;
+}
+
+.gallery-thumbs .gt img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-thumbs .gt.on {
+  opacity: 1;
+  scale: 1;
+  border-color: var(--laravel);
+  box-shadow: 0 0 0 1px var(--laravel);
+}
+
+/* 크게 보기 morph 속도 */
+::view-transition-group(wedding-photo) {
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.3, 0.9, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery .g-item { transform: none; opacity: 1; }
+  .gallery .g-item::after { display: none; }
+}

@@ -13,7 +13,7 @@
    07. 배경색          : 스크롤에 따라 배경색이 은은하게 바뀐다 (CSS scroll-timeline 미지원 시 JS)
    08. 프로필 카드     : 손가락을 댄 자리에 빛이 따라오고 PC에서는 3D로 기운다
    09. 복사·공유 하트  : 복사·공유 button을 누르면 하트가 터지고 짧게 진동한다
-   10. 마지막 장면     : Thank You 손글씨와 아래에서 떠오르는 하트
+   10. 마지막 장면     : '감사합니다' 손글씨와 아래에서 떠오르는 하트
  */
 
 const FX_MOTION = !(typeof REDUCE_MOTION !== 'undefined' && REDUCE_MOTION);
@@ -364,14 +364,14 @@ fxSafe('burst', () => {
 });
 
 
-/* 10. 마지막 장면: footer가 보이면 'Thank You'를 손글씨로 그리고 아래에서 하트가 천천히 떠오른다. */
+/* 10. 마지막 장면: footer가 보이면 '감사합니다'를 손글씨로 그리고 아래에서 하트가 천천히 떠오른다. */
 
 fxSafe('finale', () => {
   const footer = document.querySelector('footer');
   const thanks = footer && footer.querySelector('.ft-thanks');
   if (!footer || !thanks) return;
 
-  // 'Thank You' 글자를 손글씨 획 SVG로 바꾼다. 화면 읽기 프로그램에는 원래 글자를 알려 준다.
+  // '감사합니다' 글자를 손글씨 획 SVG로 바꾼다. 화면 읽기 프로그램에는 원래 글자를 알려 준다.
   const label = thanks.textContent.trim();
   thanks.setAttribute('aria-label', label);
   thanks.innerHTML =

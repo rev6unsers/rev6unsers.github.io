@@ -1812,8 +1812,8 @@ footer > *:not(.ft-bubbles) { position: relative; z-index: 1; }
   fill: transparent;
   stroke: var(--coral);
   stroke-width: 0.9;
-  stroke-dasharray: 500;
-  stroke-dashoffset: 500;
+  stroke-dasharray: 1400;
+  stroke-dashoffset: 1400;
 }
 
 .ft-thanks.play .ft-sign text {
