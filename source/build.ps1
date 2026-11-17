@@ -175,6 +175,20 @@ function JAccounts([string]$s) {
   return '[' + ($out -join ',') + ']'
 }
 
+# 역할|이름|전화번호,... 를 JSON 객체 배열로 만듭니다. '연락하기' 창에 씁니다.
+# 번호가 비어 있는 사람은 뺍니다.
+function JContacts([string]$s) {
+  $recs = SplitList $s
+  $out = @()
+  foreach ($r in $recs) {
+    $p = $r.Split('|')
+    if ($p.Count -lt 3 -or $p[2].Trim() -eq '') { continue }
+    $out += '{"role":' + (JStr $p[0].Trim()) + ',"name":' + (JStr $p[1].Trim()) + ',"phone":' + (JStr $p[2].Trim()) + '}'
+  }
+  if ($out.Count -eq 0) { return '[]' }
+  return '[' + ($out -join ',') + ']'
+}
+
 # 콤마 목록의 n번째(1부터) 항목입니다. 부모 이름을 하나씩 쓰는 token에 씁니다.
 function Nth([string]$s, [int]$n) {
   $items = SplitList $s
@@ -370,6 +384,8 @@ $weddingJson = '{"at":' + (JStr (Cf 'WEDDING_AT')) +
     ',"zoom":' + (NumOr (Cf 'VENUE_MAP_ZOOM') '17') + '}' +
   ',"map":{"naver":' + (JStr (Cf 'MAP_NAVER_URL')) +
     ',"kakao":' + (JStr (Cf 'MAP_KAKAO_URL')) + '}' +
+  ',"contacts":{"groom":' + (JContacts (Cf 'GROOM_CONTACTS')) +
+    ',"bride":' + (JContacts (Cf 'BRIDE_CONTACTS')) + '}' +
   ',"photos":{"main":' + (JStr (Cf 'PHOTO_MAIN')) +
     ',"mainDev":' + (JStr (Cf 'PHOTO_MAIN_DEV')) +
     ',"bless":' + (JStr (Cf 'PHOTO_BLESS')) +
