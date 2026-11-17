@@ -412,12 +412,20 @@ else      { [void]$data.AppendLine('window.__NO_API__=true;') }
 [void]$data.AppendLine("window.__KAKAO_KEY__=$(JStr (Cf 'KAKAO_JS_KEY'));")
 [void]$data.AppendLine("window.__GA_ID__=$(JStr (Cf 'GA_MEASUREMENT_ID'));")
 # 배경음악. src/assets 에 있는 파일 이름을 적으면 켜진다. 파일이 없으면 끈다.
-$bgm = (Cf 'BGM_FILE').Trim()
-if ($bgm -and -not (Test-Path -LiteralPath ([IO.Path]::Combine($src, 'assets', $bgm)))) {
-  Write-Warning "BGM_FILE '$bgm' 이 src/assets 에 없어 배경음악을 끕니다."
-  $bgm = ''
+# BGM_FILE 은 파스텔 version, BGM_FILE_DEV 는 개발자·감사 page 용이다(비우면 BGM_FILE 을 같이 쓴다).
+function BgmPath([string]$key) {
+  $f = (Cf $key).Trim()
+  if ($f -and -not (Test-Path -LiteralPath ([IO.Path]::Combine($src, 'assets', $f)))) {
+    Write-Warning "$key '$f' 이 src/assets 에 없어 이 음악은 끕니다."
+    $f = ''
+  }
+  if ($f) { return "assets/$f" } else { return '' }
 }
-[void]$data.AppendLine("window.__BGM__=$(JStr $(if ($bgm) { "assets/$bgm" } else { '' }));")
+$bgm = BgmPath 'BGM_FILE'
+$bgmDev = BgmPath 'BGM_FILE_DEV'
+if (-not $bgmDev) { $bgmDev = $bgm }
+[void]$data.AppendLine("window.__BGM__=$(JStr $bgm);")
+[void]$data.AppendLine("window.__BGM_DEV__=$(JStr $bgmDev);")
 [void]$data.AppendLine("window.__GIFT__=$(JStr $giftBlob);")
 Write-Text ([IO.Path]::Combine($Out, 'js', 'data.js')) $data.ToString()
 

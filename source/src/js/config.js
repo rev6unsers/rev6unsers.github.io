@@ -922,15 +922,17 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 
 /* 배경음악 (파스텔·개발자·감사 page 공통)
-   window.__BGM__ (invitation.conf 의 BGM_FILE) 이 있을 때만 켠다.
+   window.__BGM__ / __BGM_DEV__ (invitation.conf 의 BGM_FILE / BGM_FILE_DEV) 가 있을 때만 켠다.
    표지를 지나 스크롤을 내리기 시작하면 튼다(아래 설명 참고).
    오른쪽 아래 ♪ button으로 끄고 켜며, 끈 상태는 이 기기에 기억한다.
    다른 앱이나 탭으로 가면 멈추고, 돌아오면 이어서 튼다. */
 (function bgm() {
-  var src = (typeof window !== 'undefined' && window.__BGM__) || '';
+  // 개발자 css 를 쓰는 page(개발자 version, 감사 page)는 개발자용 음악을 쓴다.
+  var isDev = !!document.querySelector('link[href*="developer.css"]');
+  var src = (isDev ? window.__BGM_DEV__ : window.__BGM__) || '';
   if (!src) return;
   var KEY = 'wedding-bgm-off';
-  var VOL = 0.15;                      // 최종 볼륨(0~1)
+  var VOL = 0.165;                     // 최종 볼륨(0~1)
   var audio = new Audio(src);
   audio.loop = true;
   audio.preload = 'auto';
