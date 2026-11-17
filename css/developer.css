@@ -2210,3 +2210,12 @@ body { font-variant-ligatures: none; }
 @media (hover: hover) {
   .made-by:hover { color: var(--laravel); }
 }
+
+/* 22. hero 위 'Our Wedding Day' (파스텔 version의 상단 문구와 맞춘다) */
+.hero-names .hero-eyebrow {
+  margin-bottom: 12px;
+  font-family: var(--mono);
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  color: var(--comment);
+}
