@@ -545,9 +545,59 @@ function initNaverMap() {
   // 키(ncpKeyId)는 invitation.conf 의 NAVER_MAP_KEY_ID 가 window.__NAVER_MAP_KEY__ 로 주입된다.
   // 없으면 아래 cfg.keyId로 fallback하는데 그쪽은 늘 비어 있다.
   var keyId = (typeof window !== 'undefined' && window.__NAVER_MAP_KEY__) || cfg.keyId || '';
-  // 네이버 지도 키가 없거나 인증에 실패하면 key가 필요 없는 구글 지도 embed를 띄운다.
-  // 좌표마저 없을 때에만 안내 문구(.is-fallback)로 떨어진다.
-  function fallback() {
+  // 순서: 네이버 지도(키가 있을 때) → 카카오맵(카카오 JavaScript 키가 있을 때) → 구글 지도(키 불필요).
+  // 앞 단계가 실패하면 다음 단계로 넘어간다. 좌표마저 없을 때에만 안내 문구(.is-fallback)로 떨어진다.
+  var fallback = kakaoMap;
+
+  /* 카카오맵. 카카오톡 공유와 같은 JavaScript 키(window.__KAKAO_KEY__)를 쓴다.
+     카카오디벨로퍼스에서 [카카오맵] 사용 설정 ON, JavaScript SDK 도메인 등록이 되어 있어야 뜬다.
+     실패하거나 8초 안에 뜨지 않으면 구글 지도로 넘어간다. */
+  function kakaoMap() {
+    var key = (typeof window !== 'undefined' && window.__KAKAO_KEY__) || '';
+    if (!key || !(cfg.lat && cfg.lng)) { googleMap(); return; }
+    var done = false;
+    function giveUp() { if (!done) { done = true; clearTimeout(timer); googleMap(); } }
+    var timer = setTimeout(giveUp, 8000);
+    var s = document.createElement('script');
+    s.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + encodeURIComponent(key) + '&autoload=false';
+    s.onerror = giveUp;
+    s.onload = function () {
+      if (!window.kakao || !kakao.maps || !kakao.maps.load) { giveUp(); return; }
+      kakao.maps.load(function () {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        box.innerHTML = '';
+        var pos = new kakao.maps.LatLng(cfg.lat, cfg.lng);
+        // 약도라서 손으로 끌거나 확대되지 않게 고정한다(page scroll이 지도에 갇히지 않게).
+        var map = new kakao.maps.Map(box, {
+          center: pos,
+          level: 3,
+          draggable: false,
+          scrollwheel: false,
+          disableDoubleClickZoom: true,
+        });
+        new kakao.maps.Marker({ position: pos, map: map });
+        // 핀 위 식장 이름 말풍선
+        var label = document.createElement('div');
+        label.textContent = cfg.label || '';
+        label.style.cssText = 'padding:5px 11px;border-radius:99px;background:#fff;color:#372d28;' +
+          'font-size:13px;font-weight:700;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.18)';
+        if (cfg.label) new kakao.maps.CustomOverlay({ position: pos, content: label, yAnchor: 2.6, map: map });
+        // 지도를 누르면 카카오맵(앱이 있으면 앱)으로 길찾기를 연다.
+        var url = (CONFIG.map && CONFIG.map.kakao) || '';
+        if (url) {
+          box.style.cursor = 'pointer';
+          kakao.maps.event.addListener(map, 'click', function () { window.open(url, '_blank', 'noopener'); });
+        }
+        window.addEventListener('resize', function () { map.relayout(); map.setCenter(pos); });
+      });
+    };
+    document.head.appendChild(s);
+  }
+
+  // 구글 지도. key가 필요 없는 embed iframe이다.
+  function googleMap() {
     if (cfg.lat && cfg.lng) {
       var f = document.createElement('iframe');
       f.src = 'https://maps.google.com/maps?q=' + cfg.lat + ',' + cfg.lng +
