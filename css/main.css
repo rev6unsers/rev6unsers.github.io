@@ -2061,3 +2061,51 @@ footer > *:not(.ft-bubbles) { position: relative; z-index: 1; }
   text-decoration: none;
   opacity: 0.85;
 }
+
+/* 22. 배경음악 button (js/config.js 의 bgm). 오른쪽 아래에 떠 있다.
+   켜져 있으면 ♪ 가 천천히 흔들리고 주위에 은은한 물결이 퍼진다. 꺼지면 사선이 그어진다. */
+.bgm-btn {
+  position: fixed;
+  right: calc(14px + env(safe-area-inset-right, 0px));
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  z-index: 90;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--coral-soft);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--paper) 82%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 14px rgba(192, 106, 80, 0.16);
+  color: var(--coral-deep);
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bgm-btn .bgm-ic { position: relative; display: inline-block; }
+.bgm-btn:not(.on) { color: var(--soft, #a8968c); }
+.bgm-btn:not(.on) .bgm-ic::after {
+  content: '';
+  position: absolute;
+  left: -3px; right: -3px; top: 50%;
+  height: 1.5px;
+  background: currentColor;
+  transform: rotate(-40deg);
+}
+.bgm-btn.on .bgm-ic { animation: bgm-sway 2.4s ease-in-out infinite; }
+.bgm-btn.on::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  border: 1px solid var(--coral);
+  animation: bgm-ripple 2.4s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes bgm-sway { 0%, 100% { rotate: -8deg; } 50% { rotate: 8deg; } }
+@keyframes bgm-ripple { from { scale: 1; opacity: 0.55; } to { scale: 1.6; opacity: 0; } }
+.intro-on .bgm-btn { opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) {
+  .bgm-btn.on .bgm-ic, .bgm-btn.on::before { animation: none; }
+}

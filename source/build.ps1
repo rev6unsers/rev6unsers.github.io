@@ -411,6 +411,13 @@ else      { [void]$data.AppendLine('window.__NO_API__=true;') }
 [void]$data.AppendLine("window.__NAVER_MAP_KEY__=$(JStr (Cf 'NAVER_MAP_KEY_ID'));")
 [void]$data.AppendLine("window.__KAKAO_KEY__=$(JStr (Cf 'KAKAO_JS_KEY'));")
 [void]$data.AppendLine("window.__GA_ID__=$(JStr (Cf 'GA_MEASUREMENT_ID'));")
+# 배경음악. src/assets 에 있는 파일 이름을 적으면 켜진다. 파일이 없으면 끈다.
+$bgm = (Cf 'BGM_FILE').Trim()
+if ($bgm -and -not (Test-Path -LiteralPath ([IO.Path]::Combine($src, 'assets', $bgm)))) {
+  Write-Warning "BGM_FILE '$bgm' 이 src/assets 에 없어 배경음악을 끕니다."
+  $bgm = ''
+}
+[void]$data.AppendLine("window.__BGM__=$(JStr $(if ($bgm) { "assets/$bgm" } else { '' }));")
 [void]$data.AppendLine("window.__GIFT__=$(JStr $giftBlob);")
 Write-Text ([IO.Path]::Combine($Out, 'js', 'data.js')) $data.ToString()
 

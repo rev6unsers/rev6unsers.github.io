@@ -920,3 +920,86 @@ document.addEventListener('DOMContentLoaded', function () {
     );
   } catch (e) {}
 })();
+
+/* 배경음악 (파스텔·개발자·감사 page 공통)
+   window.__BGM__ (invitation.conf 의 BGM_FILE) 이 있을 때만 켠다.
+   브라우저가 소리 있는 자동 재생을 막으므로 처음 화면을 누를 때 시작한다.
+   오른쪽 아래 ♪ button으로 끄고 켜며, 끈 상태는 이 기기에 기억한다.
+   다른 앱이나 탭으로 가면 멈추고, 돌아오면 이어서 튼다. */
+(function bgm() {
+  var src = (typeof window !== 'undefined' && window.__BGM__) || '';
+  if (!src) return;
+  var KEY = 'wedding-bgm-off';
+  var VOL = 0.45;
+  var audio = new Audio(src);
+  audio.loop = true;
+  audio.preload = 'auto';
+  audio.volume = 0;
+  var wanted = true, btn = null, fadeT = 0;
+  try { wanted = localStorage.getItem(KEY) !== '1'; } catch (e) {}
+
+  function fade(to, done) {
+    clearInterval(fadeT);
+    fadeT = setInterval(function () {
+      var v = audio.volume + (to > audio.volume ? 0.05 : -0.05);
+      if ((to > audio.volume && v >= to) || (to <= audio.volume && v <= to)) {
+        audio.volume = Math.max(0, Math.min(1, to));
+        clearInterval(fadeT);
+        if (done) done();
+      } else audio.volume = Math.max(0, Math.min(1, v));
+    }, 60);
+  }
+  function render() {
+    if (!btn) return;
+    var on = !audio.paused;
+    btn.classList.toggle('on', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.setAttribute('aria-label', on ? '배경음악 끄기' : '배경음악 켜기');
+  }
+  // 소리 재생을 허락받는 사용자 동작. 터치는 손을 뗄 때(pointerup/touchend)라야 허락된다.
+  var GESTURES = ['pointerup', 'touchend', 'click', 'keydown'];
+  var started = false;
+  function stopListening() {
+    started = true;
+    GESTURES.forEach(function (ev) { document.removeEventListener(ev, firstTouch, true); });
+  }
+  function play() {
+    var p = audio.play();
+    if (p && p.then) p.then(function () { stopListening(); fade(VOL); render(); }, render);
+    else { stopListening(); fade(VOL); render(); }
+  }
+  function pause() { fade(0, function () { audio.pause(); render(); }); }
+
+  function remember(on) { try { on ? localStorage.removeItem(KEY) : localStorage.setItem(KEY, '1'); } catch (e) {} }
+
+  // 첫 터치에서 시작. 스크롤처럼 허락이 안 되는 동작이면 다음 터치에서 다시 시도한다.
+  // ♪ button 자체를 누른 경우는 button 쪽에서 처리한다.
+  function firstTouch(e) {
+    if (started || !wanted) return;
+    if (btn && e && e.target && btn.contains(e.target)) return;
+    if (audio.paused) play();
+  }
+  GESTURES.forEach(function (ev) { document.addEventListener(ev, firstTouch, true); });
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) { if (!audio.paused) { audio.pause(); audio.__resume = true; } }
+    else if (audio.__resume) { audio.__resume = false; play(); }
+  });
+  audio.addEventListener('pause', render);
+  audio.addEventListener('play', render);
+
+  function mount() {
+    btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'bgm-btn';
+    btn.innerHTML = '<span class="bgm-ic" aria-hidden="true">♪</span>';
+    btn.addEventListener('click', function () {
+      if (audio.paused) { wanted = true; remember(true); play(); }
+      else { wanted = false; remember(false); pause(); }
+    });
+    document.body.appendChild(btn);
+    render();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);
+  else mount();
+})();

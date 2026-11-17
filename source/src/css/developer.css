@@ -2219,3 +2219,40 @@ body { font-variant-ligatures: none; }
   letter-spacing: 0.04em;
   color: var(--comment);
 }
+
+/* 23. 배경음악 button (js/config.js 의 bgm). 오른쪽 아래, 터미널 키캡 모양. */
+.bgm-btn {
+  position: fixed;
+  right: calc(14px + env(safe-area-inset-right, 0px));
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  z-index: 90;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bgm-btn .bgm-ic { position: relative; display: inline-block; }
+.bgm-btn.on { color: var(--laravel); border-color: color-mix(in srgb, var(--laravel) 45%, var(--line)); }
+.bgm-btn:not(.on) .bgm-ic::after {
+  content: '';
+  position: absolute;
+  left: -3px; right: -3px; top: 50%;
+  height: 1.5px;
+  background: currentColor;
+  transform: rotate(-40deg);
+}
+.bgm-btn.on .bgm-ic { animation: bgm-blink 1.2s steps(2, jump-none) infinite; }
+@keyframes bgm-blink { 50% { opacity: 0.45; } }
+@media (prefers-reduced-motion: reduce) {
+  .bgm-btn.on .bgm-ic { animation: none; }
+}
