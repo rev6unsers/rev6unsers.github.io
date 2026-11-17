@@ -137,5 +137,5 @@ BRIDE_ACCOUNTS="천희진|우리은행|0000-000-000000,천재민 (아버지)|하
 # --- 외부 서비스 key (선택) ---
 # 발급 절차는 source/README.md 에 있습니다. 비워도 정상 동작합니다.
 NAVER_MAP_KEY_ID=""
-KAKAO_JS_KEY="beca3583d14360d8646088d5cf062b9d"
+KAKAO_JS_KEY="fdd865ec2d411449e12e7633baf0120b"
 GA_MEASUREMENT_ID=""
