@@ -1204,7 +1204,7 @@ footer .share-btn:active { transform: scale(0.97); }
 /* 14. 글씨체 굵기
    글씨체는 참고 소스와 같다. 제목과 serif는 고운바탕, 본문은 고운돋움.
    고운바탕은 400/700 뿐이라 제목은 400, 강조할 곳만 700으로 둔다.
-   영문 label(Wedding Day 등)만 나눔펜 손글씨로 둔다. */
+   영문 label(The Day 등)만 나눔펜 손글씨로 둔다. */
 
 .cover h1,
 .label-title,
@@ -1391,7 +1391,7 @@ footer .thanks-line + div { font-weight: 700; }
 
 .intro-sign text {
   font-family: var(--script);
-  font-size: 64px;
+  font-size: 52px;
   fill: transparent;
   stroke: var(--coral);
   stroke-width: 1.1;

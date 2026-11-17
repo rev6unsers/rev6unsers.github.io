@@ -4,7 +4,7 @@
    움직임 줄이기(REDUCE_MOTION, main.js)를 켠 기기에서는 움직이는 연출을 하지 않는다.
 
    목차
-   01. 오프닝 인트로   : 'Save the date'를 손글씨로 그리고 막이 걷히듯 열린다 (세션당 한 번)
+   01. 오프닝 인트로   : 'Our Wedding Day'를 손글씨로 그리고 막이 걷히듯 열린다 (세션당 한 번)
    02. 꽃잎            : 표지 위로 꽃잎이 흩날린다 (canvas, 표지가 보일 때만)
    03. 하트 터치       : 표지를 누르면 그 자리에서 하트가 떠오른다
    04. 진행 바         : 맨 위 얇은 바가 읽은 만큼 차오른다 (CSS scroll-timeline, 미지원 시 JS)
@@ -48,7 +48,7 @@ fxSafe('intro', () => {
   intro.innerHTML =
     '<div class="intro-glow"></div>' +
     '<svg class="intro-sign" viewBox="0 0 360 100" aria-hidden="true">' +
-      '<text x="180" y="70" text-anchor="middle">Save the date</text>' +
+      '<text x="180" y="70" text-anchor="middle">Our Wedding Day</text>' +
     '</svg>' +
     `<div class="intro-names">${g} <i>&amp;</i> ${b}</div>` +
     `<div class="intro-date">${dateText}</div>` +
