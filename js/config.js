@@ -930,7 +930,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var src = (typeof window !== 'undefined' && window.__BGM__) || '';
   if (!src) return;
   var KEY = 'wedding-bgm-off';
-  var VOL = 0.28;                      // 최종 볼륨(0~1)
+  var VOL = 0.15;                      // 최종 볼륨(0~1)
   var audio = new Audio(src);
   audio.loop = true;
   audio.preload = 'auto';
