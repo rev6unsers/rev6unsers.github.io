@@ -183,6 +183,8 @@ function JContacts([string]$s) {
   foreach ($r in $recs) {
     $p = $r.Split('|')
     if ($p.Count -lt 3 -or $p[2].Trim() -eq '') { continue }
+    # 010-0000-0000 같은 자리표시 번호는 넣지 않는다(없는 번호로 전화가 걸리지 않게).
+    if (($p[2] -replace '[^0-9]', '') -match '^010?0+$') { continue }
     $out += '{"role":' + (JStr $p[0].Trim()) + ',"name":' + (JStr $p[1].Trim()) + ',"phone":' + (JStr $p[2].Trim()) + '}'
   }
   if ($out.Count -eq 0) { return '[]' }
