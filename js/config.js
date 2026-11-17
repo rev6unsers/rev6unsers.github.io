@@ -923,7 +923,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /* 배경음악 (파스텔·개발자·감사 page 공통)
    window.__BGM__ / __BGM_DEV__ (invitation.conf 의 BGM_FILE / BGM_FILE_DEV) 가 있을 때만 켠다.
-   표지를 지나 스크롤을 내리기 시작하면 튼다(아래 설명 참고).
+   page 를 열면 바로 튼다(막히면 첫 터치에서. 아래 설명 참고).
    오른쪽 아래 ♪ button으로 끄고 켜며, 끈 상태는 이 기기에 기억한다.
    다른 앱이나 탭으로 가면 멈추고, 돌아오면 이어서 튼다. */
 (function bgm() {
@@ -948,14 +948,15 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!ctx) {
       var AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return;
+      var cur = audio.paused ? 0 : audio.volume;   // 이미 자동 재생 중이면 그 볼륨을 이어받는다
       try {
         ctx = new AC();
         gain = ctx.createGain();
-        gain.gain.value = 0;
+        gain.gain.value = cur;
         ctx.createMediaElementSource(audio).connect(gain);
         gain.connect(ctx.destination);
         audio.volume = 1;
-      } catch (e) { ctx = null; gain = null; audio.volume = 0; return; }
+      } catch (e) { ctx = null; gain = null; audio.volume = cur; return; }
     }
     if (ctx.state === 'suspended') { try { ctx.resume(); } catch (e) {} }
   }
@@ -978,29 +979,26 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   function render() {
     if (!btn) return;
-    var on = !audio.paused && !unlocking;
+    var on = !audio.paused;
     btn.classList.toggle('on', on);
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     btn.setAttribute('aria-label', on ? '배경음악 끄기' : '배경음악 켜기');
   }
-  /* 언제 트는가: 첫 화면(표지)을 지나 스크롤을 내리기 시작할 때.
-     스크롤만으로는 브라우저가 소리를 허락하지 않는다. 그래서
-       1) 첫 터치(보통 인트로를 누를 때)에 소리 없이 잠깐 재생했다 멈춰 '허락'만 받아 두고
-       2) 스크롤이 표지를 지나면 그때 실제로 튼다.
-     터치 없이 바로 스크롤했다면 허락이 없으므로, 그다음 첫 터치에서 바로 튼다.
-     스크롤할 것이 거의 없는 page(감사 page)는 처음부터 '지난 것'으로 본다. */
+  /* 언제 트는가: page 를 열자마자.
+     다만 브라우저는(특히 휴대폰은) 사용자가 화면을 한 번 누르기 전에는 소리 재생을 막는다. 그래서
+       1) 열리자마자 바로 재생을 시도하고 (허락하는 브라우저는 여기서 바로 나온다)
+       2) 막히면 첫 터치(보통 인트로를 누를 때)에서 바로 튼다. */
   var GESTURES = ['pointerup', 'touchend', 'click', 'keydown'];
-  var started = false, unlocked = false, unlocking = false, passed = false;
+  var started = false;
   function stopListening() {
     started = true;
     GESTURES.forEach(function (ev) { document.removeEventListener(ev, onGesture, true); });
-    window.removeEventListener('scroll', onScroll);
   }
   function play() {
     if (ctx) graph();                  // 백그라운드에서 멈춘 AudioContext 를 다시 깨운다
     var p = audio.play();
-    if (p && p.then) p.then(function () { unlocked = true; stopListening(); fade(VOL); render(); }, render);
-    else { unlocked = true; stopListening(); fade(VOL); render(); }
+    if (p && p.then) p.then(function () { stopListening(); fade(VOL); render(); }, render);
+    else { stopListening(); fade(VOL); render(); }
   }
   function pause() {
     if (btn) btn.classList.remove('on');   // 누르자마자 꺼진 모양으로
@@ -1009,45 +1007,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function remember(on) { try { on ? localStorage.removeItem(KEY) : localStorage.setItem(KEY, '1'); } catch (e) {} }
 
-  // 허락만 받기: 볼륨 0으로 재생을 시작했다가 곧바로 멈춘다.
-  function unlock() {
-    if (unlocked || unlocking) return;
-    unlocking = true;
-    setV(0);
-    var p = audio.play();
-    var after = function () {
-      unlocking = false;
-      unlocked = true;
-      if (passed && wanted && !started) { play(); return; }
-      audio.pause();
-      audio.currentTime = 0;
-      render();
-    };
-    if (p && p.then) p.then(after, function () { unlocking = false; });
-    else after();
-  }
-
   // ♪ button 자체를 누른 경우는 button 쪽에서 처리한다.
   function onGesture(e) {
     if (started || !wanted) return;
     if (btn && e && e.target && btn.contains(e.target)) return;
     graph();
-    if (passed) play();
-    else unlock();
-  }
-  function onScroll() {
-    if (passed) return;
-    if (window.scrollY > window.innerHeight * 0.3) {
-      passed = true;
-      if (wanted && unlocked && !started) play();
-    }
+    play();
   }
   GESTURES.forEach(function (ev) { document.addEventListener(ev, onGesture, true); });
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('load', function () {
-    var root = document.documentElement;
-    if (root.scrollHeight < window.innerHeight * 1.5) passed = true;
-  });
+  if (wanted) play();                  // 1) 바로 재생 시도
 
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) { if (!audio.paused) { audio.pause(); audio.__resume = true; } }
