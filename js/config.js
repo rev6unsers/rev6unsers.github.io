@@ -930,7 +930,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var src = (typeof window !== 'undefined' && window.__BGM__) || '';
   if (!src) return;
   var KEY = 'wedding-bgm-off';
-  var VOL = 0.45;
+  var VOL = 0.28;                      // 최종 볼륨(0~1)
   var audio = new Audio(src);
   audio.loop = true;
   audio.preload = 'auto';
@@ -938,15 +938,40 @@ document.addEventListener('DOMContentLoaded', function () {
   var wanted = true, btn = null, fadeT = 0;
   try { wanted = localStorage.getItem(KEY) !== '1'; } catch (e) {}
 
+  /* 볼륨. 아이폰 Safari는 audio.volume 을 무시하고 늘 최대로 튼다.
+     그래서 Web Audio 의 GainNode 를 거쳐 볼륨을 조절한다. 안 되는 브라우저는 audio.volume 으로.
+     AudioContext 는 사용자 동작 안에서 만들어야 하므로 graph() 는 터치·button 처리에서 부른다. */
+  var ctx = null, gain = null;
+  function graph() {
+    if (!ctx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      try {
+        ctx = new AC();
+        gain = ctx.createGain();
+        gain.gain.value = 0;
+        ctx.createMediaElementSource(audio).connect(gain);
+        gain.connect(ctx.destination);
+        audio.volume = 1;
+      } catch (e) { ctx = null; gain = null; audio.volume = 0; return; }
+    }
+    if (ctx.state === 'suspended') { try { ctx.resume(); } catch (e) {} }
+  }
+  function getV() { return gain ? gain.gain.value : audio.volume; }
+  function setV(v) { v = Math.max(0, Math.min(1, v)); if (gain) gain.gain.value = v; else audio.volume = v; }
+
   function fade(to, done) {
     clearInterval(fadeT);
+    var step = Math.max(0.02, to / 12), ticks = 0;
     fadeT = setInterval(function () {
-      var v = audio.volume + (to > audio.volume ? 0.05 : -0.05);
-      if ((to > audio.volume && v >= to) || (to <= audio.volume && v <= to)) {
-        audio.volume = Math.max(0, Math.min(1, to));
+      var cur = getV();
+      var v = cur + (to > cur ? step : -step);
+      // 볼륨이 바뀌지 않는 기기(아이폰의 audio.volume)에서도 1.5초 안에는 반드시 끝낸다.
+      if (++ticks > 25 || (to > cur && v >= to) || (to <= cur && v <= to)) {
+        setV(to);
         clearInterval(fadeT);
         if (done) done();
-      } else audio.volume = Math.max(0, Math.min(1, v));
+      } else setV(v);
     }, 60);
   }
   function render() {
@@ -970,11 +995,15 @@ document.addEventListener('DOMContentLoaded', function () {
     window.removeEventListener('scroll', onScroll);
   }
   function play() {
+    if (ctx) graph();                  // 백그라운드에서 멈춘 AudioContext 를 다시 깨운다
     var p = audio.play();
     if (p && p.then) p.then(function () { unlocked = true; stopListening(); fade(VOL); render(); }, render);
     else { unlocked = true; stopListening(); fade(VOL); render(); }
   }
-  function pause() { fade(0, function () { audio.pause(); render(); }); }
+  function pause() {
+    if (btn) btn.classList.remove('on');   // 누르자마자 꺼진 모양으로
+    fade(0, function () { audio.pause(); render(); });
+  }
 
   function remember(on) { try { on ? localStorage.removeItem(KEY) : localStorage.setItem(KEY, '1'); } catch (e) {} }
 
@@ -982,7 +1011,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function unlock() {
     if (unlocked || unlocking) return;
     unlocking = true;
-    audio.volume = 0;
+    setV(0);
     var p = audio.play();
     var after = function () {
       unlocking = false;
@@ -1000,6 +1029,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function onGesture(e) {
     if (started || !wanted) return;
     if (btn && e && e.target && btn.contains(e.target)) return;
+    graph();
     if (passed) play();
     else unlock();
   }
@@ -1030,6 +1060,7 @@ document.addEventListener('DOMContentLoaded', function () {
     btn.className = 'bgm-btn';
     btn.innerHTML = '<span class="bgm-ic" aria-hidden="true">♪</span>';
     btn.addEventListener('click', function () {
+      graph();
       if (audio.paused) { wanted = true; remember(true); play(); }
       else { wanted = false; remember(false); pause(); }
     });
