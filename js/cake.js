@@ -88,7 +88,7 @@
   function newMover() {
     var top = stack[stack.length - 1];
     var n = stack.length;
-    var sp = Math.min(150 + n * 9, 380);
+    var sp = Math.min(115 + n * 6, 290);
     var fromLeft = n % 2 === 1;
     mover = { x: fromLeft ? -top.w : W, w: top.w, f: n % FLAVORS.length, v: fromLeft ? sp : -sp };
     // 쌓인 높이가 화면 가운데를 넘으면 카메라를 내린다
