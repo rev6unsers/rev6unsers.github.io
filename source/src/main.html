@@ -12,7 +12,7 @@
 
   <!-- 카카오톡/SNS 공유 미리보기 (Open Graph)
        주의: og:image는 반드시 절대 URL이어야 카카오톡이 썸네일을 읽습니다.
-       ?v= cache busting은 배포마다 server가 자동 부여합니다. 사진 교체 후엔 카카오 디버거로 재스크랩:
+       ?v= cache busting은 배포마다 build.ps1이 자동 부여합니다. 사진 교체 후엔 카카오 디버거로 재스크랩:
        https://developers.kakao.com/tool/debugger/sharing -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="{{GROOM_NAME_SHORT}} ❤ {{BRIDE_NAME_SHORT}} 결혼식에 초대합니다" />
@@ -81,7 +81,7 @@
       </p>
       <p>
         오랜 기다림 속에서<br />
-        한 마음 되어 사랑의 결실을 맺게 되었습니다.
+        한마음 되어 사랑의 결실을 맺게 되었습니다.
       </p>
       <p class="soft">
         귀한 걸음 하시어<br />
@@ -114,7 +114,6 @@
       <!-- js가 CONFIG.profile에서 자동 생성합니다 -->
     </div>
 
-    <!-- 연락하기. 누르면 js/config.js 가 연락처 창을 띄운다. -->
   </section>
 
   <div class="divider" aria-hidden="true"><i></i></div>
@@ -172,7 +171,7 @@
 
     <!-- 네이버 지도 embed. 키가 있으면 js/config.js가 지도를 그린다. -->
     <div class="map-embed rv d2" id="naverMap" aria-label="예식장 위치 지도">
-      <div class="map-note">네이버 지도 혹은 카카오맵 버튼으로 길찾기를 열어주세요</div>
+      <div class="map-note">네이버 지도 혹은 카카오맵 버튼으로 길찾기를 열어 주세요</div>
     </div>
 
     <div class="parking-note rv d3">
@@ -214,7 +213,7 @@
 
     <p class="gift-note rv">
       참석이 어려우신 분들을 위해 기재했습니다.<br />
-      전해주시는 따뜻한 마음, 소중히 간직하겠습니다.
+      전해 주시는 따뜻한 마음, 소중히 간직하겠습니다.
     </p>
 
     <!-- 계좌는 invitation.conf 에만 있다.
@@ -247,7 +246,7 @@
 
     <input class="bless-input rv d1" id="blessInput" type="text" maxlength="50"
            placeholder="축하 한마디 (선택, 최대 50자)" autocomplete="off" />
-    <p class="input-hint rv d1">입력하지 않으시면 랜덤한 축하 메세지가 발송됩니다.</p>
+    <p class="input-hint rv d1">입력하지 않으시면 랜덤한 축하 메시지가 발송됩니다.</p>
     <button class="bless-btn rv d1" id="blessBtn" type="button">축하의 마음 전하기 ❀</button>
     <div class="bless-msg" id="blessMsg"></div>
 
@@ -269,7 +268,7 @@
   <!-- footer -->
   <footer>
     <div class="thanks-line">
-      바쁘신 가운데 귀한 걸음 해주셔서 감사합니다.<br />
+      바쁘신 가운데 귀한 걸음 해 주셔서 감사합니다.<br />
       서로를 아끼고 존중하며,<br />
       늘 건강하고 행복한 부부가 되겠습니다.
     </div>

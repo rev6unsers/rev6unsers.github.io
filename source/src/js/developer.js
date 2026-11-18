@@ -90,7 +90,7 @@ const TERMINAL_LINES = [
   { type: 'out', text: '  INFO  Running migrations.', cls: 't-info' },
   { type: 'out', text: `  ${MIGRATION_TS}_create_marriages_table ... 6.78ms DONE`, cls: 't-green' },
   { type: 'cmd', text: 'php artisan wedding:invite --all' },
-  { type: 'out', text: '저희, 결혼합니다. 귀한 걸음 해주세요 ♥', cls: 't-rose' },
+  { type: 'out', text: '저희, 결혼합니다. 귀한 걸음 해 주세요 ♥', cls: 't-rose' },
 ];
 
 const termBody = document.getElementById('termBody');
@@ -606,11 +606,11 @@ function refreshDeployBtn() {
   if (at && remain > 0) {
     deployBtn.disabled = true;
     deployBtn.classList.add('deployed');
-    deployBtn.textContent = `$ approve --again (${remain}s)`;
+    deployBtn.textContent = `$ php artisan congrats:send (${remain}s)`;
   } else {
     deployBtn.disabled = false;
     deployBtn.classList.remove('deployed');
-    deployBtn.textContent = at ? '$ approve --again' : '$ approve --deploy wedding';   // 한 번이라도 축하했으면 '--again'
+    deployBtn.textContent = at ? '$ php artisan congrats:send --again' : '$ php artisan congrats:send';   // 한 번이라도 축하했으면 '--again'
     if (deployTick) { clearInterval(deployTick); deployTick = null; }
   }
 }
@@ -625,7 +625,7 @@ deployBtn.addEventListener('click', function () {
 
   // 50자 초과를 막는다. cooldown timestamp를 먼저 쓰지 않도록 전송 전에 검사한다.
   if (typeof blessExceeded === 'function' && blessExceeded('deployInput')) {
-    deployMsg.textContent = '// 50자를 넘기는 축하 메세지는 보낼 수 없어요';
+    deployMsg.textContent = '// 50자를 넘기는 축하 메시지는 보낼 수 없어요';
     deployMsg.classList.add('show');
     return;
   }

@@ -1295,9 +1295,9 @@ details.gift .acc-list {
   border: 1px solid color-mix(in srgb, var(--mint) 28%, transparent);
   border-radius: 12px;
   font-family: var(--mono);
-  /* '$ approve --deploy wedding'(가장 긴 label)이 좁은 화면에서도 한 줄에 들어가게:
+  /* '$ php artisan congrats:send --again'(가장 긴 label)이 좁은 화면에서도 한 줄에 들어가게:
      nowrap 로 'wedding' 줄바꿈 차단 + 폭에 따라 font를 clamp 로 축소(button이 2줄로 커지던 문제). */
-  font-size: clamp(13px, 4vw, 16px);
+  font-size: clamp(11px, 3.4vw, 16px);
   letter-spacing: 0.03em;
   white-space: nowrap;
   max-width: 100%;

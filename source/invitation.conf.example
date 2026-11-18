@@ -39,7 +39,7 @@ GROOM_NAME_EN="Lee Sung Yeon"
 GROOM_INITIAL="성"
 # 부모 이름입니다. 표시 순서대로 콤마로 구분합니다.
 GROOM_PARENTS="이상로,유연숙"
-# '부모님 의 ___ 성연' 자리에 들어갑니다. 장남, 차남 등으로 바꿔도 됩니다.
+# '부모님의 ___ 성연' 자리에 들어갑니다. 장남, 차남 등으로 바꿔도 됩니다.
 GROOM_RANK_KO="아들"
 # developer version의 장식 문구입니다.
 GROOM_RANK_EXPR="son"
@@ -102,7 +102,7 @@ MAP_KAKAO_URL="https://map.kakao.com/link/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%
 # --- 오시는 길 안내 ---
 INFO_SUBWAY="삼성역 3번 출구 도보 8분"
 INFO_BUS="강남01, 강남06, 지선4319\n대치2동주민센터, 래미안하이스턴 하차"
-INFO_PARKING="도곡로 99길 16 (구주소: 대치동 984)"
+INFO_PARKING="도곡로99길 16 (구주소: 대치동 984)"
 INFO_MEAL=""
 
 

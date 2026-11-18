@@ -510,7 +510,7 @@ const BLESS_MSGS = [
   '변치 않는 사랑 나누며 사세요 💗',
   '좋은 일만 가득하시길 바랍니다 🍀',
   '오래오래 함께 웃으며 사세요 😊',
-  '서로에게 가장 좋은 사람이 되어주세요 ✨',
+  '서로에게 가장 좋은 사람이 되어 주세요 ✨',
   '두 분의 새 출발을 응원합니다 🌷',
   '영원히 행복하세요 🎊',
   '깨가 쏟아지는 신혼 되세요 🌿',
@@ -533,7 +533,7 @@ function renderBlessings(count, recent) {
 
   if (!recent.length) {
     blLines.innerHTML =
-      '<div class="bl-line">아직 기록이 없어요. 첫 번째 축하를 남겨주세요!</div>';
+      '<div class="bl-line">아직 기록이 없어요. 첫 번째 축하를 남겨 주세요!</div>';
   }
 
   // 빈 msg는 자동 문구로 채우되 '직전 2개'와 안 겹치게(config.js resolveAutoMsgs). 렌더는 최신순 유지.
@@ -609,7 +609,7 @@ async function sendBlessing() {
 const PETALS = ['❀', '✿', '🌸', '♥', '❁'];
 const PETAL_COLORS = ['#bd5d7c', '#e7c3cf', '#b08d4f', '#5a7a5e', '#d98ba6'];
 
-/* 축하 버튼. 첫 축하 뒤 60초가 지나야 '한번 더 축하하기'가 열린다.
+/* 축하 버튼. 첫 축하 뒤 60초가 지나야 '한 번 더 축하하기'가 열린다.
    server는 경계 race를 피하려고 이보다 짧은 50초 창으로 검증한다(RATE_LIMIT_SECONDS). */
 const blessBtn = document.getElementById('blessBtn');
 const blessMsg = document.getElementById('blessMsg');
@@ -640,11 +640,11 @@ function refreshBlessBtn() {
   if (at && remain > 0) {
     blessBtn.disabled = true;
     blessBtn.classList.add('blessed');
-    blessBtn.textContent = `한번 더 축하하기 (${remain}초)`;
+    blessBtn.textContent = `한 번 더 축하하기 (${remain}초)`;
   } else {
     blessBtn.disabled = false;
     blessBtn.classList.remove('blessed');
-    blessBtn.textContent = at ? '한번 더 축하하기 ❀' : '축하의 마음 전하기 ❀';   // 한 번이라도 축하했으면 '한번 더'
+    blessBtn.textContent = at ? '한 번 더 축하하기 ❀' : '축하의 마음 전하기 ❀';   // 한 번이라도 축하했으면 '한 번 더'
     if (blessTick) { clearInterval(blessTick); blessTick = null; }
   }
 }
@@ -659,7 +659,7 @@ blessBtn.addEventListener('click', function () {
 
   // 50자 초과를 막는다. 쿨다운 타임스탬프를 먼저 쓰지 않도록 전송 전에 검사한다.
   if (typeof blessExceeded === 'function' && blessExceeded('blessInput')) {
-    blessMsg.textContent = '50자를 넘기는 축하 메세지는 보낼 수 없어요.';
+    blessMsg.textContent = '50자를 넘기는 축하 메시지는 보낼 수 없어요.';
     blessMsg.classList.add('show');
     return;
   }

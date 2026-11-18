@@ -307,7 +307,7 @@ function resolveAutoMsgs(list, pool) {
    1) 카카오톡으로 공유하기  : Kakao.Share.sendDefault로 피드 card(사진, 제목, button)를 보낸다.
                               login은 필요 없다.
    2) 문자로 공유하기        : sms: scheme으로 문자앱을 연다. 본문은 제목, 일자, 장소, link다.
-   3) 이외 방법으로 공유하기 : system native 공유 sheet(navigator.share). 미지원이면 link 복사.
+   3) 다른 방법으로 공유하기 : system native 공유 sheet(navigator.share). 미지원이면 link 복사.
    4) link 복사              : clipboard로 복사한다.
    카카오 키(JavaScript 키, domain 제한 공개키)는 invitation.conf 의 KAKAO_JS_KEY 에 넣고
    window.__KAKAO_KEY__ 로 심어진다. 키가 없으면 1)은 system 공유로 fallback한다. */
@@ -472,7 +472,7 @@ function buildShareSheet() {
     '<button class="shs-btn kakao" data-act="kakao"><span class="i"><img class="kakao-ico" src="' +
     invAsset('assets/kakao.png') + '" alt="" /></span>카카오톡으로 공유하기</button>' +
     '<button class="shs-btn sms" data-act="sms"><span class="i">✉️</span>문자로 공유하기</button>' +
-    '<button class="shs-btn sys" data-act="system"><span class="i">📤</span>이외 방법으로 공유하기</button>' +
+    '<button class="shs-btn sys" data-act="system"><span class="i">📤</span>다른 방법으로 공유하기</button>' +
     '<button class="shs-btn copy" data-act="copy"><span class="i">🔗</span>모바일 청첩장 링크 복사하기</button>' +
     '<button class="shs-btn shs-cancel" data-act="close">닫기</button>' +
     '</div>';
@@ -800,7 +800,7 @@ document.addEventListener('DOMContentLoaded', function () {
       } else {
         counter.className = 'bless-count' + (over ? ' over' : '');
         counter.textContent = over
-          ? '50자를 넘기는 축하 메세지는 보낼 수 없어요 (현재 ' + len + '자)'
+          ? '50자를 넘기는 축하 메시지는 보낼 수 없어요 (현재 ' + len + '자)'
           : len + ' / ' + BLESS_LIMIT;
       }
     }
