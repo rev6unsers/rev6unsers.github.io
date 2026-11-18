@@ -1,7 +1,8 @@
 /* 미니 게임 'wedding-defense' (개발자 version 전용) + 게임 탭 전환
    예식장으로 몰려오는 버그와 에러 블록을, 아래의 하트 비행선이 하트를 쏘아 막는다.
    - 손가락(마우스)으로 끌면 우주선이 따라오고, 하트는 자동으로 나간다. PC 는 ←/→ 키도 된다.
-   - 버그 10점, 에러 블록 30점, 내려꽂히는 적을 잡으면 +20점. 목숨은 ♥ 5개.
+   - 버그 10점, 에러 블록 30점, 내려꽂히는 적을 잡으면 +20점. 목숨은 ♥ 3개.
+   - 적을 잡으면 가끔 반지가 떨어진다. 받으면 10초 동안 하트가 두 줄로 나간다.
    - 적이 쏘는 빨간 '!' 에 맞거나 적과 부딪히면 목숨이 하나 준다.
    - 한 wave 를 다 잡으면 다음 wave 가 더 빨라진다. 1030점(예식일 10.30)을 넘으면 축하 문구.
    - 색은 css/developer.css 의 theme 변수를 읽는다. 화면 밖·다른 탭에서는 멈춘다. */
@@ -83,6 +84,17 @@
     ['.b....b.', '..bbbb..', '.bbbbbb.', 'bbbbbbbb', '.bbbbbb.', '.b.bb.b.'],
   ];
   var HEART = ['.h.h.', 'hhhhh', '.hhh.', '..h..'];
+  // 반지 아이템: 위에 다이아(d), 금색 고리(g)
+  var RING = [
+    '..ddd..',
+    '...d...',
+    '.ggggg.',
+    'gg...gg',
+    'g.....g',
+    'gg...gg',
+    '.ggggg.',
+  ];
+  var POWER_SEC = 10;
   function sprite(rows, x, y, px, pal) {
     for (var r = 0; r < rows.length; r++) {
       for (var c = 0; c < rows[r].length; c++) {
@@ -98,14 +110,14 @@
   var SPX = 2.6, SW = 9 * SPX, SH = 7 * SPX;
   var state = 'idle';
   var ship = null, targetX = null, keys = {}, shots, foes, bombs, sparks, stars;
-  var score, lives, wave, fireIn, inv, last, raf = 0, t = 0, msg = '', msgT = 0, goalShown = 0, overAt = 0;
+  var score, lives, wave, fireIn, inv, power = 0, rings = [], last, raf = 0, t = 0, msg = '', msgT = 0, goalShown = 0, overAt = 0;
   var swayT = 0;
 
   function reset() {
     ship = { x: W / 2, y: H - 30 };
     targetX = null;
     shots = []; bombs = []; sparks = [];
-    score = 0; lives = 5; wave = 0; fireIn = 0; inv = 0; goalShown = 0;
+    score = 0; lives = 3; wave = 0; power = 0; rings = []; fireIn = 0; inv = 0; goalShown = 0;
     stars = [];
     for (var i = 0; i < 26; i++) stars.push({ x: Math.random() * W, y: Math.random() * H, s: 10 + Math.random() * 30 });
     nextWave();
@@ -166,7 +178,14 @@
 
     // 자동 발사
     fireIn -= dt;
-    if (fireIn <= 0) { shots.push({ x: ship.x - 5, y: ship.y - SH / 2 - 6, w: 10, h: 8 }); fireIn = 0.2; }
+    if (fireIn <= 0) {
+      if (power > 0) {                       // 반지 효과: 두 줄 발사
+        shots.push({ x: ship.x - 13, y: ship.y - SH / 2 - 4, w: 10, h: 8 });
+        shots.push({ x: ship.x + 3, y: ship.y - SH / 2 - 4, w: 10, h: 8 });
+      } else shots.push({ x: ship.x - 5, y: ship.y - SH / 2 - 6, w: 10, h: 8 });
+      fireIn = 0.2;
+    }
+    if (power > 0) power = Math.max(0, power - dt);
     shots.forEach(function (s) { s.y -= 430 * dt; });
     shots = shots.filter(function (s) { return s.y > -12 && !s.dead; });
 
@@ -213,6 +232,10 @@
           s.dead = true; f.dead = true;
           score += (f.kind === 'err' ? 30 : 10) + (f.dive ? 20 : 0);
           burst(f.x, f.y, f.kind === 'err' ? C.red : C.rose);
+          // 가끔 반지를 떨어뜨린다(에러 블록은 더 자주). 화면에 하나만, 효과 중에는 안 떨어진다.
+          if (!rings.length && power <= 0 && Math.random() < (f.kind === 'err' ? 0.3 : 0.08)) {
+            rings.push({ x: f.x - 7, y: f.y, w: 14, h: 14 });
+          }
           break;
         }
       }
@@ -220,6 +243,20 @@
     foes = foes.filter(function (f) { return !f.dead; });
 
     // 우주선 피격
+    // 반지 받기
+    rings.forEach(function (r) { r.y += 85 * dt; });
+    var catchBox = { x: ship.x - SW / 2 - 4, y: ship.y - SH / 2 - 4, w: SW + 8, h: SH + 8 };
+    rings.forEach(function (r) {
+      if (!r.got && hit(catchBox, r)) {
+        r.got = true;
+        power = POWER_SEC;
+        msg = '💍 반지 획득! 하트 x2';
+        msgT = 1.4;
+        burst(ship.x, ship.y - 10, '#f5c542');
+      }
+    });
+    rings = rings.filter(function (r) { return !r.got && r.y < H + 16; });
+
     if (inv > 0) inv -= dt;
     var sb = { x: ship.x - SW / 2 + 3, y: ship.y - SH / 2 + 3, w: SW - 6, h: SH - 4 };
     if (inv <= 0) {
@@ -295,6 +332,21 @@
       g.restore();
     });
 
+    // 반지 아이템 (반짝이며 천천히 떨어진다)
+    (rings || []).forEach(function (r) {
+      g.save();
+      g.shadowColor = '#f5c542';
+      g.shadowBlur = 10 + Math.sin(t * 8) * 5;
+      sprite(RING, r.x, r.y, 2, { g: '#f5c542', d: '#bfefff' });
+      g.restore();
+    });
+
+    // 반지 효과 남은 시간 (우주선 위 작은 막대)
+    if (power > 0 && ship) {
+      g.fillStyle = '#f5c542';
+      g.fillRect(ship.x - 12, ship.y + SH / 2 + 8, 24 * (power / POWER_SEC), 2);
+    }
+
     // 불꽃
     (sparks || []).forEach(function (p) {
       g.globalAlpha = Math.max(0, p.life / 0.45);
@@ -349,8 +401,8 @@
   function pad(n) { return ('00000' + n).slice(-5); }
   function updateScore() {
     if (!scoreEl) return;
-    var L = state === 'idle' ? 5 : Math.max(0, lives);
-    var hearts = new Array(L + 1).join('♥') + new Array(5 - L + 1).join('♡');
+    var L = state === 'idle' ? 3 : Math.max(0, lives);
+    var hearts = new Array(L + 1).join('♥') + new Array(3 - L + 1).join('♡');
     scoreEl.innerHTML = 'score ' + pad(state === 'idle' ? 0 : score) + ' · <span class="lives">' + hearts + '</span> · best ' + pad(best);
   }
 
