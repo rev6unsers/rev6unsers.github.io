@@ -375,7 +375,7 @@
     if (goalShown > 0) {
       g.fillStyle = C.green;
       g.font = 'bold 13px "Fira Code", monospace';
-      g.fillText('🎉 2027.10.30 버그 없는 결혼식!', W / 2, H / 2 - 30);
+      g.fillText('🎉 2027.10.30 예식장을 지켜냈어요!', W / 2, H / 2 - 30);
       g.fillStyle = C.dim;
       g.font = '11px "Fira Code", monospace';
       g.fillText('// 실제로도 꼭 와 주세요 ♥', W / 2, H / 2 - 12);
@@ -383,17 +383,18 @@
     if (state === 'idle') {
       g.fillStyle = C.dim;
       g.font = '12px "Fira Code", monospace';
-      g.fillText('// 예식장 경비 준비 완료', W / 2, H / 2 - 30);
+      g.fillText('// 예식장 경비 준비 완료', W / 2, 40);
     }
     if (state === 'over') {
       g.fillStyle = 'rgba(0,0,0,0.4)';
       g.fillRect(0, 0, W, H);
       g.fillStyle = C.red;
       g.font = 'bold 12px "Fira Code", monospace';
-      g.fillText('WeddingException: 버그가 예식장에 들어왔어요', W / 2, H / 2 - 52);
+      g.fillText('WeddingException:', W / 2, 28);
+      g.fillText('버그가 예식장에 들어왔어요', W / 2, 46);
       g.fillStyle = '#fafafa';
       g.font = '12px "Fira Code", monospace';
-      g.fillText('wave ' + wave + ' · score ' + score + (score >= best && score > 0 ? '  · new best!' : ''), W / 2, H / 2 - 30);
+      g.fillText('wave ' + wave + ' · score ' + score + (score >= best && score > 0 ? '  · new best!' : ''), W / 2, 68);
     }
     g.textAlign = 'left';
   }

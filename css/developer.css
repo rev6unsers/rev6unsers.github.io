@@ -2311,4 +2311,5 @@ body { font-variant-ligatures: none; }
   cursor: pointer;
 }
 #game3 .game-start { top: 112px; }
-.game-tabs { flex-wrap: wrap; }
+.game-tabs { display: grid; grid-template-columns: repeat(3, 1fr); flex-wrap: nowrap; }
+.gtab { white-space: nowrap; text-align: center; padding-inline: 6px; }
