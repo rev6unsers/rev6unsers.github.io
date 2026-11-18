@@ -104,7 +104,7 @@
     obs = [];
     hearts = [];
     tokens = [];
-    speed = 250;
+    speed = 220;
     dist = 0;
     bonus = 0;
     spawnIn = 380;
@@ -126,12 +126,12 @@
   }
 
   function spawnObstacle() {
-    var tall = Math.random() < 0.35 && speed > 300;
+    var tall = Math.random() < 0.35 && speed > 330;
     if (tall) obs.push({ kind: 'err', code: ERR_CODES[(Math.random() * ERR_CODES.length) | 0], x: W + 10, w: 28, h: 32 });
     else obs.push({ kind: 'bug', x: W + 10, w: 8 * 2.5, h: 6 * 2.5 });
     // 가끔 버그 두 마리가 붙어 나온다
-    if (!tall && speed > 340 && Math.random() < 0.25) obs.push({ kind: 'bug', x: W + 34, w: 20, h: 15 });
-    var gap = speed * 0.62 + 140 + Math.random() * 260;
+    if (!tall && speed > 400 && Math.random() < 0.15) obs.push({ kind: 'bug', x: W + 34, w: 20, h: 15 });
+    var gap = speed * 0.75 + 190 + Math.random() * 280;
     spawnIn = gap;
   }
 
@@ -146,7 +146,7 @@
     last = t;
     frame += dt;
 
-    speed = Math.min(640, speed + 9 * dt);
+    speed = Math.min(520, speed + 5 * dt);
     var dx = speed * dt;
     dist += dx;
 
@@ -170,10 +170,10 @@
     tokens.forEach(function (k) { k.x -= dx * k.s; if (k.x < -30) { var n = makeToken(W + Math.random() * 60); k.x = n.x; k.y = n.y; k.t = n.t; k.s = n.s; } });
 
     // 충돌 (조금 너그럽게)
-    var box = { x: player.x + 4, y: GROUND - PH + player.y + 3, w: PW - 8, h: PH - 4 };
+    var box = { x: player.x + 5, y: GROUND - PH + player.y + 5, w: PW - 10, h: PH - 7 };
     for (var i = 0; i < obs.length; i++) {
       var o = obs[i];
-      if (hit(box, { x: o.x + 2, y: GROUND - o.h + 2, w: o.w - 4, h: o.h - 2 })) { gameOver(); return; }
+      if (hit(box, { x: o.x + 4, y: GROUND - o.h + 4, w: o.w - 8, h: o.h - 4 })) { gameOver(); return; }
     }
     hearts.forEach(function (h) {
       if (!h.got && hit(box, h)) { h.got = true; bonus += 50; flash = 0.6; }

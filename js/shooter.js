@@ -1,12 +1,12 @@
-/* 미니 게임 'bug-hunt' (개발자 version 전용) + 게임 탭 전환
-   아래의 작은 우주선이 하트를 쏘아 위에서 내려오는 버그와 에러 블록을 잡는다.
+/* 미니 게임 'wedding-defense' (개발자 version 전용) + 게임 탭 전환
+   예식장으로 몰려오는 버그와 에러 블록을, 아래의 하트 비행선이 하트를 쏘아 막는다.
    - 손가락(마우스)으로 끌면 우주선이 따라오고, 하트는 자동으로 나간다. PC 는 ←/→ 키도 된다.
-   - 버그 10점, 에러 블록 30점, 내려꽂히는 적을 잡으면 +20점. 목숨은 ♥ 3개.
+   - 버그 10점, 에러 블록 30점, 내려꽂히는 적을 잡으면 +20점. 목숨은 ♥ 5개.
    - 적이 쏘는 빨간 '!' 에 맞거나 적과 부딪히면 목숨이 하나 준다.
    - 한 wave 를 다 잡으면 다음 wave 가 더 빨라진다. 1030점(예식일 10.30)을 넘으면 축하 문구.
    - 색은 css/developer.css 의 theme 변수를 읽는다. 화면 밖·다른 탭에서는 멈춘다. */
 
-// ---- 게임 탭 (wedding-run / bug-hunt) ----
+// ---- 게임 탭 (wedding-run / wedding-defense) ----
 (function gameTabs() {
   var tabs = document.querySelectorAll('.gtab');
   tabs.forEach(function (t) {
@@ -34,7 +34,7 @@
   if (!wrap || !cv || !cv.getContext) return;
   var g = cv.getContext('2d');
 
-  var BEST_KEY = 'wedding-hunt-best';
+  var BEST_KEY = 'wedding-defense-best';
   var GOAL = 1030;
   var ERR_CODES = ['404', '500', '503', '419'];
   var best = 0;
@@ -68,14 +68,15 @@
   }
 
   // ---- 스프라이트 ----
+  // 하트 비행선: 빨간 하트 몸체에 흰 눈, 아래로 작은 꼬리
   var SHIP = [
-    '....r....',
-    '...rrr...',
-    '...rwr...',
-    '..rrwrr..',
+    '.rrr.rrr.',
+    'rrrrrrrrr',
+    'rrwrrrwrr',
+    'rrrrrrrrr',
     '.rrrrrrr.',
-    'rrr.r.rrr',
-    'rr.....rr',
+    '..rrrrr..',
+    '....r....',
   ];
   var BUG = [
     ['..b..b..', '...bb...', '.bbbbbb.', 'bbbbbbbb', '.bbbbbb.', 'b.b..b.b'],
@@ -104,7 +105,7 @@
     ship = { x: W / 2, y: H - 30 };
     targetX = null;
     shots = []; bombs = []; sparks = [];
-    score = 0; lives = 3; wave = 0; fireIn = 0; inv = 0; goalShown = 0;
+    score = 0; lives = 5; wave = 0; fireIn = 0; inv = 0; goalShown = 0;
     stars = [];
     for (var i = 0; i < 26; i++) stars.push({ x: Math.random() * W, y: Math.random() * H, s: 10 + Math.random() * 30 });
     nextWave();
@@ -130,7 +131,7 @@
         });
       }
     }
-    msg = 'wave ' + wave + ' · deploying bugs...';
+    msg = 'wave ' + wave + ' · 버그들이 예식장으로 몰려와요';
     msgT = 1.6;
   }
 
@@ -165,14 +166,14 @@
 
     // 자동 발사
     fireIn -= dt;
-    if (fireIn <= 0) { shots.push({ x: ship.x - 5, y: ship.y - SH / 2 - 6, w: 10, h: 8 }); fireIn = 0.26; }
+    if (fireIn <= 0) { shots.push({ x: ship.x - 5, y: ship.y - SH / 2 - 6, w: 10, h: 8 }); fireIn = 0.2; }
     shots.forEach(function (s) { s.y -= 430 * dt; });
     shots = shots.filter(function (s) { return s.y > -12 && !s.dead; });
 
     // 대열: 좌우로 흔들리며 아주 천천히 내려온다
     swayT += dt;
     var sway = Math.sin(swayT * (0.9 + lvl * 0.08)) * Math.min(40, W * 0.08);
-    var sink = Math.min(70, swayT * (1.2 + lvl * 0.5));
+    var sink = Math.min(70, swayT * (0.8 + lvl * 0.3));
     foes.forEach(function (f) {
       if (f.dive) {
         f.x += f.vx * dt; f.y += f.vy * dt;
@@ -189,19 +190,19 @@
     });
 
     // 가끔 한 마리가 내려꽂힌다
-    if (Math.random() < dt * (0.25 + lvl * 0.12)) {
+    if (Math.random() < dt * (0.12 + lvl * 0.06)) {
       var idle = foes.filter(function (f) { return !f.dive && !f.entering; });
       if (idle.length) {
         var f = idle[(Math.random() * idle.length) | 0];
-        f.dive = true; f.vx = (ship.x - f.x) * 0.4; f.vy = 120 + lvl * 18;
+        f.dive = true; f.vx = (ship.x - f.x) * 0.4; f.vy = 95 + lvl * 10;
       }
     }
     // 적의 '!' 폭탄
-    if (foes.length && Math.random() < dt * (0.6 + lvl * 0.25)) {
+    if (foes.length && Math.random() < dt * (0.35 + lvl * 0.12)) {
       var sh = foes[(Math.random() * foes.length) | 0];
       if (!sh.entering) bombs.push({ x: sh.x - 2, y: sh.y + 8, w: 4, h: 10 });
     }
-    bombs.forEach(function (b) { b.y += (170 + lvl * 14) * dt; });
+    bombs.forEach(function (b) { b.y += (130 + lvl * 8) * dt; });
     bombs = bombs.filter(function (b) { return b.y < H + 12 && !b.dead; });
 
     // 하트 ↔ 적
@@ -228,7 +229,7 @@
       foes = foes.filter(function (f) { return !f.dead; });
       if (hurt) {
         lives--;
-        inv = 1.4;
+        inv = 2;
         burst(ship.x, ship.y, C.red);
         if (navigator.vibrate) { try { navigator.vibrate(50); } catch (e) {} }
         if (lives <= 0) { gameOver(); return; }
@@ -330,14 +331,14 @@
     if (state === 'idle') {
       g.fillStyle = C.dim;
       g.font = '12px "Fira Code", monospace';
-      g.fillText('// 버그 사냥 준비 완료', W / 2, H / 2 - 30);
+      g.fillText('// 예식장 경비 준비 완료', W / 2, H / 2 - 30);
     }
     if (state === 'over') {
       g.fillStyle = 'rgba(0,0,0,0.4)';
       g.fillRect(0, 0, W, H);
       g.fillStyle = C.red;
-      g.font = 'bold 13px "Fira Code", monospace';
-      g.fillText('FatalError: 버그가 너무 많아요', W / 2, H / 2 - 52);
+      g.font = 'bold 12px "Fira Code", monospace';
+      g.fillText('WeddingException: 버그가 예식장에 들어왔어요', W / 2, H / 2 - 52);
       g.fillStyle = '#fafafa';
       g.font = '12px "Fira Code", monospace';
       g.fillText('wave ' + wave + ' · score ' + score + (score >= best && score > 0 ? '  · new best!' : ''), W / 2, H / 2 - 30);
@@ -348,7 +349,8 @@
   function pad(n) { return ('00000' + n).slice(-5); }
   function updateScore() {
     if (!scoreEl) return;
-    var hearts = state === 'idle' ? '♥♥♥' : (new Array(Math.max(0, lives) + 1).join('♥') + new Array(3 - Math.max(0, lives) + 1).join('♡'));
+    var L = state === 'idle' ? 5 : Math.max(0, lives);
+    var hearts = new Array(L + 1).join('♥') + new Array(5 - L + 1).join('♡');
     scoreEl.innerHTML = 'score ' + pad(state === 'idle' ? 0 : score) + ' · <span class="lives">' + hearts + '</span> · best ' + pad(best);
   }
 
@@ -372,7 +374,7 @@
     overAt = performance.now();
     if (score > best) { best = score; try { localStorage.setItem(BEST_KEY, String(best)); } catch (e) {} }
     wrap.classList.remove('playing');
-    startBtn.textContent = '$ php artisan debug:retry';
+    startBtn.textContent = '$ php artisan wedding:defend --retry';
     startBtn.hidden = false;
     if (navigator.vibrate) { try { navigator.vibrate(80); } catch (e) {} }
     draw();
