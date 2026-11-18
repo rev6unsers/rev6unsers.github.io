@@ -24,7 +24,7 @@ function profileOf(p, role) {
   return {
     role: role, name: p.name || '', initial: p.initial || '',
     photo: p.photo || '', photoFocus: p.photoFocus || '50% 30%', photoZoom: p.photoZoom || 1,
-    mbti: p.mbti || '', hobby: p.hobby || '', birth: p.birth || '',
+    mbti: p.mbti || '', hobby: p.hobby || '',
   };
 }
 

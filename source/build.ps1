@@ -239,7 +239,6 @@ $T['GROOM_NAME']       = Cf 'GROOM_NAME'
 $T['GROOM_NAME_SHORT'] = Cf 'GROOM_NAME_SHORT'
 $T['GROOM_NAME_EN']    = Cf 'GROOM_NAME_EN'
 $T['GROOM_ROLE']       = Cf 'GROOM_ROLE'
-$T['GROOM_BIRTH']      = Cf 'GROOM_BIRTH'
 $T['GROOM_PARENTS']    = (SplitList (Cf 'GROOM_PARENTS')) -join ' · '
 $T['GROOM_PARENTS_0']  = Nth (Cf 'GROOM_PARENTS') 1
 $T['GROOM_PARENTS_1']  = Nth (Cf 'GROOM_PARENTS') 2
@@ -254,7 +253,6 @@ $T['BRIDE_NAME']       = Cf 'BRIDE_NAME'
 $T['BRIDE_NAME_SHORT'] = Cf 'BRIDE_NAME_SHORT'
 $T['BRIDE_NAME_EN']    = Cf 'BRIDE_NAME_EN'
 $T['BRIDE_ROLE']       = Cf 'BRIDE_ROLE'
-$T['BRIDE_BIRTH']      = Cf 'BRIDE_BIRTH'
 $T['BRIDE_PARENTS']    = (SplitList (Cf 'BRIDE_PARENTS')) -join ' · '
 $T['BRIDE_PARENTS_0']  = Nth (Cf 'BRIDE_PARENTS') 1
 $T['BRIDE_PARENTS_1']  = Nth (Cf 'BRIDE_PARENTS') 2
@@ -347,7 +345,6 @@ function PersonJson([string]$px) {
     ',"rank":'       + (JStr (Cf "${px}_RANK_EXPR")) +
     ',"mbti":'       + (JStr (Cf "${px}_MBTI")) +
     ',"hobby":'      + (JStr (Cf "${px}_HOBBY")) +
-    ',"birth":'      + (JStr (Cf "${px}_BIRTH")) +
     ',"note":'       + (JStr (Cf "${px}_NOTE")) +
     ',"photo":'      + (JStr (Cf "${px}_PHOTO")) +
     ',"photoFocus":' + (JStr (Cf "${px}_PHOTO_FOCUS" '50% 30%')) +
