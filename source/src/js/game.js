@@ -14,6 +14,7 @@
 
   var BEST_KEY = 'wedding-run-best';
   var GOAL = 1030;
+  var ERR_CODES = ['404', '500', '503', '419'];   // 장애물 블록에 랜덤으로 붙는 HTTP 에러 코드
   var best = 0;
   try { best = +localStorage.getItem(BEST_KEY) || 0; } catch (e) {}
 
@@ -126,7 +127,7 @@
 
   function spawnObstacle() {
     var tall = Math.random() < 0.35 && speed > 300;
-    if (tall) obs.push({ kind: '500', x: W + 10, w: 26, h: 28 });
+    if (tall) obs.push({ kind: 'err', code: ERR_CODES[(Math.random() * ERR_CODES.length) | 0], x: W + 10, w: 28, h: 32 });
     else obs.push({ kind: 'bug', x: W + 10, w: 8 * 2.5, h: 6 * 2.5 });
     // 가끔 버그 두 마리가 붙어 나온다
     if (!tall && speed > 340 && Math.random() < 0.25) obs.push({ kind: 'bug', x: W + 34, w: 20, h: 15 });
@@ -213,7 +214,11 @@
     // 하트
     (hearts || []).forEach(function (h) {
       var bob = Math.sin(frame * 5 + h.x * 0.05) * 2;
+      g.save();
+      g.shadowColor = C.rose;
+      g.shadowBlur = 8 + Math.sin(frame * 6) * 4;   // 반짝이며 '먹는 것' 으로 보이게
       sprite(HEART, h.x, h.y + bob, 2, { h: C.rose });
+      g.restore();
     });
 
     // 장애물
@@ -222,14 +227,41 @@
         var leg = Math.floor(frame * 10) % 2 ? 0 : 1;
         sprite(BUG, o.x, GROUND - o.h + leg, 2.5, { b: C.red });
       } else {
-        g.fillStyle = C.panel2;
-        g.fillRect(o.x, GROUND - o.h, o.w, o.h);
-        g.strokeStyle = C.red;
-        g.strokeRect(o.x + 0.5, GROUND - o.h + 0.5, o.w - 1, o.h - 1);
+        // 에러 블록: 위에 가시, 빨간 몸통에 경고 사선, 가끔 지직거림(glitch). 닿으면 끝나는 장애물로 보이게.
+        var SP = 7;                                   // 가시 높이
+        var jx = (Math.floor(frame * 14 + o.x * 0.1) % 9 === 0) ? 2 : 0;
+        var bx = o.x + jx, top = GROUND - o.h, bodyTop = top + SP, bh = o.h - SP;
+        g.save();
+        g.shadowColor = C.red;
+        g.shadowBlur = 10;
         g.fillStyle = C.red;
+        g.beginPath();                                // 가시
+        for (var sx = 0; sx < o.w; sx += 7) {
+          g.moveTo(bx + sx, bodyTop);
+          g.lineTo(bx + sx + 3.5, top);
+          g.lineTo(bx + Math.min(sx + 7, o.w), bodyTop);
+        }
+        g.fill();
+        g.fillRect(bx, bodyTop, o.w, bh);             // 몸통
+        g.restore();
+        g.save();                                     // 경고 사선
+        g.beginPath();
+        g.rect(bx, bodyTop, o.w, bh);
+        g.clip();
+        g.fillStyle = 'rgba(0,0,0,0.22)';
+        for (var k = -bh; k < o.w; k += 8) {
+          g.beginPath();
+          g.moveTo(bx + k, bodyTop + bh);
+          g.lineTo(bx + k + 4, bodyTop + bh);
+          g.lineTo(bx + k + 4 + bh, bodyTop);
+          g.lineTo(bx + k + bh, bodyTop);
+          g.fill();
+        }
+        g.restore();
+        g.fillStyle = '#ffffff';
         g.font = 'bold 10px "Fira Code", monospace';
         g.textAlign = 'center';
-        g.fillText('500', o.x + o.w / 2, GROUND - o.h / 2 + 4);
+        g.fillText(o.code || '500', bx + o.w / 2, bodyTop + bh / 2 + 4);
         g.textAlign = 'left';
       }
     });
