@@ -327,6 +327,10 @@
   <!-- 미니 게임: 신랑이 버그를 피해 예식장까지 달린다 (js/game.js) -->
   <section id="play">
     <div class="sec-label rv">php artisan play</div>
+    <div class="game-tabs rv d1" role="tablist">
+      <button type="button" role="tab" class="gtab on" data-game="game" aria-selected="true">wedding-run</button>
+      <button type="button" role="tab" class="gtab" data-game="game2" aria-selected="false">bug-hunt</button>
+    </div>
     <div class="game rv d1" id="game">
       <div class="game-head">
         <span>~/wedding-run</span>
@@ -334,8 +338,17 @@
       </div>
       <canvas id="gameCanvas" aria-label="미니 게임: 화면을 눌러 점프"></canvas>
       <button class="game-start" id="gameStart" type="button">$ php artisan play:run</button>
+      <p class="game-hint">// 화면을 누르면 점프! 버그를 피해 예식장까지 달려 주세요</p>
     </div>
-    <p class="input-hint rv d2">// 화면을 누르면 점프! 버그를 피해 예식장까지 달려 주세요</p>
+    <div class="game rv d1" id="game2" hidden>
+      <div class="game-head">
+        <span>~/bug-hunt</span>
+        <span class="game-score" id="shootScore">score 00000 · ♥♥♥</span>
+      </div>
+      <canvas id="shootCanvas" class="tall" aria-label="미니 게임: 손가락으로 끌어 움직이기"></canvas>
+      <button class="game-start" id="shootStart" type="button">$ php artisan debug:start</button>
+      <p class="game-hint">// 손가락으로 끌어 움직이면 하트가 자동으로 나가요. 버그를 잡아 주세요</p>
+    </div>
   </section>
 
 
@@ -368,5 +381,6 @@
 <!--#PRIVATE#--><script src="js/private.js"></script>
 <script src="js/developer.js"></script>
 <script src="js/game.js"></script>
+<script src="js/shooter.js"></script>
 </body>
 </html>
