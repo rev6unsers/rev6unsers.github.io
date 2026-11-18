@@ -992,8 +992,8 @@ document.addEventListener('DOMContentLoaded', function () {
     busy = true;
     wake();
     setV(0);
-    var ok = function () { busy = false; everPlayed = true; fadeIn(); render(); };
-    var no = function () { busy = false; render(); };   // 막혔으면 다음 터치에서 다시 시도
+    var ok = function () { busy = false; everPlayed = true; hideHint(); fadeIn(); render(); };
+    var no = function () { busy = false; render(); showHint(); };   // 막혔으면 다음 터치에서 다시 시도
     var p;
     try { p = audio.play(); } catch (e) { no(); return; }
     if (p && p.then) p.then(ok, no); else ok();
@@ -1027,6 +1027,30 @@ document.addEventListener('DOMContentLoaded', function () {
   audio.addEventListener('pause', render);
   audio.addEventListener('play', render);
 
+  /* 다른 version 에서 음악을 듣다가 넘어온 경우. 새 page 라서 휴대폰은 다시 한 번 눌러야 소리를 허락한다.
+     그래서 ♪ button 옆에 '화면을 누르면 음악이 이어져요' 말풍선을 띄워 알려 준다. */
+  var CARRY = 'wedding-bgm-playing', carried = false, hint = null;
+  try { carried = sessionStorage.getItem(CARRY) === '1'; } catch (e) {}
+  window.addEventListener('pagehide', function () {
+    try { sessionStorage.setItem(CARRY, audio.paused ? '0' : '1'); } catch (e) {}
+  });
+  function showHint() {
+    if (!carried || !wanted || hint || everPlayed || !document.body) return;
+    hint = document.createElement('div');
+    hint.className = 'bgm-hint';
+    hint.textContent = isDev ? '// 화면을 누르면 음악이 이어져요' : '화면을 누르면 음악이 이어져요';
+    document.body.appendChild(hint);
+    if (btn) btn.classList.add('wait');
+  }
+  function hideHint() {
+    if (btn) btn.classList.remove('wait');
+    if (!hint) return;
+    var h = hint;
+    hint = null;
+    h.classList.add('out');
+    setTimeout(function () { h.remove(); }, 400);
+  }
+
   function mount() {
     btn = document.createElement('button');
     btn.type = 'button';
@@ -1034,13 +1058,15 @@ document.addEventListener('DOMContentLoaded', function () {
     btn.innerHTML = '<span class="bgm-ic" aria-hidden="true">♪</span>';
     btn.addEventListener('click', function () {
       if (audio.paused && !busy) { wanted = true; setupIOS(); play(); }
-      else { wanted = false; pause(); }
+      else { wanted = false; hideHint(); pause(); }
     });
     document.body.appendChild(btn);
+    if (hint) btn.classList.add('wait');
     render();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);
   else mount();
 
   if (!IOS) play();                    // 열자마자 재생 시도(허락하는 브라우저는 바로 나온다)
+  else showHint();
 })();
