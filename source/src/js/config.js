@@ -538,6 +538,42 @@ document.addEventListener('DOMContentLoaded', function () {
    #naverMap 요소가 있고 키가 설정돼 있을 때만 지도를 그린다.
    키가 없거나 load에 실패하면 container에 .is-fallback을 붙여 안내 문구(.map-note)를 노출하고,
    네이버 지도와 카카오맵 길찾기 button으로 유도한다. */
+/* 지도를 눌렀을 때 '카카오맵에서 크게 볼까요?' 를 지도 위에 띄운다.
+   [열기]를 눌러야 카카오맵으로 간다. 바깥(지도의 다른 곳)이나 [취소]를 누르면 닫힌다.
+   개발자 version 은 터미널 질문(y/n) 모양이다. 모양은 css 의 .map-ask */
+function askOpenMap(box, url) {
+  if (box.querySelector('.map-ask')) return;
+  var dev = !!document.querySelector('link[href*="developer.css"]');
+  if (getComputedStyle(box).position === 'static') box.style.position = 'relative';
+  var ask = document.createElement('div');
+  ask.className = 'map-ask';
+  ask.innerHTML =
+    '<div class="ma-card" role="dialog" aria-label="카카오맵 열기">' +
+      '<div class="ma-q">' + (dev ? '$ open kakao-map <span>--route</span>' : '카카오맵에서 크게 볼까요?') + '</div>' +
+      (dev ? '<div class="ma-sub">카카오맵으로 이동할까요? [y/N]</div>' : '<div class="ma-sub">길찾기와 큰 지도로 이동해요</div>') +
+      '<div class="ma-btns">' +
+        '<button type="button" class="ma-no">' + (dev ? 'n' : '취소') + '</button>' +
+        '<button type="button" class="ma-yes">' + (dev ? 'y' : '열기') + '</button>' +
+      '</div>' +
+    '</div>';
+  function close() {
+    ask.classList.remove('on');
+    setTimeout(function () { ask.remove(); }, 200);
+  }
+  ask.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (e.target.closest('.ma-yes')) { window.open(url, '_blank', 'noopener'); close(); }
+    else if (e.target.closest('.ma-no') || !e.target.closest('.ma-card')) close();
+  });
+  // 지도(카카오)가 이 창 위의 터치를 지도 클릭으로 받지 않게 막는다.
+  ['mousedown', 'mouseup', 'pointerdown', 'pointerup', 'touchstart', 'touchend', 'dblclick'].forEach(function (ev) {
+    ask.addEventListener(ev, function (e) { e.stopPropagation(); });
+  });
+  box.appendChild(ask);
+  void ask.offsetWidth;
+  ask.classList.add('on');
+}
+
 function initNaverMap() {
   var box = document.getElementById('naverMap');
   if (!box) return;
@@ -584,11 +620,11 @@ function initNaverMap() {
         label.style.cssText = 'padding:5px 11px;border-radius:99px;background:#fff;color:#372d28;' +
           'font-size:13px;font-weight:700;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.18)';
         if (cfg.label) new kakao.maps.CustomOverlay({ position: pos, content: label, yAnchor: 2.6, map: map });
-        // 지도를 누르면 카카오맵(앱이 있으면 앱)으로 길찾기를 연다.
+        // 지도를 누르면 카카오맵(앱이 있으면 앱)으로 열지 먼저 묻는다(스크롤하다 잘못 누른 경우 대비).
         var url = (CONFIG.map && CONFIG.map.kakao) || '';
         if (url) {
           box.style.cursor = 'pointer';
-          kakao.maps.event.addListener(map, 'click', function () { window.open(url, '_blank', 'noopener'); });
+          kakao.maps.event.addListener(map, 'click', function () { askOpenMap(box, url); });
         }
         window.addEventListener('resize', function () { map.relayout(); map.setCenter(pos); });
       });

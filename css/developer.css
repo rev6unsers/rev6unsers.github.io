@@ -2162,3 +2162,46 @@ body { font-variant-ligatures: none; }
 @media (prefers-reduced-motion: reduce) {
   .bgm-hint, .bgm-hint.out, .bgm-btn.wait .bgm-ic { animation: none; }
 }
+
+/* 24. 지도를 눌렀을 때 카카오맵 이동 확인 (js/config.js 의 askOpenMap). 터미널 y/n 질문 모양 */
+.map-ask {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(9, 9, 11, 0.45);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  cursor: default;
+}
+.map-ask.on { opacity: 1; }
+.map-ask .ma-card {
+  width: min(100%, 270px);
+  padding: 14px 16px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  font-family: var(--mono);
+  text-align: left;
+}
+.ma-q { font-size: 13.5px; color: var(--text-bright); }
+.ma-q span { color: var(--comment); }
+.ma-sub { margin-top: 6px; font-family: var(--sans); font-size: 12.5px; color: var(--text-dim); }
+.ma-btns { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+.ma-btns button {
+  min-width: 52px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 13px;
+  cursor: pointer;
+}
+.ma-no { border: 1px solid var(--line); background: transparent; color: var(--text); }
+.ma-yes { border: 1px solid var(--laravel); background: var(--laravel); color: #fff; }
+@media (prefers-reduced-motion: reduce) {
+  .map-ask { transition: none; }
+}
