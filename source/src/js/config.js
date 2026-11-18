@@ -923,60 +923,62 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /* 배경음악 (파스텔·개발자·감사 page 공통)
    window.__BGM__ / __BGM_DEV__ (invitation.conf 의 BGM_FILE / BGM_FILE_DEV) 가 있을 때만 켠다.
-   page 를 열면 바로 튼다(막히면 첫 터치에서. 아래 설명 참고).
-   오른쪽 아래 ♪ button으로 끄고 켜며, 끈 상태는 이 기기에 기억한다.
-   다른 앱이나 탭으로 가면 멈추고, 돌아오면 이어서 튼다. */
+   개발자 css 를 쓰는 page(개발자 version, 감사 page)는 개발자용 음악을 쓴다.
+
+   언제 트는가: page 를 열자마자 재생을 시도한다. 휴대폰처럼 '먼저 한 번 눌러야' 소리를 허락하는
+   브라우저에서는 첫 터치(보통 인트로를 누를 때)에 튼다.
+   오른쪽 아래 ♪ button으로 끄고 켠다. 끈 상태는 그 page 에서만 유지한다(다른 version 으로 넘어가면 다시 나온다).
+   다른 앱이나 탭으로 가면 멈추고, 돌아오면 이어서 튼다.
+
+   볼륨: 아이폰은 audio.volume 을 무시하므로 Web Audio 의 GainNode 로 줄인다.
+   이 연결은 반드시 '처음 재생하기 전에, 사용자 터치 안에서, 한 번만' 만든다.
+   재생 중에 연결하면 같은 곡이 두 경로로 겹쳐 나오는 문제가 있다.
+   그래서 아이폰에서는 열자마자 재생을 시도하지 않고 첫 터치를 기다린다. */
 (function bgm() {
-  // 개발자 css 를 쓰는 page(개발자 version, 감사 page)는 개발자용 음악을 쓴다.
   var isDev = !!document.querySelector('link[href*="developer.css"]');
   var src = (isDev ? window.__BGM_DEV__ : window.__BGM__) || '';
   if (!src) return;
-  var KEY = 'wedding-bgm-off';
   var VOL = 0.165;                     // 최종 볼륨(0~1)
+  var IOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
   var audio = new Audio(src);
   audio.loop = true;
   audio.preload = 'auto';
-  audio.volume = 0;
-  var wanted = true, btn = null, fadeT = 0;
-  try { wanted = localStorage.getItem(KEY) !== '1'; } catch (e) {}
+  if (!IOS) audio.volume = 0;
 
-  /* 볼륨. 아이폰 Safari는 audio.volume 을 무시하고 늘 최대로 튼다.
-     그래서 Web Audio 의 GainNode 를 거쳐 볼륨을 조절한다. 안 되는 브라우저는 audio.volume 으로.
-     AudioContext 는 사용자 동작 안에서 만들어야 하므로 graph() 는 터치·button 처리에서 부른다. */
-  var ctx = null, gain = null;
-  function graph() {
-    if (!ctx) {
-      var AC = window.AudioContext || window.webkitAudioContext;
-      if (!AC) return;
-      var cur = audio.paused ? 0 : audio.volume;   // 이미 자동 재생 중이면 그 볼륨을 이어받는다
-      try {
-        ctx = new AC();
-        gain = ctx.createGain();
-        gain.gain.value = cur;
-        ctx.createMediaElementSource(audio).connect(gain);
-        gain.connect(ctx.destination);
-        audio.volume = 1;
-      } catch (e) { ctx = null; gain = null; audio.volume = cur; return; }
-    }
-    if (ctx.state === 'suspended') { try { ctx.resume(); } catch (e) {} }
+  var ctx = null, gain = null, btn = null, fadeT = 0;
+  var wanted = true, busy = false, everPlayed = false, resumeAfterHide = false;
+
+  function setupIOS() {
+    if (!IOS || ctx || everPlayed) return;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    try {
+      ctx = new AC();
+      gain = ctx.createGain();
+      gain.gain.value = 0;
+      ctx.createMediaElementSource(audio).connect(gain);
+      gain.connect(ctx.destination);
+    } catch (e) { ctx = null; gain = null; }
+  }
+  function wake() {
+    if (ctx && ctx.state !== 'running') { try { ctx.resume(); } catch (e) {} }
   }
   function getV() { return gain ? gain.gain.value : audio.volume; }
   function setV(v) { v = Math.max(0, Math.min(1, v)); if (gain) gain.gain.value = v; else audio.volume = v; }
 
-  function fade(to, done) {
+  // 서서히 키운다. 볼륨이 안 바뀌는 기기에서도 1.5초 안에 끝낸다.
+  function fadeIn() {
     clearInterval(fadeT);
-    var step = Math.max(0.02, to / 12), ticks = 0;
+    var ticks = 0;
     fadeT = setInterval(function () {
-      var cur = getV();
-      var v = cur + (to > cur ? step : -step);
-      // 볼륨이 바뀌지 않는 기기(아이폰의 audio.volume)에서도 1.5초 안에는 반드시 끝낸다.
-      if (++ticks > 25 || (to > cur && v >= to) || (to <= cur && v <= to)) {
-        setV(to);
-        clearInterval(fadeT);
-        if (done) done();
-      } else setV(v);
+      var v = getV() + VOL / 12;
+      if (++ticks > 25 || v >= VOL) { setV(VOL); clearInterval(fadeT); }
+      else setV(v);
     }, 60);
   }
+
   function render() {
     if (!btn) return;
     var on = !audio.paused;
@@ -984,42 +986,43 @@ document.addEventListener('DOMContentLoaded', function () {
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     btn.setAttribute('aria-label', on ? '배경음악 끄기' : '배경음악 켜기');
   }
-  /* 언제 트는가: page 를 열자마자.
-     다만 브라우저는(특히 휴대폰은) 사용자가 화면을 한 번 누르기 전에는 소리 재생을 막는다. 그래서
-       1) 열리자마자 바로 재생을 시도하고 (허락하는 브라우저는 여기서 바로 나온다)
-       2) 막히면 첫 터치(보통 인트로를 누를 때)에서 바로 튼다. */
-  var GESTURES = ['pointerup', 'touchend', 'click', 'keydown'];
-  var started = false;
-  function stopListening() {
-    started = true;
-    GESTURES.forEach(function (ev) { document.removeEventListener(ev, onGesture, true); });
-  }
+
   function play() {
-    if (ctx) graph();                  // 백그라운드에서 멈춘 AudioContext 를 다시 깨운다
-    var p = audio.play();
-    if (p && p.then) p.then(function () { stopListening(); fade(VOL); render(); }, render);
-    else { stopListening(); fade(VOL); render(); }
+    if (busy || !audio.paused) return;
+    busy = true;
+    wake();
+    setV(0);
+    var ok = function () { busy = false; everPlayed = true; fadeIn(); render(); };
+    var no = function () { busy = false; render(); };   // 막혔으면 다음 터치에서 다시 시도
+    var p;
+    try { p = audio.play(); } catch (e) { no(); return; }
+    if (p && p.then) p.then(ok, no); else ok();
   }
-  function pause() {
-    if (btn) btn.classList.remove('on');   // 누르자마자 꺼진 모양으로
-    fade(0, function () { audio.pause(); render(); });
+  function pause() {                   // 끄기는 바로 멈춘다
+    clearInterval(fadeT);
+    audio.pause();
+    setV(0);
+    render();
   }
 
-  function remember(on) { try { on ? localStorage.removeItem(KEY) : localStorage.setItem(KEY, '1'); } catch (e) {} }
-
-  // ♪ button 자체를 누른 경우는 button 쪽에서 처리한다.
+  // 재생돼야 하는데 멈춰 있으면 어느 터치에서든 튼다. 사용자가 끈 뒤에는 건드리지 않는다.
   function onGesture(e) {
-    if (started || !wanted) return;
-    if (btn && e && e.target && btn.contains(e.target)) return;
-    graph();
+    if (!wanted || busy || !audio.paused) return;
+    if (btn && e && e.target && btn.contains(e.target)) return;   // ♪ button 은 따로 처리
+    setupIOS();
     play();
   }
-  GESTURES.forEach(function (ev) { document.addEventListener(ev, onGesture, true); });
-  if (wanted) play();                  // 1) 바로 재생 시도
+  ['pointerup', 'touchend', 'click', 'keydown'].forEach(function (ev) {
+    document.addEventListener(ev, onGesture, true);
+  });
 
   document.addEventListener('visibilitychange', function () {
-    if (document.hidden) { if (!audio.paused) { audio.pause(); audio.__resume = true; } }
-    else if (audio.__resume) { audio.__resume = false; play(); }
+    if (document.hidden) {
+      if (!audio.paused) { resumeAfterHide = true; pause(); }
+    } else if (resumeAfterHide) {
+      resumeAfterHide = false;
+      if (wanted) play();
+    }
   });
   audio.addEventListener('pause', render);
   audio.addEventListener('play', render);
@@ -1030,13 +1033,14 @@ document.addEventListener('DOMContentLoaded', function () {
     btn.className = 'bgm-btn';
     btn.innerHTML = '<span class="bgm-ic" aria-hidden="true">♪</span>';
     btn.addEventListener('click', function () {
-      graph();
-      if (audio.paused) { wanted = true; remember(true); play(); }
-      else { wanted = false; remember(false); pause(); }
+      if (audio.paused && !busy) { wanted = true; setupIOS(); play(); }
+      else { wanted = false; pause(); }
     });
     document.body.appendChild(btn);
     render();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);
   else mount();
+
+  if (!IOS) play();                    // 열자마자 재생 시도(허락하는 브라우저는 바로 나온다)
 })();
