@@ -21,7 +21,7 @@ $dist = Join-Path $source 'dist'
 if (-not $?) { exit 1 }
 
 # build가 만드는 것만 지웁니다. source/, README.md, .git 등 다른 것은 건드리지 않습니다.
-$generated = @('index.html', 'main.html', 'developer.html', 'release.html', 'wedding.ics', 'css', 'js', 'assets', 'photos')
+$generated = @('index.html', 'main.html', 'developer.html', 'release.html', '404.html', 'wedding.ics', 'css', 'js', 'assets', 'photos')
 foreach ($name in $generated) {
   $p = Join-Path $root $name
   if (Test-Path -LiteralPath $p) { Remove-Item -LiteralPath $p -Recurse -Force }

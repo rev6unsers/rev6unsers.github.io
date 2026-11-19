@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#fdefe8" />
+  <meta name="robots" content="noindex" />
+  <title>페이지를 찾을 수 없어요 — 성연 ❤ 희진</title>
+
+  <!-- 없는 주소로 들어오면 GitHub Pages가 이 페이지를 보여 준다.
+       주소가 /a/b/c 처럼 깊어도 깨지지 않게 모든 경로는 / 로 시작하고, style은 이 파일 안에 둔다.
+       마지막으로 본 version(js/config.js 가 기억)에 따라 파스텔 또는 Laravel 404 모양이 된다. -->
+  <script>
+    (function () {
+      var v = 'main', t = 'dark';
+      try {
+        v = localStorage.getItem('wedding-last-version') || 'main';
+        t = localStorage.getItem('wedding-theme') || 'dark';
+      } catch (e) {}
+      var r = document.documentElement;
+      if (v === 'developer') {
+        r.className = 'dev';
+        r.dataset.theme = t === 'light' ? 'light' : 'dark';
+        document.querySelector('meta[name="theme-color"]').content = t === 'light' ? '#fdfcfb' : '#18181b';
+      }
+    })();
+  </script>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Nanum+Pen+Script&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+
+    /* ---------- 파스텔 (기본) ---------- */
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px calc(40px + env(safe-area-inset-bottom, 0px));
+      background:
+        radial-gradient(circle at 15% 10%, #fde3d6 0, transparent 38%),
+        radial-gradient(circle at 85% 70%, #eee8f7 0, transparent 42%),
+        #f8ece4;
+      color: #4a3f3a;
+      font-family: 'Gowun Dodum', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+      text-align: center;
+      -webkit-font-smoothing: antialiased;
+    }
+    .p { width: 100%; max-width: 360px; }
+    .d { display: none; }
+    .p-label { font-family: 'Nanum Pen Script', cursive; font-size: 24px; color: #c06a50; }
+    .p-code {
+      position: relative;
+      display: inline-block;
+      margin: 6px 0 4px;
+      font-family: 'Gowun Batang', serif;
+      font-size: 88px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      line-height: 1;
+      color: #e8957a;
+    }
+    .p-code i {
+      position: absolute;
+      top: -6px;
+      right: -18px;
+      font-style: normal;
+      font-size: 22px;
+      color: #f0a98f;
+      animation: beat 1.8s ease-in-out infinite;
+    }
+    @keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+    .p h1 {
+      margin: 18px 0 12px;
+      font-family: 'Gowun Batang', serif;
+      font-size: 22px;
+      font-weight: 400;
+      color: #372d28;
+    }
+    .p p { margin: 0; font-size: 15px; line-height: 1.85; color: #7a6a62; }
+    .p-btn {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 14px 30px;
+      border-radius: 99px;
+      background: #e8957a;
+      color: #fff;
+      font-size: 15px;
+      text-decoration: none;
+      box-shadow: 0 10px 24px -12px rgba(192, 106, 80, 0.7);
+    }
+    .p-btn:active { transform: scale(0.97); }
+    .p-sub { display: block; margin-top: 18px; font-size: 13px; color: #94827a; text-decoration: none; }
+    .p-sign { margin-top: 44px; font-size: 13px; letter-spacing: 0.1em; color: #94827a; }
+
+    /* ---------- 개발자 (Laravel 404) ---------- */
+    html.dev { --bg: #18181b; --panel: #202024; --line: #34343a; --text: #d6d6dc; --dim: #8b8b96; --red: #ff5a52; --rose: #ff7a8a; --amber: #f6c26b; --blue: #a78bfa; }
+    html.dev[data-theme="light"] { --bg: #fdfcfb; --panel: #ffffff; --line: #e7e3de; --text: #3f3f46; --dim: #71717a; --red: #e5312a; --rose: #d9465a; --amber: #b7791f; --blue: #7c5cd6; }
+    html.dev body { background: var(--bg); color: var(--text); font-family: 'Fira Code', 'Noto Sans KR', monospace; }
+    html.dev .p { display: none; }
+    html.dev .d { display: block; width: 100%; max-width: 380px; }
+    .d-nf { display: flex; align-items: center; justify-content: center; gap: 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 18px; letter-spacing: 0.06em; color: var(--dim); }
+    .d-nf b { padding-right: 16px; border-right: 1px solid var(--dim); font-weight: 400; }
+    .d-term {
+      margin-top: 40px;
+      padding: 16px 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      text-align: left;
+      font-size: 12.5px;
+      line-height: 1.8;
+      word-break: break-all;
+    }
+    .d-term .c { color: var(--dim); }
+    .d-term .s { color: var(--amber); }
+    .d-err { display: inline-block; margin-right: 6px; padding: 0 6px; border-radius: 3px; background: var(--red); color: #fff; font-weight: 500; }
+    .d-btn {
+      display: block;
+      margin-top: 22px;
+      padding: 14px 12px;
+      border: 1px solid color-mix(in srgb, var(--rose) 45%, var(--line));
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--rose) 10%, transparent);
+      color: var(--text);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .d-btn .k { color: var(--blue); }
+    .d-btn .s { color: var(--amber); }
+    .d-sub { display: block; margin-top: 16px; font-size: 12px; color: var(--dim); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <!-- 파스텔 -->
+  <main class="p">
+    <div class="p-label">Page not found</div>
+    <div class="p-code">404<i>♥</i></div>
+    <h1>길을 잃으셨나요?</h1>
+    <p>
+      찾으시는 페이지가 없어요.<br />
+      예식장 가는 길은 저희가 안내해 드릴게요.
+    </p>
+    <a class="p-btn" href="/main.html">청첩장으로 가기 →</a>
+    <a class="p-sub" href="/developer.html">&lt;/&gt; 개발자 버전으로 보기</a>
+    <div class="p-sign">성연 ♥ 희진</div>
+  </main>
+
+  <!-- 개발자: Laravel 기본 404 화면 + 터미널 -->
+  <main class="d">
+    <div class="d-nf"><b>404</b>NOT FOUND</div>
+    <div class="d-term">
+      <div class="c">$ php artisan route:list --path=<span id="dPath">/</span></div>
+      <div><span class="d-err">ERROR</span>Your application doesn't have any routes matching the given criteria.</div>
+      <div>&nbsp;</div>
+      <div class="c">// 이 주소에는 아무것도 없어요.</div>
+      <div class="c">// 예식장 가는 길은 아래에 있어요 ♥</div>
+    </div>
+    <a class="d-btn" href="/developer.html"><span class="k">return</span> redirect(<span class="s">'/wedding'</span>);</a>
+    <a class="d-sub" href="/main.html">🤵👰 일반 버전으로 보기</a>
+  </main>
+
+  <script>
+    var dp = document.getElementById('dPath');
+    var path = location.pathname;
+    try { path = decodeURIComponent(path); } catch (e) {}
+    if (dp) dp.textContent = path.replace(/^\//, '') || '/';
+  </script>
+</body>
+</html>

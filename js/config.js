@@ -594,6 +594,8 @@ function openCalendarSheet() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  // 마지막으로 본 version을 기억해 둔다. 404 page가 같은 모양(파스텔 / Laravel)으로 뜬다.
+  try { localStorage.setItem('wedding-last-version', document.querySelector('.editor-bar') ? 'developer' : 'main'); } catch (e) {}
   var b = document.getElementById('calAdd');
   if (b) b.addEventListener('click', openCalendarSheet);
 });
