@@ -454,6 +454,45 @@ foreach ($file in (Get-ChildItem -LiteralPath $src -Filter '*.html' -File)) {
   $pages++
 }
 
+# '캘린더에 추가' button이 여는 일정 파일(wedding.ics)을 만듭니다.
+# iPhone은 열면 바로 캘린더 추가 창이 뜨고, Android는 받은 파일을 캘린더 앱으로 엽니다.
+function IcsText([string]$s) {
+  return $s.Replace('\', '\\').Replace(';', '\;').Replace(',', '\,').Replace("`r", '').Replace("`n", '\n')
+}
+function IcsFold([string]$line) {
+  # 한 줄이 75 byte를 넘으면 접습니다. 한글(3 byte)이 중간에 잘리지 않게 글자 단위로 셉니다.
+  $out = New-Object Text.StringBuilder
+  $n = 0
+  foreach ($ch in $line.ToCharArray()) {
+    $b = [Text.Encoding]::UTF8.GetByteCount([string]$ch)
+    if ($n + $b -gt 73) { [void]$out.Append("`r`n "); $n = 1 }
+    [void]$out.Append($ch); $n += $b
+  }
+  return $out.ToString()
+}
+$icsStart = $w.UtcDateTime
+$icsEnd   = $icsStart.AddHours(2)
+$icsFmt   = 'yyyyMMdd\THHmmss\Z'
+$icsLoc   = Cf 'VENUE_ADDRESS_COPY' $T['VENUE_ADDRESS_FULL']
+$icsDesc  = "$(Cf 'GROOM_NAME_SHORT') ♥ $(Cf 'BRIDE_NAME_SHORT') 결혼식에 초대합니다.`n귀한 걸음 해 주셔서 감사합니다."
+if ($origin) { $icsDesc += "`n$origin" }
+$ics = @(
+  'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//rev6unsers//wedding//KO', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+  'BEGIN:VEVENT',
+  "UID:wedding-$($icsStart.ToString('yyyyMMdd'))@rev6unsers",
+  "DTSTAMP:$([DateTime]::UtcNow.ToString($icsFmt))",
+  "DTSTART:$($icsStart.ToString($icsFmt))",
+  "DTEND:$($icsEnd.ToString($icsFmt))",
+  "SUMMARY:$(IcsText "$(Cf 'GROOM_NAME') ♥ $(Cf 'BRIDE_NAME') 결혼식")",
+  "LOCATION:$(IcsText $icsLoc)",
+  "DESCRIPTION:$(IcsText $icsDesc)"
+)
+if ($origin) { $ics += "URL:$origin/" }
+$ics += @('BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:내일은 결혼식 날이에요', 'TRIGGER:-P1D', 'END:VALARM',
+          'END:VEVENT', 'END:VCALENDAR')
+$icsBody = (($ics | ForEach-Object { IcsFold $_ }) -join "`r`n") + "`r`n"
+[IO.File]::WriteAllText([IO.Path]::Combine($Out, 'wedding.ics'), $icsBody, (New-Object Text.UTF8Encoding $false))
+
 # 처음 열었을 때 보여줄 version을 index.html 로 복사합니다.
 $def = Cf 'DEFAULT_VERSION' 'main'
 if (@('main', 'developer') -notcontains $def) {

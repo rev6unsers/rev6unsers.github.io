@@ -526,6 +526,78 @@ function openShareSheet() {
 /* 하위호환용으로 기존 진입점 이름을 남겨 둔다. */
 function shareInvitation() { openShareSheet(); }
 
+/* '캘린더에 일정 추가'. 공유 창과 같은 bottom sheet 모양으로 두 가지를 고르게 한다.
+   - 휴대폰 캘린더: build.ps1 이 만든 wedding.ics 를 연다. iPhone은 바로 추가 창이 뜨고,
+     Android는 받은 파일을 캘린더 앱으로 연다.
+   - 구글 캘린더: 일정이 채워진 구글 캘린더 추가 화면을 새 창으로 연다. */
+function gcalUrl() {
+  var s = CONFIG.date, e = new Date(s.getTime() + 2 * 3600 * 1000);
+  function f(d) { return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); }
+  var p = CONFIG.profile || {};
+  var title = ((p.groom && p.groom.name) || '신랑') + ' ♥ ' + ((p.bride && p.bride.name) || '신부') + ' 결혼식';
+  var loc = WV.addressCopy || [WV.address, WV.name, WV.floor].filter(Boolean).join(' ');
+  var site = location.origin + location.pathname.replace(/[^/]*$/, '');
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+    '&text=' + encodeURIComponent(title) +
+    '&dates=' + f(s) + '/' + f(e) +
+    '&location=' + encodeURIComponent(loc) +
+    '&details=' + encodeURIComponent('귀한 걸음 해 주셔서 감사합니다.\n' + site);
+}
+
+var _calBack = null;
+function openCalendarSheet() {
+  buildShareSheet();                                   // 공유 창의 style(shs-*)을 함께 쓴다
+  if (!_calBack) {
+    if (!document.getElementById('cal-style')) {
+      var st = document.createElement('style');
+      st.id = 'cal-style';
+      st.textContent =
+        '.shs-btn.ics{background:#fdeee6;color:#8a4a32}.shs-btn.ics:active{background:#f9e0d3}' +
+        '.shs-btn.gcal{background:#e7eefb;color:#284a86}.shs-btn.gcal:active{background:#d6e4f8}' +
+        '.shs-btn small{display:block;margin-top:3px;font-size:12px;font-weight:400;opacity:.7}' +
+        '.shs-back.dev .shs-btn.ics{border-color:color-mix(in srgb,var(--rose) 40%,var(--line))}.shs-back.dev .shs-btn.ics::before{content:"ics: ";color:var(--rose)}.shs-back.dev .shs-btn.ics:active{background:color-mix(in srgb,var(--rose) 16%,transparent)}' +
+        '.shs-back.dev .shs-btn.gcal{border-color:color-mix(in srgb,var(--blue) 40%,var(--line))}.shs-back.dev .shs-btn.gcal::before{content:"google: ";color:var(--blue)}.shs-back.dev .shs-btn.gcal:active{background:color-mix(in srgb,var(--blue) 16%,transparent)}';
+      document.head.appendChild(st);
+    }
+    var dev = !!document.querySelector('.editor-bar');
+    var back = document.createElement('div');
+    back.className = 'shs-back' + (dev ? ' dev' : '');
+    back.innerHTML =
+      '<div class="shs" role="dialog" aria-label="캘린더에 일정 추가">' +
+      '<div class="shs-grip"></div><div class="shs-ttl">' + (dev ? '$ php artisan calendar:add' : '캘린더에 일정 추가') + '</div>' +
+      '<button class="shs-btn ics" data-act="ics">' + (dev ? '' : '<span class="i">📱</span>') +
+        '<span>휴대폰 캘린더에 추가<small>iPhone · 갤럭시 기본 캘린더</small></span></button>' +
+      '<button class="shs-btn gcal" data-act="gcal">' + (dev ? '' : '<span class="i">🗓️</span>') +
+        '<span>구글 캘린더에 추가<small>Google 계정 캘린더</small></span></button>' +
+      '<button class="shs-btn shs-cancel" data-act="close">닫기</button>' +
+      '</div>';
+    back.style.display = 'none';
+    document.body.appendChild(back);
+    var close = function () {
+      back.classList.remove('on');
+      setTimeout(function () { back.style.display = 'none'; }, 260);
+    };
+    back.addEventListener('click', function (e) {
+      if (e.target === back) return close();
+      var b = e.target.closest('[data-act]');
+      if (!b) return;
+      var act = b.getAttribute('data-act');
+      if (act === 'ics') location.href = 'wedding.ics';
+      else if (act === 'gcal') window.open(gcalUrl(), '_blank', 'noopener');
+      close();
+    });
+    _calBack = back;
+  }
+  _calBack.style.display = 'flex';
+  void _calBack.offsetWidth;
+  _calBack.classList.add('on');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  var b = document.getElementById('calAdd');
+  if (b) b.addEventListener('click', openCalendarSheet);
+});
+
 document.addEventListener('DOMContentLoaded', function () {
   initKakaoShare();                                // 키가 있으면 카카오 SDK를 미리 load한다
   var b = document.getElementById('shareBtn');

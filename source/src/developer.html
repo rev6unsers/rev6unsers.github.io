@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#18181b" />
 
   <title>{{GROOM_NAME_SHORT}} ❤ {{BRIDE_NAME_SHORT}} 결혼식에 초대합니다</title>
   <link rel="icon" type="image/svg+xml" href="assets/favicon-dev.svg" />
@@ -207,6 +208,11 @@
     <div class="cal rv d3">
       <div class="cal-title" id="calTitle">{{WEDDING_MONTH_EN}} {{WEDDING_YEAR}}</div>
       <table id="calTable" aria-label="예식 달력"></table>
+    </div>
+
+    <!-- 누르면 js/config.js 가 캘린더 선택 창(휴대폰 캘린더 / 구글 캘린더)을 띄운다 -->
+    <div class="btn-row rv d3">
+      <button class="btn rose" id="calAdd" type="button">$ php artisan calendar:add</button>
     </div>
   </section>
 

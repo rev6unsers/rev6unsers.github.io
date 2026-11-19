@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#fdefe8" />
 
   <title>성연 ❤ 희진 결혼식에 초대합니다</title>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
@@ -34,7 +35,7 @@
 
   <!-- 크림과 피치 톤의 파스텔 version style.
        동작은 js/main.js가, 날짜와 사진과 profile 같은 내용은 js/config.js가 관리한다. -->
-  <link rel="stylesheet" href="css/main.css?v=b17c5d96" />
+  <link rel="stylesheet" href="css/main.css?v=8dc688a6" />
 </head>
 
 <body>
@@ -146,6 +147,11 @@
     <div class="cal rv d3">
       <div class="cal-title" id="calTitle">2027년 10월</div>
       <table id="calTable" aria-label="예식 달력"></table>
+    </div>
+
+    <!-- 누르면 js/config.js 가 캘린더 선택 창(휴대폰 캘린더 / 구글 캘린더)을 띄운다 -->
+    <div class="btn-row rv d3">
+      <button class="btn" id="calAdd" type="button">📅 내 캘린더에 일정 추가</button>
     </div>
   </section>
 
@@ -292,11 +298,11 @@
   <button class="lb-next" id="lbNext" type="button" aria-label="다음 사진">›</button>
 </div>
 
-<script src="js/data.js?v=b17c5d96"></script><script src="js/config.js?v=b17c5d96"></script>
-<script src="js/private.js?v=b17c5d96"></script>
-<script src="js/main.js?v=b17c5d96"></script>
+<script src="js/data.js?v=8dc688a6"></script><script src="js/config.js?v=8dc688a6"></script>
+<script src="js/private.js?v=8dc688a6"></script>
+<script src="js/main.js?v=8dc688a6"></script>
 <!-- 화려한 연출(오프닝, 꽃잎, 하트, 제목 등장 등). 없어도 청첩장은 그대로 동작한다. -->
-<script src="js/fx.js?v=b17c5d96"></script>
+<script src="js/fx.js?v=8dc688a6"></script>
 
 <!-- 신랑과 신부 profile render. main version 전용이며 CONFIG.profile을 쓴다. -->
 <script>

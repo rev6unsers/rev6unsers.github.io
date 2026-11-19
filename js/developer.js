@@ -31,6 +31,8 @@ const themeToggle = document.getElementById('themeToggle');
 
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
+  const themeMeta = document.querySelector('meta[name="theme-color"]');   // 휴대폰 주소창 색도 theme를 따라간다
+  if (themeMeta) themeMeta.content = theme === 'dark' ? '#18181b' : '#fdfcfb';
   themeToggle.textContent = theme === 'dark' ? '☾' : '☀';
   themeToggle.title = theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환';
   localStorage.setItem('wedding-theme', theme);
