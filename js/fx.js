@@ -116,7 +116,8 @@ fxSafe('intro', () => {
 
 
 // 오프닝을 띄웠든 건너뛰었든, 본문 가림(main.html <head> 의 intro-pending)을 푼다.
-document.documentElement.classList.remove('intro-pending');
+// 봉투가 화면에 한 번 그려진 다음 프레임에 푼다(그 사이에 본문이 비치지 않게).
+requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.remove('intro-pending')));
 
 /* 01-2. 날짜 긁기: 예식 안내의 날짜를 로즈골드 은박으로 덮고, 긁으면 드러난다 (makeScratch 는 config.js) */
 

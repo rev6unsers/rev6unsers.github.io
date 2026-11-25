@@ -41,7 +41,12 @@
 
   <!-- 봉투 오프닝을 볼 차례면, fx.js 가 봉투를 띄우기 전까지 본문을 가린다(본문이 0.5초 먼저 비치는 것 방지).
        fx.js 가 봉투를 붙이자마자 풀고, 혹시 fx.js 가 실패해도 3초 뒤에는 저절로 풀린다. -->
-  <style>html.intro-pending body { visibility: hidden; } html.intro-pending .intro { visibility: visible; }</style>
+  <style>
+    html.intro-pending body { visibility: hidden; }
+    html.intro-pending .intro { visibility: visible; }
+    /* 일부 휴대폰 browser(iOS, 인앱)는 움직이는 요소를 visibility 와 상관없이 먼저 그린다. 그래서 크림색 막으로 한 번 더 덮는다. */
+    html.intro-pending::after { content: ""; position: fixed; inset: 0; z-index: 199; background: #fff8f3; }
+  </style>
   <script>
     try {
       if (sessionStorage.getItem('wedding-intro') !== '1' && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
