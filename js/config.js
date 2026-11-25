@@ -600,6 +600,17 @@ document.addEventListener('DOMContentLoaded', function () {
   try { localStorage.setItem('wedding-last-version', document.querySelector('.editor-bar') ? 'developer' : 'main'); } catch (e) {}
   var b = document.getElementById('calAdd');
   if (b) b.addEventListener('click', openCalendarSheet);
+
+  // 버전 전환 링크는 page 맨 아래에 있다. 그대로 떠나면 브라우저가 그 위치를 기억해서,
+  // 뒤로 가기로 돌아왔을 때 맨 아래에서 시작한다. 그래서 맨 위로 올린 다음 이동한다.
+  document.querySelectorAll('.version-link').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      if (e.ctrlKey || e.metaKey || e.shiftKey || e.button) return;   // 새 탭으로 열 때는 그대로
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      requestAnimationFrame(function () { location.href = a.href; });
+    });
+  });
 });
 
 document.addEventListener('DOMContentLoaded', function () {
