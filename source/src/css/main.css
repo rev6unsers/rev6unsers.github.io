@@ -2435,3 +2435,13 @@ footer > *:not(.ft-bubbles) { position: relative; z-index: 1; }
 .pb-layer { opacity: 0; }
 .popup.open .pb-layer { opacity: 1; }
 .popup.open .pb-back { transform: translateY(-2px) rotateX(0deg); }
+
+/* 17-1 보충: 밀랍 도장의 하트. 살짝 눌러 찍힌 듯 안쪽 그림자를 준다. */
+.env-seal span {
+  position: relative;
+  font-size: 26px;
+  line-height: 1;
+  color: #fde9df;
+  text-shadow: 0 -1px 0 rgba(120, 40, 25, 0.35), 0 1px 1px rgba(255, 255, 255, 0.35);
+  translate: 0 1px;
+}

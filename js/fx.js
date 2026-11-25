@@ -42,9 +42,6 @@ fxSafe('intro', () => {
   const ampm = D.getHours() < 12 ? 'AM' : 'PM';
   const dateText = `${D.getFullYear()}. ${D.getMonth() + 1}. ${D.getDate()}  ${DAY}  ${h12}${ampm}`;
 
-  // 밀랍 도장에 새길 두 사람의 첫 글자
-  const gi = (p.groom || {}).initial || g.charAt(0);
-  const bi = (p.bride || {}).initial || b.charAt(0);
 
   // 봉투: 뒤판, 편지, 앞주머니, 윗덮개, 밀랍 도장 순서로 쌓는다. 모양과 움직임은 css/main.css 의 17-1.
   const intro = document.createElement('div');
@@ -75,7 +72,7 @@ fxSafe('intro', () => {
         '</svg>' +
       '</div>' +
       '<div class="env-flap"></div>' +
-      `<div class="env-seal"><span>${gi}♥${bi}</span></div>` +
+      '<div class="env-seal"><span>♥</span></div>' +   // 밀랍 도장: 하트 하나
     '</div></div>' +
     '<div class="intro-hint">봉투를 눌러 열어 주세요</div>';
 
