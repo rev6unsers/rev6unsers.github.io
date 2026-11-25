@@ -4,7 +4,7 @@
    움직임 줄이기(REDUCE_MOTION, main.js)를 켠 기기에서는 움직이는 연출을 하지 않는다.
 
    목차
-   01. 오프닝 인트로   : 'Our Wedding Day'를 손글씨로 그리고 막이 걷히듯 열린다 (세션당 한 번)
+   01. 오프닝 인트로   : 봉투를 누르면 도장이 떨어지고 편지가 올라온 뒤 청첩장이 열린다 (세션당 한 번)
    02. 꽃잎            : 표지 위로 꽃잎이 흩날린다 (canvas, 표지가 보일 때만)
    03. 하트 터치       : 표지를 누르면 그 자리에서 하트가 떠오른다
    04. 진행 바         : 맨 위 얇은 바가 읽은 만큼 차오른다 (CSS scroll-timeline, 미지원 시 JS)
@@ -41,18 +41,42 @@ fxSafe('intro', () => {
   const ampm = D.getHours() < 12 ? 'AM' : 'PM';
   const dateText = `${D.getFullYear()}. ${D.getMonth() + 1}. ${D.getDate()}  ${DAY}  ${h12}${ampm}`;
 
+  // 밀랍 도장에 새길 두 사람의 첫 글자
+  const gi = (p.groom || {}).initial || g.charAt(0);
+  const bi = (p.bride || {}).initial || b.charAt(0);
+
+  // 봉투: 뒤판, 편지, 앞주머니, 윗덮개, 밀랍 도장 순서로 쌓는다. 모양과 움직임은 css/main.css 의 17-1.
   const intro = document.createElement('div');
   intro.className = 'intro';
   intro.setAttribute('role', 'dialog');
-  intro.setAttribute('aria-label', '청첩장 열기');
+  intro.setAttribute('aria-label', '청첩장 봉투 열기');
   intro.innerHTML =
     '<div class="intro-glow"></div>' +
-    '<svg class="intro-sign" viewBox="0 0 360 100" aria-hidden="true">' +
-      '<text x="180" y="70" text-anchor="middle">Our Wedding Day</text>' +
-    '</svg>' +
-    `<div class="intro-names">${g} <i>&amp;</i> ${b}</div>` +
-    `<div class="intro-date">${dateText}</div>` +
-    '<div class="intro-hint">화면을 누르면 바로 열려요</div>';
+    '<div class="env-to">You\'re invited</div>' +
+    '<div class="env-wrap"><div class="env">' +
+      '<div class="env-back"></div>' +
+      '<div class="env-letter">' +
+        '<svg class="intro-sign" viewBox="0 0 360 86" aria-hidden="true">' +
+          '<text x="180" y="62" text-anchor="middle">Our Wedding Day</text>' +
+        '</svg>' +
+        `<div class="intro-names">${g} <i>&amp;</i> ${b}</div>` +
+        `<div class="intro-date">${dateText}</div>` +
+      '</div>' +
+      '<div class="env-pocket">' +
+        '<svg viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">' +
+          '<defs>' +
+            '<linearGradient id="envSide" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8dccf"/><stop offset="1" stop-color="#f3cbba"/></linearGradient>' +
+            '<linearGradient id="envBottom" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fde7dd"/><stop offset="1" stop-color="#fad9cb"/></linearGradient>' +
+          '</defs>' +
+          '<path d="M0 6 Q0 0 4 1 L150 112 L4 199 Q0 200 0 194 Z" fill="url(#envSide)"/>' +
+          '<path d="M300 6 Q300 0 296 1 L150 112 L296 199 Q300 200 300 194 Z" fill="url(#envSide)"/>' +
+          '<path d="M0 194 L150 100 L300 194 Q300 200 292 200 L8 200 Q0 200 0 194 Z" fill="url(#envBottom)"/>' +
+        '</svg>' +
+      '</div>' +
+      '<div class="env-flap"></div>' +
+      `<div class="env-seal"><span>${gi}♥${bi}</span></div>` +
+    '</div></div>' +
+    '<div class="intro-hint">봉투를 눌러 열어 주세요</div>';
 
   document.body.appendChild(intro);
   document.documentElement.classList.add('intro-on');
@@ -67,17 +91,29 @@ fxSafe('intro', () => {
     setTimeout(() => intro.remove(), 1000);
   }
 
-  // 손글씨 획이 글꼴 load 뒤에 그려지도록 기다린다. 글꼴이 늦어도 3.6초 뒤에는 열린다.
+  // 누르면 봉투가 열린다. 열리는 동안 한 번 더 누르면 바로 청첩장으로 넘어간다.
+  // 아무도 누르지 않으면 6초 뒤 저절로 열린다(멈춘 화면처럼 보이지 않게).
+  let opened = false, autoTimer = 0;
+  function open() {
+    if (opened) { close(); return; }
+    opened = true;
+    clearTimeout(autoTimer);
+    intro.classList.add('ready', 'open');
+    if (navigator.vibrate) { try { navigator.vibrate(10); } catch (e) {} }
+    setTimeout(close, 4800);
+  }
+
+  // 손글씨 글꼴이 load된 뒤 봉투를 띄운다. 글꼴이 늦어도 1.2초 뒤에는 띄운다.
   const start = () => {
-    intro.classList.add('play');
-    setTimeout(close, 3600);
+    intro.classList.add('ready');
+    autoTimer = setTimeout(open, 6000);
   };
   if (document.fonts && document.fonts.ready) {
     Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1200))]).then(start);
   } else {
     start();
   }
-  intro.addEventListener('click', close);
+  intro.addEventListener('click', open);
 });
 
 

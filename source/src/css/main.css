@@ -1368,7 +1368,9 @@ footer .thanks-line + div { font-weight: 700; }
 /* 17. 연출 (js/fx.js 와 짝)
    색은 이 page의 크림·피치코랄·옅은 라벤더를 그대로 쓴다. */
 
-/* 17-1. 오프닝 인트로 */
+/* 17-1. 오프닝 인트로: 봉투 (js/fx.js 01)
+   봉인된 봉투가 떠 있고, 누르면 밀랍 도장이 톡 떨어지고 덮개가 열리며 편지가 올라온다.
+   편지에는 'Our Wedding Day' 손글씨가 그려지고 이름과 날짜가 나타난 뒤 막이 걷히듯 청첩장이 열린다. */
 .intro {
   position: fixed;
   inset: 0;
@@ -1377,7 +1379,6 @@ footer .thanks-line + div { font-weight: 700; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
   background: var(--paper);
   clip-path: inset(0 0 0 0);
   transition: clip-path 0.95s cubic-bezier(0.7, 0, 0.2, 1), opacity 0.95s ease;
@@ -1402,69 +1403,229 @@ footer .thanks-line + div { font-weight: 700; }
   to { translate: 4% -3%; scale: 1.08; }
 }
 
-.intro-sign {
+/* 봉투 위 손글씨 인사 */
+.env-to {
   position: relative;
-  width: min(86vw, 360px);
+  margin-bottom: 26px;
+  font-family: var(--script);
+  font-size: 30px;
+  color: var(--coral-deep);
+  opacity: 0;
+  translate: 0 10px;
+  transition: opacity 0.8s ease, translate 0.8s ease;
+}
+
+.intro.ready .env-to { opacity: 1; translate: 0 0; transition-delay: 0.3s; }
+.intro.open .env-to { opacity: 0; translate: 0 -10px; transition-delay: 0s; }
+
+/* 봉투 몸통. 3:2 비율, 화면 폭에 맞춰 줄어든다. */
+.env-wrap {
+  position: relative;
+  width: min(78vw, 300px);
+  aspect-ratio: 3 / 2;
+  opacity: 0;
+  translate: 0 24px;
+  scale: 0.94;
+  transition: opacity 0.8s ease, translate 1s cubic-bezier(0.2, 0.8, 0.2, 1), scale 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.intro.ready .env-wrap { opacity: 1; translate: 0 0; scale: 1; }
+.intro.ready:not(.open) .env-wrap { animation: env-float 3.2s ease-in-out 1s infinite; }
+.intro.open .env-wrap { translate: 0 64px; transition-delay: 0.7s; }
+
+@keyframes env-float {
+  0%, 100% { transform: translateY(0) rotate(-0.6deg); }
+  50%      { transform: translateY(-7px) rotate(0.6deg); }
+}
+
+.env { position: absolute; inset: 0; }
+
+.env-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #d99c86 0%, #e6b3a0 70%, #eec4b3 100%);   /* 봉투 안쪽: 앞주머니보다 어둡게 */
+  box-shadow: 0 22px 40px -22px rgba(150, 80, 60, 0.55);
+}
+
+/* 편지. 봉투 안에 있다가 위로 올라온다. */
+.env-letter {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 5%;
+  height: 92%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 6px;
+  border-radius: 6px;
+  background:
+    linear-gradient(var(--line-soft), var(--line-soft)) 50% 100% / 70% 1px no-repeat,
+    #fffaf6;
+  box-shadow: 0 0 0 1px var(--line), 0 8px 18px -10px rgba(120, 70, 50, 0.4);
+  transition: transform 1s cubic-bezier(0.3, 0.9, 0.25, 1);
+  transition-delay: 0.75s;
+}
+
+.intro.open .env-letter { transform: translateY(-66%); }
+
+.env-letter .intro-sign {
+  width: 92%;
   overflow: visible;
 }
 
 .intro-sign text {
   font-family: var(--script);
-  font-size: 52px;
+  font-size: 58px;
   fill: transparent;
   stroke: var(--coral);
-  stroke-width: 1.1;
-  stroke-dasharray: 700;
-  stroke-dashoffset: 700;
+  stroke-width: 1.2;
+  stroke-dasharray: 760;
+  stroke-dashoffset: 760;
 }
 
-.intro.play .intro-sign text {
-  animation: sign-draw 1.8s cubic-bezier(0.6, 0, 0.3, 1) forwards, sign-fill 0.8s ease 1.4s forwards;
+.intro.open .intro-sign text {
+  animation: sign-draw 1.5s cubic-bezier(0.6, 0, 0.3, 1) 1.35s forwards, sign-fill 0.7s ease 2.5s forwards;
 }
 
 @keyframes sign-draw { to { stroke-dashoffset: 0; } }
 @keyframes sign-fill { to { fill: var(--coral); stroke-width: 0.4; } }
 
 .intro-names,
-.intro-date,
-.intro-hint {
-  position: relative;
+.intro-date {
   opacity: 0;
-  translate: 0 12px;
-  transition: opacity 0.8s ease, translate 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  translate: 0 8px;
+  transition: opacity 0.7s ease, translate 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .intro-names {
+  margin-top: -4px;
   font-family: var(--serif);
-  font-size: 30px;
-  letter-spacing: 0.12em;
+  font-size: 21px;
+  letter-spacing: 0.1em;
   color: var(--ink-bright);
 }
 
 .intro-names i {
   font-family: var(--script);
   font-style: normal;
-  font-size: 32px;
+  font-size: 23px;
   color: var(--peach-deep);
-  margin: 0 6px;
+  margin: 0 4px;
 }
 
 .intro-date {
-  font-size: 13px;
-  letter-spacing: 0.3em;
+  margin-top: 4px;
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
   color: var(--soft);
 }
+
+.intro.open .intro-names { opacity: 1; translate: 0 0; transition-delay: 2.2s; }
+.intro.open .intro-date  { opacity: 1; translate: 0 0; transition-delay: 2.5s; }
+
+/* 앞주머니: 양옆 삼각과 아래 삼각 */
+.env-pocket {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+}
+
+/* 앞주머니 모양은 SVG로 그린다(clip-path는 봉투가 움직이는 동안 일부 browser에서 잠깐 안 먹는다). */
+.env-pocket svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+
+.env-pocket::before {
+  content: 'with love';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 9%;
+  z-index: 1;
+  text-align: center;
+  font-family: var(--script);
+  font-size: 19px;
+  color: var(--coral-deep);
+  opacity: 0.8;
+}
+
+/* 윗덮개. 위쪽 모서리를 축으로 뒤로 넘어가며 열린다. 반쯤 넘어가면 편지 뒤로 내려간다. */
+.env-flap {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 62%;
+  z-index: 4;
+  background: linear-gradient(180deg, #f6d2c2 0%, #f1c3b0 100%);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: 50% 0;
+  transform: perspective(700px) rotateX(0deg);
+  transition: transform 0.7s cubic-bezier(0.5, 0, 0.3, 1) 0.25s, z-index 0s linear 0.6s;
+}
+
+.intro.open .env-flap {
+  z-index: 1;
+  transform: perspective(700px) rotateX(180deg);
+}
+
+/* 밀랍 도장 */
+.env-seal {
+  position: absolute;
+  left: 50%;
+  top: 62%;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  margin: -29px 0 0 -29px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #eaa792 0%, #d27a62 45%, #b65a43 100%);
+  box-shadow: 0 6px 14px -4px rgba(140, 60, 40, 0.55), inset 0 -3px 6px rgba(120, 40, 25, 0.35);
+  color: #fff7f2;
+  font-family: var(--serif);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  transition: transform 0.45s cubic-bezier(0.5, -0.4, 0.6, 1), opacity 0.4s ease;
+}
+
+.env-seal::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(255, 240, 232, 0.45);
+}
+
+.intro.ready:not(.open) .env-seal { animation: seal-pulse 1.6s ease-in-out 1.2s infinite; }
+
+@keyframes seal-pulse {
+  0%, 100% { box-shadow: 0 6px 14px -4px rgba(140, 60, 40, 0.55), 0 0 0 0 rgba(232, 149, 122, 0.45); }
+  50%      { box-shadow: 0 6px 14px -4px rgba(140, 60, 40, 0.55), 0 0 0 12px rgba(232, 149, 122, 0); }
+}
+
+.intro.open .env-seal { transform: translateY(26px) scale(0.6) rotate(-25deg); opacity: 0; }
 
 .intro-hint {
   position: absolute;
   bottom: calc(36px + env(safe-area-inset-bottom, 0px));
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--faint);
+  opacity: 0;
+  transition: opacity 0.6s ease;
 }
 
-.intro.play .intro-names { opacity: 1; translate: 0 0; transition-delay: 1.5s; }
-.intro.play .intro-date  { opacity: 1; translate: 0 0; transition-delay: 1.9s; }
-.intro.play .intro-hint  { opacity: 1; translate: 0 0; transition-delay: 1.2s; }
+.intro.ready .intro-hint { opacity: 1; transition-delay: 1.4s; animation: hint-blink 2.4s ease-in-out 2s infinite; }
+.intro.open .intro-hint { opacity: 0; animation: none; transition-delay: 0s; }
+
+@keyframes hint-blink { 50% { opacity: 0.45; } }
 
 /* 17-2. 표지: 꽃잎 canvas, 사진 Ken Burns와 빛 번짐, 떠다니는 배경 원 */
 .cover .petals {
