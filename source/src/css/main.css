@@ -2256,3 +2256,182 @@ footer > *:not(.ft-bubbles) { position: relative; z-index: 1; }
 @media (prefers-reduced-motion: reduce) {
   .map-ask, .map-ask .ma-card { transition: none; }
 }
+
+
+/* 24. 팝업북 카드 (js/fx.js 11과 짝)
+   책(뒤판 + 바닥판)이 접혀 있다가 펼쳐지고, 접힌 선 위의 종이 층(꽃 아치, 이름 팻말, 꽃덤불)이
+   차례로 일어선다. 3D 좌표: 접힌 선이 .pb-scene 의 아래쪽 가장자리이고, z가 클수록 보는 사람 쪽이다. */
+.popup-sec { padding-top: 40px; overflow: hidden; }
+
+.popup-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.popup {
+  position: relative;
+  width: 280px;
+  height: 330px;
+  perspective: 900px;
+  perspective-origin: 50% 0%;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pb-scene {
+  position: absolute;
+  left: 0;
+  top: 20px;
+  width: 280px;
+  height: 200px;
+  transform-style: preserve-3d;
+  transform: rotateX(-14deg);
+  transform-origin: 50% 100%;
+}
+
+.pb-base,
+.pb-back,
+.pb-layer {
+  position: absolute;
+  left: 0;
+  backface-visibility: visible;
+}
+
+.pb-base svg,
+.pb-back svg,
+.pb-layer svg { display: block; width: 100%; height: 100%; }
+
+/* 바닥판: 접힌 선에서 보는 사람 쪽으로 눕는다 */
+.pb-base {
+  top: 100%;
+  width: 280px;
+  height: 150px;
+  transform-origin: 50% 0;
+  transform: rotateX(90deg);
+  box-shadow: 0 0 0 1px rgba(232, 149, 122, 0.18);
+  border-radius: 6px;
+}
+
+/* 뒤판: 접혀 있을 때는 바닥판 위에 엎어져 있다가(-90deg) 일어선다(0deg) */
+.pb-back {
+  bottom: 0;
+  width: 280px;
+  height: 200px;
+  transform-origin: 50% 100%;
+  transform: rotateX(-90deg);
+  transition: transform 1.1s cubic-bezier(0.3, 0.8, 0.25, 1);
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px rgba(232, 149, 122, 0.18);
+}
+
+.pb-title {
+  position: absolute;
+  top: 14px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--script);
+  font-size: 26px;
+  color: var(--coral-deep);
+}
+
+/* 종이 층: 접힌 선에서 z만큼 앞에 서 있다. 접혀 있을 때는 앞으로 눕는다. */
+.pb-layer {
+  bottom: 0;
+  transform-origin: 50% 100%;
+  transform: translateZ(var(--z)) rotateX(-90deg);
+  transition: transform 0.9s cubic-bezier(0.25, 1.4, 0.4, 1), opacity 0.35s ease;
+  filter: drop-shadow(0 4px 4px rgba(150, 80, 60, 0.18));
+}
+
+.pb-arch { left: 30px; width: 220px; height: 170px; --z: 30px; transition-delay: 0.35s; }
+.pb-sign { left: 80px; width: 120px; height: 92px; --z: 72px; transition-delay: 0.55s; }
+.pb-bush { left: 0; width: 280px; height: 60px; --z: 118px; transition-delay: 0.75s; }
+
+.pb-board {
+  padding: 10px 6px 8px;
+  border-radius: 10px;
+  background: #fffaf6;
+  box-shadow: 0 0 0 1.5px var(--coral-soft);
+  text-align: center;
+}
+
+.pb-names {
+  font-family: var(--serif);
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  color: var(--ink-bright);
+}
+
+.pb-names i { font-style: normal; font-size: 13px; color: var(--coral); }
+
+.pb-date {
+  margin-top: 2px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--soft);
+}
+
+.pb-legs {
+  height: 26px;
+  margin: 0 30px;
+  background:
+    linear-gradient(var(--coral-soft), var(--coral-soft)) 18% 0 / 4px 100% no-repeat,
+    linear-gradient(var(--coral-soft), var(--coral-soft)) 82% 0 / 4px 100% no-repeat;
+}
+
+/* 펼침 */
+.popup.open .pb-back { transform: rotateX(0deg); }
+.popup.open .pb-layer { transform: translateZ(var(--z)) rotateX(0deg); }
+
+/* 접을 때는 앞 층부터 빠르게 눕는다 */
+.popup:not(.open) .pb-layer { transition-duration: 0.45s; transition-timing-function: ease-in; }
+.popup:not(.open) .pb-arch { transition-delay: 0.12s; }
+.popup:not(.open) .pb-sign { transition-delay: 0.06s; }
+.popup:not(.open) .pb-bush { transition-delay: 0s; }
+.popup:not(.open) .pb-back { transition-duration: 0.6s; transition-delay: 0.2s; }
+
+.popup-hint {
+  margin-top: 4px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--faint);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pb-back, .pb-layer { transition: none !important; }
+}
+
+/* 24-1. 표지와 겹침 정리
+   뒤판은 앞면(하늘, 제목)과 뒷면(표지)을 따로 갖는다. 접혀 있을 때는 표지만 보인다.
+   종이 층은 누워 있을 때 비친 글씨가 보이지 않도록, 일어서는 동안 서서히 나타난다. */
+.pb-back { transform-style: preserve-3d; transform: translateY(-2px) rotateX(-90deg); }
+.pb-back svg { position: absolute; inset: 0; }
+.pb-back svg,
+.pb-title { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+
+.pb-cover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 6px;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.5) 0, transparent 45%),
+    linear-gradient(160deg, #f6d2c2 0%, #efbba6 100%);
+  box-shadow: inset 0 0 0 6px rgba(255, 250, 246, 0.55);
+  transform: rotateX(180deg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.pb-cover-to { font-family: var(--script); font-size: 28px; color: #fffaf6; text-shadow: 0 1px 2px rgba(150, 70, 50, 0.3); }
+.pb-cover-heart { font-size: 16px; color: #fffaf6; }
+
+.pb-layer { opacity: 0; }
+.popup.open .pb-layer { opacity: 1; }
+.popup.open .pb-back { transform: translateY(-2px) rotateX(0deg); }

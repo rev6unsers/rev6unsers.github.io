@@ -14,6 +14,7 @@
    08. 프로필 카드     : 손가락을 댄 자리에 빛이 따라오고 PC에서는 3D로 기운다
    09. 복사·공유 하트  : 복사·공유 button을 누르면 하트가 터지고 짧게 진동한다
    10. 마지막 장면     : '감사합니다' 손글씨와 아래에서 떠오르는 하트
+   11. 팝업북 카드     : 책이 펼쳐지며 꽃 아치, 이름 팻말, 꽃덤불이 차례로 일어선다
  */
 
 const FX_MOTION = !(typeof REDUCE_MOTION !== 'undefined' && REDUCE_MOTION);
@@ -518,4 +519,23 @@ fxSafe('finale', () => {
       clearInterval(timer); timer = 0;
     }
   }, { threshold: 0.25 }).observe(footer);
+});
+
+
+/* 11. 팝업북 카드: 화면에 절반쯤 들어오면 펼친다. 누르면 접었다가 다시 펼친다. 모양은 css/main.css 의 24. */
+
+fxSafe('popup', () => {
+  const pop = document.getElementById('popup');
+  if (!pop) return;
+  if (!FX_MOTION || !('IntersectionObserver' in window)) { pop.classList.add('open'); return; }
+  let busy = false;
+  new IntersectionObserver((es) => {
+    if (es[0].isIntersecting) pop.classList.add('open');
+  }, { threshold: 0.55 }).observe(pop);
+  pop.addEventListener('click', () => {
+    if (busy) return;
+    busy = true;
+    pop.classList.remove('open');
+    setTimeout(() => { pop.classList.add('open'); busy = false; }, 1000);
+  });
 });
