@@ -38,6 +38,18 @@
   <!-- 크림과 피치 톤의 파스텔 version style.
        동작은 js/main.js가, 날짜와 사진과 profile 같은 내용은 js/config.js가 관리한다. -->
   <link rel="stylesheet" href="css/main.css" />
+
+  <!-- 봉투 오프닝을 볼 차례면, fx.js 가 봉투를 띄우기 전까지 본문을 가린다(본문이 0.5초 먼저 비치는 것 방지).
+       fx.js 가 봉투를 붙이자마자 풀고, 혹시 fx.js 가 실패해도 3초 뒤에는 저절로 풀린다. -->
+  <style>html.intro-pending body { visibility: hidden; } html.intro-pending .intro { visibility: visible; }</style>
+  <script>
+    try {
+      if (sessionStorage.getItem('wedding-intro') !== '1' && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('intro-pending');
+        setTimeout(function () { document.documentElement.classList.remove('intro-pending'); }, 3000);
+      }
+    } catch (e) {}
+  </script>
 </head>
 
 <body>

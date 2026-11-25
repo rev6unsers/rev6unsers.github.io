@@ -101,19 +101,22 @@ fxSafe('intro', () => {
     setTimeout(close, 4800);
   }
 
-  // 손글씨 글꼴이 load된 뒤 봉투를 띄운다. 글꼴이 늦어도 1.2초 뒤에는 띄운다.
+  // 손글씨 글꼴이 load된 뒤 봉투를 띄운다. 글꼴이 늦어도 0.7초 뒤에는 띄운다.
   const start = () => {
     intro.classList.add('ready');
     autoTimer = setTimeout(open, 6000);
   };
   if (document.fonts && document.fonts.ready) {
-    Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1200))]).then(start);
+    Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 700))]).then(start);
   } else {
     start();
   }
   intro.addEventListener('click', open);
 });
 
+
+// 오프닝을 띄웠든 건너뛰었든, 본문 가림(main.html <head> 의 intro-pending)을 푼다.
+document.documentElement.classList.remove('intro-pending');
 
 /* 01-2. 날짜 긁기: 예식 안내의 날짜를 로즈골드 은박으로 덮고, 긁으면 드러난다 (makeScratch 는 config.js) */
 
