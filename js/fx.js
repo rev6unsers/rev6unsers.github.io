@@ -149,35 +149,31 @@ fxSafe('intro', () => {
   draw();
   window.addEventListener('resize', draw);
 
-  // 누르면: 덮개 틈으로 빛이 새고(open) → 도장이 빛나고 → 덮개가 바깥으로 열리며 청첩장이 드러난다(reveal).
+  // 누르면 한 흐름으로 이어진다: 덮개 틈으로 빛이 새고 → 도장이 빛나며 녹아들고 → 덮개가 바깥으로 젖혀지며
+  // 청첩장이 드러난다. 움직임은 모두 css/main.css 17-1 의 keyframes(--ix-dur 2.3초)에 있다.
   // 여는 중에 한 번 더 누르면 바로 넘어간다. 아무도 누르지 않으면 6초 뒤 저절로 열린다.
-  let opened = false, revealed = false, done = false, autoTimer = 0;
+  const html = document.documentElement;
+  let opened = false, done = false, autoTimer = 0;
 
   function finish() {
     if (done) return;
     done = true;
     try { sessionStorage.setItem('wedding-intro', '1'); } catch (e) {}
-    intro.classList.add('reveal', 'out');
-    document.documentElement.classList.remove('intro-on');
+    intro.classList.add('out');
+    html.classList.remove('intro-on');
     window.removeEventListener('resize', draw);
-    setTimeout(() => intro.remove(), 900);
-  }
-
-  function reveal() {
-    if (revealed) { finish(); return; }
-    revealed = true;
-    try { sessionStorage.setItem('wedding-intro', '1'); } catch (e) {}
-    intro.classList.add('reveal');
-    setTimeout(finish, 1200);
+    setTimeout(() => { intro.remove(); html.classList.remove('intro-opening'); }, 600);
   }
 
   function open() {
-    if (opened) { reveal(); return; }
+    if (opened) { finish(); return; }
     opened = true;
     clearTimeout(autoTimer);
+    try { sessionStorage.setItem('wedding-intro', '1'); } catch (e) {}
     intro.classList.add('ready', 'open');
+    html.classList.add('intro-opening');
     if (navigator.vibrate) { try { navigator.vibrate(12); } catch (e) {} }
-    setTimeout(reveal, 1350);
+    setTimeout(finish, 2250);
   }
 
   // 손글씨 글꼴이 load된 뒤 글자와 도장을 띄운다. 글꼴이 늦어도 0.7초 뒤에는 띄운다.

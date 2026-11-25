@@ -1382,7 +1382,7 @@ footer .thanks-line + div { font-weight: 700; }
   transition: opacity 0.7s ease;
 }
 
-.intro.out { opacity: 0; pointer-events: none; }
+.intro.out { opacity: 0; pointer-events: none; transition-duration: 0.5s; }
 
 .intro-on body { overflow: hidden; }
 
@@ -1396,19 +1396,13 @@ footer .thanks-line + div { font-weight: 700; }
 /* 봉투 안쪽. 처음에는 불투명해서 뒤 본문이 비치지 않는다. */
 .ix-in {
   background: radial-gradient(circle at 50% 50%, #fbe2d4 0, #f3cbb9 55%, #eebfac 100%);
-  transition: opacity 0.9s ease 0.2s;
 }
 
 /* 틈으로 새어 나오는 빛 */
 .ix-light {
   opacity: 0;
   background: radial-gradient(circle at 50% 50%, #fffaf0 0, rgba(255, 228, 190, 0.95) 22%, rgba(255, 200, 160, 0.55) 48%, rgba(246, 196, 170, 0) 75%);
-  transition: opacity 0.9s ease 0.15s;
 }
-
-.intro.open .ix-light { opacity: 1; }
-.intro.reveal .ix-in,
-.intro.reveal .ix-light { opacity: 0; transition: opacity 0.7s ease 0.45s; }
 
 .ix-flap svg {
   display: block;
@@ -1416,32 +1410,67 @@ footer .thanks-line + div { font-weight: 700; }
   height: 100%;
 }
 
-.ix-flap {
-  transition: transform 0.85s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s, opacity 0.7s ease;
-  will-change: transform;
-}
+.ix-flap { will-change: transform, opacity; }
 
 .ix-t { transform-origin: 50% 0; filter: drop-shadow(0 3px 6px rgba(160, 95, 70, 0.2)); }
 .ix-b { transform-origin: 50% 100%; filter: drop-shadow(0 -2px 5px rgba(160, 95, 70, 0.16)); }
 .ix-l { transform-origin: 0 50%; }
 .ix-r { transform-origin: 100% 50%; }
 
-/* 1단계: 덮개가 바깥으로 조금씩 물러나 X자 틈이 생긴다 */
-.intro.open .ix-t { transform: translateY(-9px); }
-.intro.open .ix-b { transform: translateY(9px); }
-.intro.open .ix-l { transform: translateX(-9px); }
-.intro.open .ix-r { transform: translateX(9px); }
+/* 여는 동작은 끊기지 않는 한 흐름(--ix-dur)으로 이어진다.
+   0~28%: 덮개가 살짝 벌어지며 틈으로 빛이 샌다 (점점 느려지며 잠깐 머문다)
+   28~100%: 덮개가 바깥으로 젖혀지며 옅어지고, 빛이 퍼지며 안쪽이 걷혀 청첩장이 드러난다 */
+.intro { --ix-dur: 2.3s; }
+.intro.open .ix-flap { animation: var(--ix-dur) both; }
+.intro.open .ix-t { animation-name: ix-open-t; }
+.intro.open .ix-b { animation-name: ix-open-b; }
+.intro.open .ix-l { animation-name: ix-open-l; }
+.intro.open .ix-r { animation-name: ix-open-r; }
+.intro.open .ix-light { animation: ix-light var(--ix-dur) ease-in-out both; }
+.intro.open .ix-in { animation: ix-in var(--ix-dur) ease-in-out both; }
 
-/* 2단계: 덮개가 바깥으로 젖혀지며 옅어진다 */
-.intro.reveal .ix-flap {
-  opacity: 0;
-  transition: transform 1.1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.7s ease 0.35s;
+@keyframes ix-open-t {
+  0%   { transform: none; animation-timing-function: cubic-bezier(0.2, 0.7, 0.3, 1); }
+  28%  { transform: translateY(-10px); animation-timing-function: cubic-bezier(0.55, 0, 0.25, 1); }
+  55%  { opacity: 1; }
+  100% { transform: perspective(1400px) translateY(-24%) rotateX(-40deg); opacity: 0; }
+}
+@keyframes ix-open-b {
+  0%   { transform: none; animation-timing-function: cubic-bezier(0.2, 0.7, 0.3, 1); }
+  28%  { transform: translateY(10px); animation-timing-function: cubic-bezier(0.55, 0, 0.25, 1); }
+  55%  { opacity: 1; }
+  100% { transform: perspective(1400px) translateY(24%) rotateX(40deg); opacity: 0; }
+}
+@keyframes ix-open-l {
+  0%   { transform: none; animation-timing-function: cubic-bezier(0.2, 0.7, 0.3, 1); }
+  28%  { transform: translateX(-10px); animation-timing-function: cubic-bezier(0.55, 0, 0.25, 1); }
+  55%  { opacity: 1; }
+  100% { transform: perspective(1400px) translateX(-30%) rotateY(40deg); opacity: 0; }
+}
+@keyframes ix-open-r {
+  0%   { transform: none; animation-timing-function: cubic-bezier(0.2, 0.7, 0.3, 1); }
+  28%  { transform: translateX(10px); animation-timing-function: cubic-bezier(0.55, 0, 0.25, 1); }
+  55%  { opacity: 1; }
+  100% { transform: perspective(1400px) translateX(30%) rotateY(-40deg); opacity: 0; }
+}
+@keyframes ix-light {
+  0%   { opacity: 0; scale: 1; }
+  25%  { opacity: 1; scale: 1; }
+  55%  { opacity: 1; scale: 1.2; }
+  100% { opacity: 0; scale: 1.9; }
+}
+@keyframes ix-in {
+  0%, 45% { opacity: 1; }
+  100%    { opacity: 0; }
 }
 
-.intro.reveal .ix-t { transform: perspective(1400px) translateY(-9px) rotateX(-62deg); }
-.intro.reveal .ix-b { transform: perspective(1400px) translateY(9px) rotateX(62deg); }
-.intro.reveal .ix-l { transform: perspective(1400px) translateX(-9px) rotateY(62deg); }
-.intro.reveal .ix-r { transform: perspective(1400px) translateX(9px) rotateY(-62deg); }
+/* 뒤에서 드러나는 표지도 살짝 다가오며 자리를 잡아, 봉투에서 청첩장으로 자연스럽게 이어진다 */
+html.intro-opening .cover { animation: ix-cover 2.3s cubic-bezier(0.3, 0, 0.2, 1) both; }
+
+@keyframes ix-cover {
+  0%, 30% { scale: 1.06; }
+  100%    { scale: 1; }
+}
 
 /* 덮개 위 글자: 위 덮개의 손글씨 인사, 아래 덮개의 이름과 날짜 */
 .ix-to,
@@ -1525,7 +1554,6 @@ footer .thanks-line + div { font-weight: 700; }
   background: radial-gradient(circle, rgba(255, 240, 212, 0.95) 0, rgba(255, 210, 160, 0.6) 28%, rgba(255, 196, 150, 0) 62%);
   opacity: 0;
   scale: 0.5;
-  transition: opacity 0.7s ease 0.4s, scale 0.9s ease 0.4s;
 }
 
 /* 도장 테두리에 도는 금빛 */
@@ -1537,18 +1565,37 @@ footer .thanks-line + div { font-weight: 700; }
   border-radius: 50%;
   pointer-events: none;
   box-shadow: 0 0 0 1.5px rgba(255, 232, 196, 0), 0 0 18px 5px rgba(255, 196, 140, 0);
-  transition: box-shadow 0.6s ease 0.5s;
 }
 
 .intro.ready .ix-seal { opacity: 1; scale: 1; transition-delay: 0.15s; }
 .intro.ready:not(.open) .ix-seal svg { animation: ix-breathe 2.4s ease-in-out 1.2s infinite; }
-.intro.open .ix-seal svg { animation: ix-press 0.35s ease; }
-.intro.open .ix-seal::before { opacity: 1; scale: 1; }
-.intro.open .ix-seal::after { box-shadow: 0 0 0 1.5px rgba(255, 236, 204, 0.95), 0 0 18px 5px rgba(255, 196, 140, 0.85); }
-.intro.reveal .ix-seal { opacity: 0; scale: 1.25; transition: opacity 0.55s ease, scale 0.7s ease; }
+/* 누르면: 도장이 꾹 눌렸다가, 테두리와 뒤가 금빛으로 달아오르고, 빛 속으로 녹아 사라진다 */
+.intro.open .ix-seal { animation: ix-seal var(--ix-dur) ease-in-out both; }
+.intro.open .ix-seal::before { animation: ix-halo var(--ix-dur) ease-in-out both; }
+.intro.open .ix-seal::after { animation: ix-ring var(--ix-dur) ease-in-out both; }
+
+@keyframes ix-seal {
+  0%   { opacity: 1; scale: 1; }
+  7%   { scale: 0.9; }
+  16%  { scale: 1.03; }
+  24%  { scale: 1; }
+  50%  { opacity: 1; scale: 1.02; filter: brightness(1.12); }
+  78%  { opacity: 0; scale: 1.18; filter: brightness(1.3); }
+  100% { opacity: 0; scale: 1.18; }
+}
+@keyframes ix-halo {
+  0%   { opacity: 0; scale: 0.5; }
+  25%  { opacity: 1; scale: 1; }
+  55%  { opacity: 1; scale: 1.2; }
+  100% { opacity: 0; scale: 2; }
+}
+@keyframes ix-ring {
+  0%, 8%    { box-shadow: 0 0 0 1.5px rgba(255, 236, 204, 0), 0 0 18px 5px rgba(255, 196, 140, 0); }
+  26%, 52%  { box-shadow: 0 0 0 1.5px rgba(255, 236, 204, 0.95), 0 0 18px 5px rgba(255, 196, 140, 0.85); }
+  75%, 100% { box-shadow: 0 0 0 1.5px rgba(255, 236, 204, 0), 0 0 26px 8px rgba(255, 196, 140, 0); }
+}
 
 @keyframes ix-breathe { 50% { scale: 1.04; } }
-@keyframes ix-press { 40% { scale: 0.9; } }
 
 /* 안내: 도장 아래 위쪽 화살표와 문구 */
 .ix-hint {
@@ -1578,7 +1625,7 @@ footer .thanks-line + div { font-weight: 700; }
 
 .intro.ready .ix-hint { opacity: 1; transition-delay: 1.1s; }
 .intro.ready:not(.open) .ix-chev { animation: ix-bob 1.6s ease-in-out 1.5s infinite; }
-.intro.open .ix-hint { opacity: 0; transition-delay: 0s; }
+.intro.open .ix-hint { opacity: 0; transition: opacity 0.3s ease; }
 
 @keyframes ix-bob { 50% { translate: 0 -4px; } }
 
