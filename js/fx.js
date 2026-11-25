@@ -4,7 +4,7 @@
    움직임 줄이기(REDUCE_MOTION, main.js)를 켠 기기에서는 움직이는 연출을 하지 않는다.
 
    목차
-   01. 오프닝 인트로   : 봉투를 누르면 도장이 떨어지고 편지가 올라온 뒤 청첩장이 열린다 (세션당 한 번)
+   01. 오프닝 인트로   : 화면 전체 봉투. 도장을 누르면 틈으로 빛이 새고 덮개가 열리며 청첩장이 드러난다 (세션당 한 번)
    02. 꽃잎            : 표지 위로 꽃잎이 흩날린다 (canvas, 표지가 보일 때만)
    03. 하트 터치       : 표지를 누르면 그 자리에서 하트가 떠오른다
    04. 진행 바         : 맨 위 얇은 바가 읽은 만큼 차오른다 (CSS scroll-timeline, 미지원 시 JS)
@@ -38,70 +38,149 @@ fxSafe('intro', () => {
   const b = (p.bride || {}).short || '';
   const D = CONFIG.date;
   const DAY = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][D.getDay()];
-  const h12 = D.getHours() % 12 || 12;
-  const ampm = D.getHours() < 12 ? 'AM' : 'PM';
-  const dateText = `${D.getFullYear()}. ${D.getMonth() + 1}. ${D.getDate()}  ${DAY}  ${h12}${ampm}`;
+  const dateText = `${D.getFullYear()}. ${D.getMonth() + 1}. ${D.getDate()}  ${DAY}`;
 
-
-  // 봉투: 뒤판, 편지, 앞주머니, 윗덮개, 밀랍 도장 순서로 쌓는다. 모양과 움직임은 css/main.css 의 17-1.
+  // 화면 전체가 봉투다. 안쪽(빛) 위에 왼쪽·오른쪽·아래·위 덮개를 차례로 겹치고, 가운데에 밀랍 도장을 찍는다.
+  // 모양과 움직임은 css/main.css 의 17-1.
   const intro = document.createElement('div');
   intro.className = 'intro';
   intro.setAttribute('role', 'dialog');
   intro.setAttribute('aria-label', '청첩장 봉투 열기');
   intro.innerHTML =
-    '<div class="intro-glow"></div>' +
-    '<div class="env-to">You\'re invited</div>' +
-    '<div class="env-wrap"><div class="env">' +
-      '<div class="env-back"></div>' +
-      '<div class="env-letter">' +
-        '<svg class="intro-sign" viewBox="0 0 360 86" aria-hidden="true">' +
-          '<text x="180" y="62" text-anchor="middle">Our Wedding Day</text>' +
-        '</svg>' +
-        `<div class="intro-names">${g} <i>&amp;</i> ${b}</div>` +
-        `<div class="intro-date">${dateText}</div>` +
-      '</div>' +
-      '<div class="env-pocket">' +
-        '<svg viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">' +
-          '<defs>' +
-            '<linearGradient id="envSide" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8dccf"/><stop offset="1" stop-color="#f3cbba"/></linearGradient>' +
-            '<linearGradient id="envBottom" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fde7dd"/><stop offset="1" stop-color="#fad9cb"/></linearGradient>' +
-          '</defs>' +
-          '<path d="M0 6 Q0 0 4 1 L150 112 L4 199 Q0 200 0 194 Z" fill="url(#envSide)"/>' +
-          '<path d="M300 6 Q300 0 296 1 L150 112 L296 199 Q300 200 300 194 Z" fill="url(#envSide)"/>' +
-          '<path d="M0 194 L150 100 L300 194 Q300 200 292 200 L8 200 Q0 200 0 194 Z" fill="url(#envBottom)"/>' +
-        '</svg>' +
-      '</div>' +
-      '<div class="env-flap"></div>' +
-      '<div class="env-seal"><span>♥</span></div>' +   // 밀랍 도장: 하트 하나
-    '</div></div>' +
-    '<div class="intro-hint">봉투를 눌러 열어 주세요</div>';
+    '<div class="ix-in"></div>' +
+    '<div class="ix-light"></div>' +
+    '<div class="ix-flap ix-l"><svg aria-hidden="true"></svg></div>' +
+    '<div class="ix-flap ix-r"><svg aria-hidden="true"></svg></div>' +
+    '<div class="ix-flap ix-b"><svg aria-hidden="true"></svg>' +
+      `<div class="ix-names">${g} <i>&amp;</i> ${b}<small>${dateText}</small></div>` +
+    '</div>' +
+    '<div class="ix-flap ix-t"><svg aria-hidden="true"></svg>' +
+      '<div class="ix-to">You\'re invited</div>' +
+    '</div>' +
+    '<div class="ix-seal">' + sealSVG() + '</div>' +
+    '<div class="ix-hint"><span class="ix-chev"></span>봉투를 눌러 열어 주세요</div>';
+
+  // 밀랍 도장: 가장자리가 조금 울퉁불퉁한 원에 눌러 찍은 하트
+  function sealSVG() {
+    const n = 18, pts = [];
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2;
+      const r = 44 + Math.sin(i * 2.3) * 1.8 + Math.cos(i * 1.7) * 1.2;
+      pts.push([50 + Math.cos(a) * r, 50 + Math.sin(a) * r]);
+    }
+    const mid = (u, v) => [(u[0] + v[0]) / 2, (u[1] + v[1]) / 2];
+    let d = 'M' + mid(pts[n - 1], pts[0]).map((x) => x.toFixed(1)).join(' ');
+    for (let i = 0; i < n; i++) {
+      const m = mid(pts[i], pts[(i + 1) % n]);
+      d += `Q${pts[i][0].toFixed(1)} ${pts[i][1].toFixed(1)} ${m[0].toFixed(1)} ${m[1].toFixed(1)}`;
+    }
+    const heart = 'M50 64 C38 55 33 49 33 43 C33 38 37 34.5 41.5 34.5 C45 34.5 48 36.5 50 39.5 C52 36.5 55 34.5 58.5 34.5 C63 34.5 67 38 67 43 C67 49 62 55 50 64 Z';
+    return '<svg viewBox="0 0 100 100" aria-hidden="true"><defs>' +
+        '<radialGradient id="ixWax" cx="0.36" cy="0.3" r="0.8"><stop offset="0" stop-color="#f2b7a2"/><stop offset="0.45" stop-color="#d9846b"/><stop offset="1" stop-color="#b45d47"/></radialGradient>' +
+        '<radialGradient id="ixPress" cx="0.6" cy="0.68" r="0.75"><stop offset="0" stop-color="#e4977f"/><stop offset="1" stop-color="#bf654e"/></radialGradient>' +
+      '</defs>' +
+      `<path d="${d}" fill="url(#ixWax)"/>` +
+      '<circle cx="50" cy="50" r="31" fill="url(#ixPress)"/>' +
+      '<circle cx="50" cy="50" r="31" fill="none" stroke="#9e4c39" stroke-opacity="0.35" stroke-width="1.4"/>' +
+      '<circle cx="50" cy="50" r="27" fill="none" stroke="#fff1e9" stroke-opacity="0.4" stroke-width="0.8" stroke-dasharray="1.5 2.2"/>' +
+      `<path d="${heart}" fill="#9e4c39" fill-opacity="0.45" transform="translate(0.8 1.2)"/>` +
+      `<path d="${heart}" fill="#fde9df"/>` +
+    '</svg>';
+  }
+
+  // 덮개 무늬: 꽃과 잎 줄기를 종이에 눌러 찍은 듯(엠보싱) 그림자·빛·바탕 세 겹으로 그린다.
+  const MOTIF =
+    [0, 72, 144, 216, 288].map((a) => `<ellipse cx="26" cy="21.5" rx="3.4" ry="5.6" transform="rotate(${a} 26 28)"/>`).join('') +
+    '<circle cx="26" cy="28" r="2.2"/>' +
+    '<path d="M54 90 Q66 74 86 58" fill="none" stroke-width="1.2"/>' +
+    '<ellipse cx="62" cy="77" rx="2.4" ry="5.4" transform="rotate(-25 62 77)"/>' +
+    '<ellipse cx="69" cy="80" rx="2.4" ry="5.4" transform="rotate(68 69 80)"/>' +
+    '<ellipse cx="72" cy="66" rx="2.2" ry="5" transform="rotate(-18 72 66)"/>' +
+    '<ellipse cx="79" cy="70" rx="2.2" ry="5" transform="rotate(74 79 70)"/>' +
+    '<circle cx="87" cy="57" r="2.8"/>' +
+    '<circle cx="82" cy="20" r="1.5"/><circle cx="12" cy="78" r="1.3"/><circle cx="44" cy="52" r="1.1"/>';
+
+  const FLAPS = {
+    // 이름: [밝은 쪽 색, 안쪽(가운데) 색, 무늬 바탕색, 무늬 기울기]
+    t: ['#fff4ee', '#f9e1d6', '#fcebe3', -10],
+    b: ['#fdeee7', '#f6dacd', '#f9e4da', 14],
+    l: ['#fcebe3', '#f4d5c7', '#f8e1d6', 32],
+    r: ['#fcebe3', '#f4d5c7', '#f8e1d6', -32],
+  };
+
+  function draw() {
+    const W = intro.clientWidth || window.innerWidth;
+    const H = intro.clientHeight || window.innerHeight;
+    const cx = W / 2, cy = H / 2, o = 3;
+    const shape = {
+      t: `M0 0H${W}L${cx} ${cy}Z`,
+      b: `M0 ${H}H${W}L${cx} ${cy}Z`,
+      l: `M0 ${-o}L${cx + o} ${cy}L0 ${H + o}Z`,
+      r: `M${W} ${-o}L${cx - o} ${cy}L${W} ${H + o}Z`,
+    };
+    const grad = {          // 밝은 바깥 가장자리에서 어두운 가운데로
+      t: [0, 0, 0, cy], b: [0, H, 0, cy], l: [0, 0, cx, 0], r: [W, 0, cx, 0],
+    };
+    const edge = {          // 겹친 덮개의 접힌 선에 비치는 빛
+      t: `M0 0L${cx} ${cy}L${W} 0`, b: `M0 ${H}L${cx} ${cy}L${W} ${H}`, l: '', r: '',
+    };
+    Object.keys(FLAPS).forEach((k) => {
+      const [c1, c2, base, rot] = FLAPS[k];
+      const [x1, y1, x2, y2] = grad[k];
+      const svg = intro.querySelector('.ix-' + k + ' svg');
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      svg.innerHTML =
+        '<defs>' +
+          `<linearGradient id="ixG${k}" gradientUnits="userSpaceOnUse" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient>` +
+          `<pattern id="ixP${k}" width="104" height="104" patternUnits="userSpaceOnUse" patternTransform="rotate(${rot})">` +
+            `<g fill="#b8735c" stroke="#b8735c" stroke-width="0" opacity="0.2" transform="translate(0.8 1)">${MOTIF}</g>` +
+            `<g fill="#fff" stroke="#fff" stroke-width="0" opacity="0.9" transform="translate(-0.6 -0.7)">${MOTIF}</g>` +
+            `<g fill="${base}" stroke="${base}" stroke-width="0">${MOTIF}</g>` +
+          '</pattern>' +
+        '</defs>' +
+        `<path d="${shape[k]}" fill="url(#ixG${k})"/>` +
+        `<path d="${shape[k]}" fill="url(#ixP${k})" opacity="0.85"/>` +
+        (edge[k] ? `<path d="${edge[k]}" fill="none" stroke="#fff" stroke-opacity="0.85" stroke-width="1.2"/>` : '');
+    });
+  }
 
   document.body.appendChild(intro);
   document.documentElement.classList.add('intro-on');
+  draw();
+  window.addEventListener('resize', draw);
 
-  let closed = false;
-  function close() {
-    if (closed) return;
-    closed = true;
+  // 누르면: 덮개 틈으로 빛이 새고(open) → 도장이 빛나고 → 덮개가 바깥으로 열리며 청첩장이 드러난다(reveal).
+  // 여는 중에 한 번 더 누르면 바로 넘어간다. 아무도 누르지 않으면 6초 뒤 저절로 열린다.
+  let opened = false, revealed = false, done = false, autoTimer = 0;
+
+  function finish() {
+    if (done) return;
+    done = true;
     try { sessionStorage.setItem('wedding-intro', '1'); } catch (e) {}
-    intro.classList.add('out');
+    intro.classList.add('reveal', 'out');
     document.documentElement.classList.remove('intro-on');
-    setTimeout(() => intro.remove(), 1000);
+    window.removeEventListener('resize', draw);
+    setTimeout(() => intro.remove(), 900);
   }
 
-  // 누르면 봉투가 열린다. 열리는 동안 한 번 더 누르면 바로 청첩장으로 넘어간다.
-  // 아무도 누르지 않으면 6초 뒤 저절로 열린다(멈춘 화면처럼 보이지 않게).
-  let opened = false, autoTimer = 0;
+  function reveal() {
+    if (revealed) { finish(); return; }
+    revealed = true;
+    try { sessionStorage.setItem('wedding-intro', '1'); } catch (e) {}
+    intro.classList.add('reveal');
+    setTimeout(finish, 1200);
+  }
+
   function open() {
-    if (opened) { close(); return; }
+    if (opened) { reveal(); return; }
     opened = true;
     clearTimeout(autoTimer);
     intro.classList.add('ready', 'open');
-    if (navigator.vibrate) { try { navigator.vibrate(10); } catch (e) {} }
-    setTimeout(close, 4800);
+    if (navigator.vibrate) { try { navigator.vibrate(12); } catch (e) {} }
+    setTimeout(reveal, 1350);
   }
 
-  // 손글씨 글꼴이 load된 뒤 봉투를 띄운다. 글꼴이 늦어도 0.7초 뒤에는 띄운다.
+  // 손글씨 글꼴이 load된 뒤 글자와 도장을 띄운다. 글꼴이 늦어도 0.7초 뒤에는 띄운다.
   const start = () => {
     intro.classList.add('ready');
     autoTimer = setTimeout(open, 6000);
