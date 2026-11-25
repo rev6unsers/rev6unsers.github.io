@@ -598,26 +598,18 @@ fxSafe('finale', () => {
 });
 
 
-/* 11. 팝업북 카드: 화면에 절반쯤 들어오면 펼친다. 누르면 접었다가 다시 펼친다. 모양은 css/main.css 의 24. */
+/* 11. 팝업북 카드: 스크롤해서 화면에 절반쯤 들어오면 저절로 펼친다. 모양은 css/main.css 의 24. */
 
 fxSafe('popup', () => {
   const pop = document.getElementById('popup');
   if (!pop) return;
   if (!FX_MOTION || !('IntersectionObserver' in window)) { pop.classList.add('open'); return; }
-  let busy = false;
-  // 카드가 화면 가운데쯤 오면, 닫힌 표지를 잠깐 보여 준 뒤 펼친다.
-  let timer = 0;
+  // 스크롤해서 카드가 화면에 절반쯤 들어오면 저절로 펼쳐진다(한 번만).
   const io = new IntersectionObserver((es) => {
     if (es[0].isIntersecting) {
-      timer = setTimeout(() => { pop.classList.add('open'); io.disconnect(); }, 700);
-    } else clearTimeout(timer);
-  }, { threshold: 0.9, rootMargin: '0px 0px -18% 0px' });
+      setTimeout(() => pop.classList.add('open'), 150);
+      io.disconnect();
+    }
+  }, { threshold: 0.5 });
   io.observe(pop);
-  pop.addEventListener('click', () => {
-    if (busy) return;
-    if (!pop.classList.contains('open')) { clearTimeout(timer); io.disconnect(); pop.classList.add('open'); return; }
-    busy = true;
-    pop.classList.remove('open');
-    setTimeout(() => { pop.classList.add('open'); busy = false; }, 1000);
-  });
 });
