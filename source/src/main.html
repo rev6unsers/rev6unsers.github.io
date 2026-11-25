@@ -127,9 +127,12 @@
     <div class="label rv">The Day</div>
     <div class="label-title rv">예식 안내</div>
 
+    <!-- 날짜는 은박 덮개를 긁어야 보인다 (js/fx.js 의 scratch). 한 번 확인하면 다음부터는 그냥 보인다. -->
     <div class="rv d1">
-      <div class="when-date">{{WEDDING_DATE_KO}}</div>
-      <div class="when-time">{{WEDDING_TIME_KO}}</div>
+      <div class="when-box" id="whenBox">
+        <div class="when-date">{{WEDDING_DATE_KO}}</div>
+        <div class="when-time">{{WEDDING_TIME_KO}}</div>
+      </div>
     </div>
 
     <!-- 크게 반짝이는 D-day. 숫자는 js/main.js 의 countdown이 채운다. -->

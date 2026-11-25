@@ -1106,3 +1106,105 @@ document.addEventListener('DOMContentLoaded', function () {
   if (!IOS) play();                    // 열자마자 재생 시도(허락하는 브라우저는 바로 나온다)
   else showHint();
 })();
+
+
+/* 긁어서 확인하기 (scratch card).
+   box 위에 canvas 덮개를 씌우고, 손가락이나 마우스로 문지른 만큼 지운다. 절반쯤 지워지면 덮개가 사라진다.
+   한 번 확인한 사람은 다시 긁지 않도록 localStorage 에 기억한다.
+   덮개 그림은 version마다 다르므로 opt.paint(g, W, H) 로 받는다. 글자는 DOM에 그대로 있어서
+   화면 읽기 프로그램은 덮개와 상관없이 날짜를 읽는다.
+   opt: { id, paint, brush, onReveal } */
+function makeScratch(box, opt) {
+  opt = opt || {};
+  var KEY = 'wedding-scratch-' + (opt.id || 'date');
+  try { if (localStorage.getItem(KEY) === '1') return; } catch (e) {}
+  if (!document.getElementById('scratch-style')) {
+    var st = document.createElement('style');
+    st.id = 'scratch-style';
+    st.textContent =
+      '.scratch{position:relative}' +
+      '.scratch-cv{position:absolute;inset:0;width:100%;height:100%;border-radius:inherit;touch-action:none;cursor:grab;transition:opacity .7s ease,transform .7s ease;z-index:2}' +
+      '.scratch-cv:active{cursor:grabbing}' +
+      '.scratch-cv.gone{opacity:0;transform:scale(1.04);pointer-events:none}';
+    document.head.appendChild(st);
+  }
+  box.classList.add('scratch');
+  var cv = document.createElement('canvas');
+  cv.className = 'scratch-cv';
+  cv.setAttribute('aria-hidden', 'true');
+  box.appendChild(cv);
+  var g = cv.getContext('2d');
+  if (!g) { cv.remove(); return; }
+
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var W = 0, H = 0, done = false, touched = false, last = null, moves = 0;
+
+  function paint() {
+    W = box.offsetWidth; H = box.offsetHeight;
+    if (!W || !H) return;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.globalCompositeOperation = 'source-over';
+    opt.paint(g, W, H);
+  }
+  paint();
+  // 글꼴이 늦게 오면 덮개 글씨를 다시 그린다(아직 긁지 않았을 때만).
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (!touched && !done) paint(); });
+  var lastW = W;
+  window.addEventListener('resize', function () {
+    if (done || box.offsetWidth === lastW) return;   // 휴대폰 주소창이 접힐 때(높이만 변함)는 그대로 둔다
+    lastW = box.offsetWidth; paint();
+  }, { passive: true });
+  opt.repaint = function () { if (!touched && !done) paint(); };
+
+  function pt(e) {
+    var r = cv.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+  function scratchTo(p) {
+    g.globalCompositeOperation = 'destination-out';
+    g.lineCap = 'round'; g.lineJoin = 'round';
+    g.lineWidth = opt.brush || 26;
+    g.beginPath();
+    if (last) g.moveTo(last.x, last.y); else g.moveTo(p.x - 0.1, p.y);
+    g.lineTo(p.x, p.y);
+    g.stroke();
+    last = p;
+  }
+  function cleared() {
+    try {
+      var d = g.getImageData(0, 0, cv.width, cv.height).data, n = 0, c = 0;
+      for (var i = 3; i < d.length; i += 64) { n++; if (d[i] < 128) c++; }
+      return n ? c / n : 0;
+    } catch (e) { return 1; }
+  }
+  function reveal() {
+    if (done) return;
+    done = true;
+    cv.classList.add('gone');
+    box.classList.add('revealed');
+    try { localStorage.setItem(KEY, '1'); } catch (e) {}
+    setTimeout(function () { cv.remove(); }, 800);
+    if (navigator.vibrate) { try { navigator.vibrate(18); } catch (e) {} }
+    if (opt.onReveal) { try { opt.onReveal(box); } catch (e) {} }
+  }
+  cv.addEventListener('pointerdown', function (e) {
+    if (done) return;
+    touched = true; last = null;
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+    scratchTo(pt(e));
+  });
+  cv.addEventListener('pointermove', function (e) {
+    if (done || !last) return;
+    scratchTo(pt(e));
+    if (++moves % 8 === 0 && cleared() > 0.5) reveal();
+  });
+  function up() {
+    if (done || !last) return;
+    last = null;
+    if (cleared() > 0.42) reveal();
+  }
+  cv.addEventListener('pointerup', up);
+  cv.addEventListener('pointercancel', up);
+  return opt;
+}

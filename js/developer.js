@@ -815,3 +815,33 @@ if (isWeddingDeployed()) {
 }
 
 
+
+
+/* 날짜 긁기: hero 날짜를 redacted 막대로 덮는다. 문지르면 decrypt 되듯 드러난다. (makeScratch 는 config.js) */
+(function () {
+  const box = document.getElementById('dateBox');
+  if (!box || typeof makeScratch !== 'function') return;
+  const css = (k) => getComputedStyle(document.documentElement).getPropertyValue(k).trim();
+  const sc = makeScratch(box, {
+    id: 'date-dev',
+    brush: 22,
+    paint(g, W, H) {
+      g.fillStyle = css('--text') || '#d6d6dc';
+      g.fillRect(0, 0, W, H);
+      g.fillStyle = css('--bg') || '#18181b';
+      g.globalAlpha = 0.12;
+      for (let x = 0; x < W; x += 6) g.fillRect(x, 0, 3, H);
+      g.globalAlpha = 1;
+      g.textAlign = 'center';
+      g.textBaseline = 'middle';
+      g.font = '500 12px "Fira Code", "Noto Sans KR", monospace';
+      if ('letterSpacing' in g) g.letterSpacing = '1px';
+      g.fillText('[REDACTED] // 문질러서 decrypt', W / 2, H / 2 + 1);
+    },
+  });
+  // theme(dark/light)를 바꾸면 아직 안 긁은 덮개를 새 색으로 다시 그린다.
+  if (sc && sc.repaint) {
+    new MutationObserver(() => sc.repaint())
+      .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  }
+})();

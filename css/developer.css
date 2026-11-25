@@ -2319,3 +2319,22 @@ body { font-variant-ligatures: none; }
 .gtab small { font-size: 10px; color: var(--comment); letter-spacing: 0.02em; }
 .gtab.on small { color: color-mix(in srgb, var(--laravel) 70%, var(--text-dim)); }
 .game-stage { position: relative; }
+
+
+/* 26. 날짜 긁기 (js/developer.js 의 scratch, makeScratch 는 config.js)
+   hero 날짜를 redacted 막대로 덮어 두고, 문지르면 드러난다. */
+.hero-names .date-box {
+  display: inline-block;
+  padding: 7px 12px;
+  border-radius: 6px;
+}
+
+.hero-names .date-box.revealed {
+  animation: date-decrypt 0.9s steps(6, end);
+}
+
+@keyframes date-decrypt {
+  0%   { filter: blur(3px); opacity: 0.4; }
+  50%  { filter: blur(1px); opacity: 0.8; }
+  100% { filter: none; opacity: 1; }
+}

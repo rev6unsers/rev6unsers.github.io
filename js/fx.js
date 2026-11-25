@@ -81,6 +81,82 @@ fxSafe('intro', () => {
 });
 
 
+/* 01-2. 날짜 긁기: 예식 안내의 날짜를 로즈골드 은박으로 덮고, 긁으면 드러난다 (makeScratch 는 config.js) */
+
+fxSafe('scratch', () => {
+  const box = document.getElementById('whenBox');
+  if (!box || typeof makeScratch !== 'function') return;
+
+  // 반짝이 위치는 매번 같게(새로 그려도 모양이 튀지 않게) 고정된 난수로 만든다.
+  function rnd(seed) { return () => ((seed = (seed * 16807) % 2147483647) / 2147483647); }
+
+  function paintFoil(g, W, H) {
+    const grd = g.createLinearGradient(0, 0, W, H);
+    grd.addColorStop(0, '#efc2b0');
+    grd.addColorStop(0.35, '#fbe6dc');
+    grd.addColorStop(0.55, '#f2c4b2');
+    grd.addColorStop(0.8, '#fde9e0');
+    grd.addColorStop(1, '#e3a28c');
+    g.fillStyle = grd;
+    g.beginPath();
+    g.roundRect ? g.roundRect(0, 0, W, H, 16) : g.rect(0, 0, W, H);
+    g.fill();
+    // 은박 결(사선)과 반짝이
+    g.save();
+    g.globalAlpha = 0.18;
+    g.strokeStyle = '#fff';
+    g.lineWidth = 1;
+    for (let x = -H; x < W; x += 7) { g.beginPath(); g.moveTo(x, H); g.lineTo(x + H, 0); g.stroke(); }
+    g.restore();
+    const r = rnd(7);
+    for (let i = 0; i < 26; i++) {
+      g.fillStyle = `rgba(255,255,255,${(0.35 + r() * 0.5).toFixed(2)})`;
+      g.beginPath();
+      g.arc(r() * W, r() * H, 0.6 + r() * 1.6, 0, Math.PI * 2);
+      g.fill();
+    }
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    g.shadowColor = 'rgba(150,70,50,0.35)';
+    g.shadowBlur = 4;
+    g.fillStyle = '#fff';
+    g.font = '700 16px "Gowun Batang", serif';
+    g.fillText('✦ 손가락으로 긁어 주세요 ✦', W / 2, H / 2 - 9);
+    g.shadowBlur = 0;
+    g.fillStyle = 'rgba(140,70,52,0.75)';
+    g.font = '12px "Gowun Dodum", sans-serif';
+    g.fillText('예식 날짜가 숨어 있어요', W / 2, H / 2 + 14);
+  }
+
+  makeScratch(box, {
+    id: 'date',
+    brush: 30,
+    paint: paintFoil,
+    onReveal(el) {
+      if (!FX_MOTION) return;
+      const layer = document.querySelector('.fx-layer');
+      if (!layer) return;
+      const r = el.getBoundingClientRect();
+      for (let i = 0; i < 14; i++) {
+        const h = document.createElement('span');
+        h.className = 'burst-heart';
+        h.textContent = i % 3 === 0 ? '♡' : '♥';
+        h.style.left = (r.left + r.width / 2) + 'px';
+        h.style.top = (r.top + r.height / 2) + 'px';
+        const ang = (Math.PI * 2 * i) / 14 + Math.random() * 0.3;
+        const dist = 70 + Math.random() * 50;
+        h.style.setProperty('--dx', (Math.cos(ang) * dist).toFixed(0) + 'px');
+        h.style.setProperty('--dy', (Math.sin(ang) * dist * 0.6 - 30).toFixed(0) + 'px');
+        h.style.setProperty('--rot', ((Math.random() - 0.5) * 80).toFixed(0) + 'deg');
+        h.style.setProperty('--sz', (12 + Math.random() * 10).toFixed(0) + 'px');
+        layer.appendChild(h);
+        setTimeout(() => h.remove(), 1200);
+      }
+    },
+  });
+});
+
+
 /* 02. 꽃잎 */
 
 fxSafe('petals', () => {

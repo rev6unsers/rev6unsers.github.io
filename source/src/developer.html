@@ -72,7 +72,8 @@
       <h1>{{GROOM_NAME}}<span class="amp">&amp;</span>{{BRIDE_NAME}}</h1>
       <div class="eng">{{GROOM_NAME_EN}} &amp; {{BRIDE_NAME_EN}}</div>
       <div class="date-line">
-        <b id="heroDate">{{WEDDING_DATE_DOT}} {{WEDDING_DAY_EN}} {{WEDDING_TIME_EN}}</b>
+        <!-- 날짜는 redacted 덮개를 문질러야 보인다 (js/developer.js 의 scratch) -->
+        <span class="date-box" id="dateBox"><b id="heroDate">{{WEDDING_DATE_DOT}} {{WEDDING_DAY_EN}} {{WEDDING_TIME_EN}}</b></span>
       </div>
     </div>
 
