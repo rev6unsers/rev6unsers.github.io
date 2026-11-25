@@ -343,8 +343,10 @@ function initKakaoShare() {
   if (!key || document.getElementById('kakao-sdk')) return;
   var s = document.createElement('script');
   s.id = 'kakao-sdk';
-  // SDK version. 카카오가 새 version을 내면 숫자만 올리면 된다. load에 실패하면 조용히 fallback한다.
+  // SDK version. 카카오가 새 version을 내면 숫자와 아래 integrity 값을 함께 바꾼다(카카오 공식 문서에 version별 값이 있다).
+  // integrity: 받은 파일이 이 값과 다르면(위변조) browser가 실행하지 않고, 공유는 system 공유로 fallback한다.
   s.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.5/kakao.min.js';
+  s.integrity = 'sha384-dok87au0gKqJdxs7msEdBPNnKSRT+/mhTVzq+qOhcL464zXwvcrpjeWvyj1kCdq6';
   s.crossOrigin = 'anonymous';
   s.onload = function () {
     try {
